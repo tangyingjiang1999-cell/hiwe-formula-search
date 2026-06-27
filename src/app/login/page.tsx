@@ -41,9 +41,7 @@ export default function LoginPage() {
   return (
     <div
       className="flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8"
-      style={{
-        background: "linear-gradient(135deg, #23a3b3 0%, #d06af6 100%)",
-      }}
+      style={{ backgroundColor: "#f8f9fa" }}
     >
       {/* 主卡片：左侧产品图 + 右侧表单 */}
       <div className="flex w-full max-w-[920px] overflow-hidden rounded-[28px] bg-white shadow-xl shadow-black/10">
