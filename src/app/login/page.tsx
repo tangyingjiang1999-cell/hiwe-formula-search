@@ -80,7 +80,7 @@ export default function LoginPage() {
               fontFamily: '-apple-system, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
             }}
           >
-            Welcome back
+            Welcome to HAIWEN
           </h1>
           <p className="mt-2 text-base text-gray-500">
             Sign in to access formula search system
@@ -148,25 +148,6 @@ export default function LoginPage() {
             Authorized users only &middot; HAIWEN MIX &copy; {new Date().getFullYear()}
           </p>
         </div>
-      </div>
-
-      {/* 底部品牌标识（桌面端显示） */}
-      <div className="mt-6 hidden items-center justify-center gap-2.5 lg:flex">
-        <div
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm"
-        >
-          <img
-            src="/haiwen-logo.png"
-            alt="HAIWEN"
-            className="h-6 w-auto object-contain"
-          />
-        </div>
-        <span
-          className="text-base font-semibold text-white"
-          style={{ fontFamily: 'var(--font-outfit), "Outfit", sans-serif' }}
-        >
-          HAIWEN MIX
-        </span>
       </div>
     </div>
   );
