@@ -40,167 +40,154 @@ export default function LoginPage() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center px-6"
-      style={{ backgroundColor: "#f5f5f7" }}
+      className="flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8"
+      style={{ backgroundColor: "#7DD3C0" }}
     >
-      {/* Apple 风格登录卡片 - 无阴影、无硬边框 */}
-      <div
-        className="w-full max-w-[380px] rounded-2xl bg-white p-10"
-        style={{
-          boxShadow: "0 2px 20px rgba(0,0,0,0.04)",
-          border: "1px solid rgba(0,0,0,0.06)",
-        }}
-      >
-        {/* Logo */}
-        <div className="mb-7 flex justify-center">
+      {/* 主卡片：左侧图片 + 右侧表单 */}
+      <div className="flex w-full max-w-[900px] overflow-hidden rounded-[28px] bg-white shadow-sm">
+        {/* ===== 左侧：Logo / 品牌区域 ===== */}
+        <div
+          className="hidden flex-col items-center justify-center p-10 lg:flex lg:w-[45%]"
+          style={{
+            background:
+              "linear-gradient(145deg, #0EA5A0 0%, #14B8A6 50%, #2DD4BF 100%)",
+          }}
+        >
+          {/* Logo */}
           <img
             src="/haiwen-logo.png"
             alt="HAIWEN"
-            className="h-16 w-auto object-contain sm:h-20"
+            className="mb-6 h-28 w-auto object-contain drop-shadow-lg"
           />
+
+          {/* 品牌文字 */}
+          <h2
+            className="text-center text-2xl font-semibold tracking-wide text-white"
+            style={{ fontFamily: 'var(--font-outfit), "Outfit", sans-serif' }}
+          >
+            HAIWEN MIX
+          </h2>
+          <p className="mt-2 text-center text-sm text-white/80">
+            Automotive Refinish Formula Search
+          </p>
+
+          {/* 装饰性元素 */}
+          <div className="mt-8 flex gap-2">
+            <div className="h-1 w-8 rounded-full bg-white/40" />
+            <div className="h-1 w-8 rounded-full bg-white/60" />
+            <div className="h-1 w-8 rounded-full bg-white" />
+          </div>
         </div>
 
-        {/* 标题 - Apple 标题风格：SF Pro Display 600, 负字距 */}
-        <div className="mb-8 text-center">
+        {/* ===== 右侧：登录表单 ===== */}
+        <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-[55%] lg:px-14">
+          {/* 移动端 Logo（仅小屏显示） */}
+          <div className="mb-8 flex items-center gap-3 lg:hidden">
+            <img
+              src="/haiwen-logo.png"
+              alt="HAIWEN"
+              className="h-10 w-auto object-contain"
+            />
+            <span
+              className="text-lg font-semibold text-gray-800"
+              style={{ fontFamily: 'var(--font-outfit), "Outfit", sans-serif' }}
+            >
+              HAIWEN MIX
+            </span>
+          </div>
+
+          {/* 标题 */}
           <h1
-            className="text-[28px] font-semibold tracking-tight sm:text-[34px]"
-            style={{
-              color: "#1d1d1f",
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
-              letterSpacing: "-0.374px",
-              lineHeight: "1.19",
-            }}
+            className="text-[26px] font-bold leading-tight tracking-tight text-gray-900 sm:text-[30px]"
+            style={{ fontFamily: '-apple-system, "SF Pro Display", "Segoe UI", Roboto, sans-serif' }}
           >
-            登录
+            Welcome back
           </h1>
-          <p
-            className="mt-2 text-base"
-            style={{
-              color: "#7a7a7a",
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif',
-              letterSpacing: "-0.224px",
-            }}
-          >
-            HAIWEN MIX 配方检索系统
+          <p className="mt-2 text-base text-gray-500">
+            Sign in to access formula search system
+          </p>
+
+          {/* 表单 */}
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            {/* 用户名 */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                autoFocus
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 text-[15px] text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-500/20"
+              />
+            </div>
+
+            {/* 密码 */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 text-[15px] text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-500/20"
+              />
+            </div>
+
+            {/* 错误提示 */}
+            {error && (
+              <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            {/* 登录按钮 */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-2 h-12 w-full rounded-xl text-base font-medium text-white transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+              style={{
+                backgroundColor: loading ? "#0EA5A0" : "#14B8A6",
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) e.currentTarget.style.backgroundColor = "#0D9488";
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) e.currentTarget.style.backgroundColor = "#14B8A6";
+              }}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          {/* 底部信息 */}
+          <p className="mt-8 text-center text-xs text-gray-400">
+            Authorized users only &middot; HAIWEN MIX &copy; {new Date().getFullYear()}
           </p>
         </div>
+      </div>
 
-        {/* 表单 - Apple 输入风格 */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              className="block text-sm font-medium"
-              style={{
-                color: "#1d1d1f",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-                fontSize: "14px",
-                letterSpacing: "-0.224px",
-              }}
-            >
-              用户名
-            </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="输入用户名"
-              autoFocus
-              className="mt-1.5 h-11 w-full rounded-full border px-4 text-base outline-none transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              style={{
-                borderColor: "rgba(0,0,0,0.12)",
-                backgroundColor: "#fff",
-                color: "#1d1d1f",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-                fontSize: "17px",
-                letterSpacing: "-0.374px",
-                lineHeight: "1.47",
-              }}
-            />
-          </div>
-
-          <div>
-            <label
-              className="block text-sm font-medium"
-              style={{
-                color: "#1d1d1f",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-                fontSize: "14px",
-                letterSpacing: "-0.224px",
-              }}
-            >
-              密码
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="输入密码"
-              className="mt-1.5 h-11 w-full rounded-full border px-4 text-base outline-none transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              style={{
-                borderColor: "rgba(0,0,0,0.12)",
-                backgroundColor: "#fff",
-                color: "#1d1d1f",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-                fontSize: "17px",
-                letterSpacing: "-0.374px",
-                lineHeight: "1.47",
-              }}
-            />
-          </div>
-
-          {/* 错误提示 */}
-          {error && (
-            <p
-              className="rounded-lg px-3 py-2 text-sm"
-              style={{
-                color: "#c41e3a",
-                backgroundColor: "#fef2f2",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-              }}
-            >
-              {error}
-            </p>
-          )}
-
-          {/* Apple 风格按钮：药丸形、Action Blue、scale(0.95) 按压效果 */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-2 w-full rounded-full py-3 text-base font-normal transition-all active:scale-[0.95] disabled:cursor-not-allowed disabled:opacity-60"
-            style={{
-              backgroundColor: loading ? "#5ac8fa" : "#0066cc",
-              color: "#ffffff",
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-              fontSize: "17px",
-              fontWeight: 400,
-              letterSpacing: "-0.374px",
-              lineHeight: "1.47",
-            }}
-          >
-            {loading ? "登录中..." : "登录"}
-          </button>
-        </form>
-
-        {/* 底部说明 - Apple fine-print 风格 */}
-        <p
-          className="mt-8 text-center text-xs leading-relaxed"
-          style={{
-            color: "#7a7a7a",
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-            letterSpacing: "-0.08px",
-          }}
+      {/* 底部品牌标识（桌面端显示） */}
+      <div className="mt-6 hidden items-center justify-center gap-2 lg:flex">
+        <div
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm"
         >
-          仅授权用户可访问此系统 · HAIWEN MIX &copy; 2026
-        </p>
+          <img
+            src="/haiwen-logo.png"
+            alt="HAIWEN"
+            className="h-6 w-auto object-contain"
+          />
+        </div>
+        <span
+          className="text-base font-medium text-white/90"
+          style={{ fontFamily: 'var(--font-outfit), "Outfit", sans-serif' }}
+        >
+          HAIWEN MIX
+        </span>
       </div>
     </div>
   );
