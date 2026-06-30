@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signToken, setAuthCookie } from "@/lib/auth";
-import { findUser } from "@/lib/builtin-users";
+import { getUserByUsername } from "@/lib/db";
+import { verifyPassword } from "@/lib/auth-helpers";
 
 export async function POST(req: NextRequest) {
   const { username, password } = await req.json();
@@ -9,8 +10,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "用户名和密码不能为空" }, { status: 400 });
   }
 
-  const user = findUser(username);
-  if (!user || user.password !== password) {
+  const user = await getUserByUsername(username);
+  if (!user) {
+    return NextResponse.json({ error: "用户名或密码错误" }, { status: 401 });
+  }
+
+  const valid = verifyPassword(password, user.password_hash);
+  if (!valid) {
     return NextResponse.json({ error: "用户名或密码错误" }, { status: 401 });
   }
 
