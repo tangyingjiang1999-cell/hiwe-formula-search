@@ -26,7 +26,9 @@ export const COLOR_TYPE_MAP: Record<
   solid:    { label: "实色",   badge: "bg-slate-100 text-slate-700" },
   metallic: { label: "金属漆", badge: "bg-blue-50 text-blue-700" },
   pearl:    { label: "珠光漆", badge: "bg-violet-50 text-violet-700" },
-  special:  { label: "特殊漆", badge: "bg-amber-50 text-amber-700" },
+  matte:    { label: "哑光",   badge: "bg-gray-100 text-gray-700" },
+  candy:    { label: "糖果漆", badge: "bg-amber-50 text-amber-700" },
+  special:  { label: "特殊漆", badge: "bg-rose-50 text-rose-700" },
 };
 
 // ============================================================
@@ -37,6 +39,8 @@ export const COLOR_TYPE_OPTIONS = [
   { value: "solid", label: "Solid / 实色" },
   { value: "metallic", label: "Metallic / 金属" },
   { value: "pearl", label: "Pearl / 珠光" },
+  { value: "matte", label: "Matte / 哑光" },
+  { value: "candy", label: "Candy / 糖果" },
 ] as const;
 
 // ============================================================

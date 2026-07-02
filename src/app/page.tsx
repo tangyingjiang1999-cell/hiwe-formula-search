@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import SearchPanel from "@/components/SearchPanel";
 import SearchResults from "@/components/SearchResults";
 import FormulaDrawer from "@/components/FormulaDrawer";
@@ -14,8 +14,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [drawerResult, setDrawerResult] = useState<SearchResult | null>(null);
-
-  const submitRef = useRef<(() => void) | null>(null);
 
   function handleSearch(params: SearchParams) {
     setIsLoading(true);
@@ -46,7 +44,6 @@ export default function Home() {
         <SearchPanel
           onSearch={handleSearch}
           isLoading={isLoading}
-          onSubmitRef={submitRef}
         />
       </div>
 

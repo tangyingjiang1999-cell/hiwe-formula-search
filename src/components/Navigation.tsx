@@ -8,9 +8,9 @@ export default function Navigation() {
   const { t } = useLang();
 
   const navItems = [
-    { label: "Formula Search", href: "/" },
-    { label: "Color Visual Library", href: "/color-library" },
-    { label: "Application Guide", href: "/application-guide" },
+    { label: t.navFormulaSearch, href: "/" },
+    { label: t.navColorLibrary, href: "/color-library" },
+    { label: t.navAppGuide, href: "/application-guide" },
   ];
 
   return (

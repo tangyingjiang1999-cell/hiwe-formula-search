@@ -16,20 +16,20 @@ const ColorCard = memo(function ColorCard({
   onOpenDetail,
 }: ColorCardProps) {
   const { color, formulas } = result;
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const [expanded, setExpanded] = useState(false);
   const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
-
-  const typeLabelMap: Record<string, Record<string, string>> = {
-    en: { solid: "Solid", metallic: "Metallic", pearl: "Pearl", special: "Special" },
-    zh: { solid: "实色", metallic: "金属漆", pearl: "珠光漆", special: "特殊漆" },
-  };
 
   const typeInfo = COLOR_TYPE_MAP[color.color_type] ?? {
     label: color.color_type,
     badge: "bg-zinc-100 text-zinc-600",
   };
-  const typeLabel = typeLabelMap[lang][color.color_type] ?? color.color_type;
+  const typeLabelMap: Record<string, string> = {
+    solid: t.colorTypeSolidLabel, metallic: t.colorTypeMetallicLabel,
+    pearl: t.colorTypePearlLabel, matte: t.colorTypeMatteLabel,
+    candy: t.colorTypeCandyLabel, special: t.colorTypeSpecialLabel,
+  };
+  const typeLabel = typeLabelMap[color.color_type] ?? color.color_type;
 
   function toggleExpanded() {
     setExpanded(!expanded);

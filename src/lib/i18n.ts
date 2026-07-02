@@ -15,6 +15,24 @@ export const i18n = {
     langEN: "EN",
     langZH: "中文",
 
+    // Navigation
+    navFormulaSearch: "Formula Search",
+    navColorLibrary: "Color Visual Library",
+    navAppGuide: "Application Guide",
+
+    // Login
+    loginWelcome: "Welcome back",
+    loginSubtitle: "Enter your credentials to access the system",
+    loginEmail: "Email",
+    loginPassword: "Password",
+    loginPlaceholderEmail: "you@example.com",
+    loginPlaceholderPassword: "Enter your password",
+    loginButton: "Get started",
+    loginSigningIn: "Signing in...",
+    loginErrorEmpty: "Please enter username and password",
+    loginErrorNetwork: "Network error, please retry",
+    loginErrorFailed: "Login failed",
+
     // SearchPanel
     panelTitle: "Formula Search",
     make: "Make",
@@ -26,6 +44,8 @@ export const i18n = {
     colorTypeSolid: "Solid",
     colorTypeMetallic: "Metallic",
     colorTypePearl: "Pearl",
+    colorTypeMatte: "Matte",
+    colorTypeCandy: "Candy",
     search: "Search",
     searching: "Searching...",
     reset: "Reset",
@@ -65,6 +85,8 @@ export const i18n = {
     colorTypeSolidLabel: "Solid",
     colorTypeMetallicLabel: "Metallic",
     colorTypePearlLabel: "Pearl",
+    colorTypeMatteLabel: "Matte",
+    colorTypeCandyLabel: "Candy",
     colorTypeSpecialLabel: "Special",
     copySuccess: "Copied to clipboard",
     copyFail: "Copy failed, please retry",
@@ -91,6 +113,24 @@ export const i18n = {
     langEN: "EN",
     langZH: "中文",
 
+    // Navigation
+    navFormulaSearch: "配方搜索",
+    navColorLibrary: "颜色视觉库",
+    navAppGuide: "施工指南",
+
+    // Login
+    loginWelcome: "欢迎回来",
+    loginSubtitle: "请输入账号信息登录系统",
+    loginEmail: "邮箱",
+    loginPassword: "密码",
+    loginPlaceholderEmail: "请输入邮箱",
+    loginPlaceholderPassword: "请输入密码",
+    loginButton: "登录",
+    loginSigningIn: "登录中...",
+    loginErrorEmpty: "请输入用户名和密码",
+    loginErrorNetwork: "网络错误，请重试",
+    loginErrorFailed: "登录失败",
+
     panelTitle: "配方搜索",
     make: "品牌",
     colorCode: "颜色代码",
@@ -101,6 +141,8 @@ export const i18n = {
     colorTypeSolid: "实色",
     colorTypeMetallic: "金属",
     colorTypePearl: "珠光",
+    colorTypeMatte: "哑光",
+    colorTypeCandy: "糖果漆",
     search: "搜索",
     searching: "搜索中...",
     reset: "重置",
@@ -137,6 +179,8 @@ export const i18n = {
     colorTypeSolidLabel: "实色",
     colorTypeMetallicLabel: "金属漆",
     colorTypePearlLabel: "珠光漆",
+    colorTypeMatteLabel: "哑光",
+    colorTypeCandyLabel: "糖果漆",
     colorTypeSpecialLabel: "特殊漆",
     copySuccess: "已复制到剪贴板",
     copyFail: "复制失败，请重试",

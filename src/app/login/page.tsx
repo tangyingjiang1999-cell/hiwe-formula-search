@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLang } from "@/components/LanguageContext";
 
 function UserIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -45,12 +46,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { t } = useLang();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     if (!username || !password) {
-      setError("请输入用户名和密码");
+      setError(t.loginErrorEmpty);
       return;
     }
     setLoading(true);
@@ -65,10 +67,10 @@ export default function LoginPage() {
         router.push("/");
         router.refresh();
       } else {
-        setError(data.error || "登录失败");
+        setError(data.error || t.loginErrorFailed);
       }
     } catch {
-      setError("网络错误，请重试");
+      setError(t.loginErrorNetwork);
     } finally {
       setLoading(false);
     }
@@ -153,10 +155,10 @@ export default function LoginPage() {
               style={{ marginBottom: "24px", marginTop: "-80px" }}
             />
             <h2 className="mt-2 text-muji-title text-gray-900">
-              Welcome back
+              {t.loginWelcome}
             </h2>
             <p className="mt-1 text-muji-body text-gray-500">
-              Enter your credentials to access the system
+              {t.loginSubtitle}
             </p>
           </div>
 
@@ -178,7 +180,7 @@ export default function LoginPage() {
             {/* Email / Username */}
             <div>
               <label className="mb-1.5 block text-muji-body font-muji-500 text-gray-700">
-                Email
+                {t.loginEmail}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -190,7 +192,7 @@ export default function LoginPage() {
                   autoComplete="off"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={t.loginPlaceholderEmail}
                   autoFocus
                   className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-muji-body text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
                 />
@@ -200,7 +202,7 @@ export default function LoginPage() {
             {/* Password */}
             <div>
               <label className="mb-1.5 block text-muji-body font-muji-500 text-gray-700">
-                Password
+                {t.loginPassword}
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -212,7 +214,7 @@ export default function LoginPage() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t.loginPlaceholderPassword}
                   className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-muji-body text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
                 />
                 <button
@@ -245,10 +247,10 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Signing in...
+                  {t.loginSigningIn}
                 </span>
               ) : (
-                "Get started"
+                t.loginButton
               )}
             </button>
           </form>

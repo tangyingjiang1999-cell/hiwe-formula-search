@@ -11,10 +11,9 @@ function ColorCard({ color, onClick }: { color: Color; onClick: (color: Color) =
   const { t } = useLang();
 
   const typeLabels: Record<string, string> = {
-    solid: t.colorTypeSolidLabel,
-    metallic: t.colorTypeMetallicLabel,
-    pearl: t.colorTypePearlLabel,
-    special: t.colorTypeSpecialLabel,
+    solid: t.colorTypeSolidLabel, metallic: t.colorTypeMetallicLabel,
+    pearl: t.colorTypePearlLabel, matte: t.colorTypeMatteLabel,
+    candy: t.colorTypeCandyLabel, special: t.colorTypeSpecialLabel,
   };
 
   return (
@@ -108,22 +107,25 @@ export default function ColorLibraryPage() {
           </select>
 
           <div className="flex gap-2">
-            {["", "solid", "metallic", "pearl"].map((type) => (
-              <button
-                key={type}
-                onClick={() => setFilterType(type)}
-                className={`rounded-full border px-4 py-1.5 transition-all ${
-                  filterType === type
-                    ? "border-gray-800 bg-gray-800 text-white"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-teal-600"
-                }`}
-              >
-                {type === "" ? t.colorTypeAll :
-                 type === "solid" ? t.colorTypeSolid :
-                 type === "metallic" ? t.colorTypeMetallic :
-                 type === "pearl" ? t.colorTypePearl : type}
-              </button>
-            ))}
+            {(["", "solid", "metallic", "pearl", "matte", "candy"] as const).map((type) => {
+              const labels: Record<string, string> = {
+                "": t.colorTypeAll, solid: t.colorTypeSolid, metallic: t.colorTypeMetallic,
+                pearl: t.colorTypePearl, matte: t.colorTypeMatte, candy: t.colorTypeCandy,
+              };
+              return (
+                <button
+                  key={type}
+                  onClick={() => setFilterType(type)}
+                  className={`rounded-full border px-4 py-1.5 transition-all ${
+                    filterType === type
+                      ? "border-gray-800 bg-gray-800 text-white"
+                      : "border-gray-300 bg-white text-gray-700 hover:border-teal-600"
+                  }`}
+                >
+                  {labels[type] ?? type}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

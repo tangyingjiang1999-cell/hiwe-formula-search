@@ -51,24 +51,15 @@ function formatFormulaAsText(
 }
 
 export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
   const [visible, setVisible] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  const typeLabelMap: Record<string, Record<string, string>> = {
-    en: {
-      solid: t.colorTypeSolidLabel,
-      metallic: t.colorTypeMetallicLabel,
-      pearl: t.colorTypePearlLabel,
-      special: t.colorTypeSpecialLabel,
-    },
-    zh: {
-      solid: t.colorTypeSolidLabel,
-      metallic: t.colorTypeMetallicLabel,
-      pearl: t.colorTypePearlLabel,
-      special: t.colorTypeSpecialLabel,
-    },
+  const typeLabelMap: Record<string, string> = {
+    solid: t.colorTypeSolidLabel, metallic: t.colorTypeMetallicLabel,
+    pearl: t.colorTypePearlLabel, matte: t.colorTypeMatteLabel,
+    candy: t.colorTypeCandyLabel, special: t.colorTypeSpecialLabel,
   };
 
   useEffect(() => {
@@ -106,7 +97,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
     label: color.color_type,
     badge: "bg-zinc-100 text-zinc-600",
   };
-  const typeLabel = typeLabelMap[lang][color.color_type] ?? color.color_type;
+  const typeLabel = typeLabelMap[color.color_type] ?? color.color_type;
   const make =
     mockCarMakes.find((m) => m.id === color.make_id)?.name ?? color.make_id;
   const activeFormula = formulas[activeFormulaIdx];

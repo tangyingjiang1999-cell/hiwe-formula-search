@@ -18,7 +18,7 @@ export interface Color {
   make_id: string
   color_code: string      // 官方颜色代码，例如 "040" "NH731P"
   color_name: string      // 中英文颜色名，例如 "Super White / 超白"
-  color_type: "solid" | "metallic" | "pearl" | "special"
+  color_type: "solid" | "metallic" | "pearl" | "matte" | "candy" | "special"
   hex_preview: string     // 颜色预览 hex，例如 "#F5F5F0"
   variants: ColorVariant[]
 }
@@ -29,6 +29,10 @@ export interface FormulaComponent {
   toner_name: string      // 色母名称，例如 "Titanium White"
   percentage: number      // 在总配方中的百分比，例如 45.5
   grams_per_100g: number  // 每 100g 总漆的用量克数
+  density?: number        // 密度
+  rgb_r?: number          // RGB Red
+  rgb_g?: number          // RGB Green
+  rgb_b?: number          // RGB Blue
 }
 
 // 完整调漆配方
@@ -38,6 +42,7 @@ export interface Formula {
   variant_id: string
   version: string          // 配方版本号，例如 "v1.2"
   paint_system: "1K" | "2K"  // 1K 还是 2K 体系
+  formula_type: "Basecoat" | "Clearcoat" | "Single Stage" | "Primer" | "Topcoat"
   components: FormulaComponent[]
   notes: string            // 施工备注，例如 "建议喷涂2遍底色"
   updated_at: string

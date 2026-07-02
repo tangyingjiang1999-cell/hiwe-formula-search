@@ -159,9 +159,9 @@ export default function SearchPanel({
 
   const labelMap: Record<string, string> = {
     "": t.colorTypeAll,
-    solid: t.colorTypeSolid,
-    metallic: t.colorTypeMetallic,
-    pearl: t.colorTypePearl,
+    solid: t.colorTypeSolid, metallic: t.colorTypeMetallic,
+    pearl: t.colorTypePearl, matte: t.colorTypeMatte,
+    candy: t.colorTypeCandy,
   };
 
   return (
