@@ -62,3 +62,11 @@ export interface SearchResult {
   color: Color
   formulas: Formula[]
 }
+
+// 系统设置
+export interface AppSettings {
+  finishes: string[]
+  types: string[]
+  yearMin: number
+  yearMax: number
+}
