@@ -172,14 +172,14 @@ export default function SearchPanel({
           value={makeId}
           onChange={setMakeId}
           options={mockCarMakes.map((m) => ({ value: m.id, label: m.name }))}
-          placeholder={t.allMakes}
+          placeholder=""
           widthClass="w-full"
         />
         <PillInput
           label={t.colorCode}
           value={colorCode}
           onChange={handleColorCodeChange}
-          placeholder={t.colorCodePlaceholder}
+          placeholder=""
           widthClass="w-full"
           maxLength={20}
         />
@@ -187,14 +187,14 @@ export default function SearchPanel({
           label={t.colorName}
           value={colorName}
           onChange={(v) => setColorName(v)}
-          placeholder={t.colorNamePlaceholder}
+          placeholder=""
           widthClass="w-full"
         />
         <PillInput
           label={t.year}
           value={year}
           onChange={(v) => setYear(v)}
-          placeholder={t.yearPlaceholder}
+          placeholder=""
           widthClass="w-full"
           maxLength={9}
         />
