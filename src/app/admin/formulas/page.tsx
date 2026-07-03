@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import Navigation from "@/components/Navigation";
-import type { CarMake, Color, Formula, AppSettings } from "@/types";
+import type { CarMake, Color, Formula, FormulaComponent, AppSettings } from "@/types";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
 
 // ---------- sub-components ----------
@@ -261,6 +261,62 @@ function FormulasTab({
   onSave: (f: Formula[]) => Promise<void>;
 }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [editing, setEditing] = useState<Formula | null>(null);
+  const [adding, setAdding] = useState(false);
+  const emptyForm: Formula = {
+    id: "",
+    color_id: colors[0]?.id || "",
+    variant_id: "",
+    version: "v1.0",
+    paint_system: "2K",
+    formula_type: "Basecoat",
+    components: [{ toner_code: "", toner_name: "", grams_per_100g: 0, percentage: 0 }],
+    notes: "",
+    updated_at: new Date().toISOString().split("T")[0],
+  };
+  const [form, setForm] = useState<Formula>(emptyForm);
+
+  function startAdd() {
+    setAdding(true);
+    setEditing(null);
+    setForm({ ...emptyForm, id: `fml_${Date.now()}` });
+  }
+  function startEdit(f: Formula) {
+    setEditing(f);
+    setAdding(false);
+    setForm({ ...f, components: f.components.map((c) => ({ ...c })) });
+  }
+  function cancel() {
+    setAdding(false);
+    setEditing(null);
+  }
+  function submit() {
+    if (!form.color_id || form.components.length === 0) return;
+    // 自动重算百分比
+    const totalGrams = form.components.reduce((sum, c) => sum + (c.grams_per_100g || 0), 0);
+    const updatedComps = form.components.map((c) => ({
+      ...c,
+      percentage: totalGrams > 0 ? Math.round((c.grams_per_100g / totalGrams) * 10000) / 100 : 0,
+    }));
+    const final: Formula = { ...form, components: updatedComps, updated_at: new Date().toISOString().split("T")[0] };
+
+    if (adding) {
+      setFormulas([...formulas, final]);
+    } else if (editing) {
+      setFormulas(formulas.map((x) => (x.id === editing.id ? final : x)));
+    }
+    cancel();
+  }
+  function updateComponent(idx: number, field: keyof FormulaComponent, value: string | number) {
+    const comps = form.components.map((c, i) => (i === idx ? { ...c, [field]: value } : c));
+    setForm({ ...form, components: comps });
+  }
+  function addComponent() {
+    setForm({ ...form, components: [...form.components, { toner_code: "", toner_name: "", grams_per_100g: 0, percentage: 0 }] });
+  }
+  function removeComponent(idx: number) {
+    setForm({ ...form, components: form.components.filter((_, i) => i !== idx) });
+  }
 
   async function handleDelete(f: Formula) {
     if (!confirm(`Delete formula ${f.id}?`)) return;
@@ -271,7 +327,65 @@ function FormulasTab({
     <div>
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm text-gray-500">{formulas.length} formulas</span>
+        <button onClick={startAdd} className="rounded bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-teal-700">
+          + Add Formula
+        </button>
       </div>
+
+      {(adding || editing) && (
+        <div className="mb-4 bg-gray-50 p-4 rounded-lg space-y-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <label className="flex flex-col gap-1 text-xs text-gray-500">Color
+              <select className="rounded border px-2 py-1 text-sm" value={form.color_id} onChange={(e) => setForm({ ...form, color_id: e.target.value })}>
+                {colors.map((c) => <option key={c.id} value={c.id}>{c.color_code} - {c.color_name}</option>)}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-gray-500">Paint System
+              <select className="rounded border px-2 py-1 text-sm" value={form.paint_system} onChange={(e) => setForm({ ...form, paint_system: e.target.value as Formula["paint_system"] })}>
+                <option>2K</option><option>1K</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-gray-500">Type
+              <select className="rounded border px-2 py-1 text-sm" value={form.formula_type} onChange={(e) => setForm({ ...form, formula_type: e.target.value as Formula["formula_type"] })}>
+                <option>Basecoat</option><option>Clearcoat</option><option>Single Stage</option><option>Primer</option><option>Topcoat</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-gray-500">Version
+              <input className="rounded border px-2 py-1 text-sm" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} />
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-gray-500">Notes
+              <input className="rounded border px-2 py-1 text-sm" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            </label>
+          </div>
+
+          {/* 色母组件编辑区 */}
+          <div className="rounded border bg-white">
+            <div className="flex items-center justify-between px-3 py-2 bg-gray-100 text-xs font-semibold text-gray-600 uppercase">
+              <span>Toner Components</span>
+              <button onClick={addComponent} className="text-teal-600 hover:underline normal-case">+ Add Toner</button>
+            </div>
+            <div className="divide-y">
+              {form.components.map((comp, idx) => (
+                <div key={idx} className="flex items-center gap-2 px-3 py-2">
+                  <input className="w-24 rounded border px-2 py-1 text-xs font-mono" placeholder="Code" value={comp.toner_code} onChange={(e) => updateComponent(idx, "toner_code", e.target.value)} />
+                  <input className="flex-1 min-w-0 rounded border px-2 py-1 text-xs" placeholder="Toner Name" value={comp.toner_name} onChange={(e) => updateComponent(idx, "toner_name", e.target.value)} />
+                  <div className="flex items-center gap-1">
+                    <input type="number" step="0.1" min="0" className="w-20 rounded border px-2 py-1 text-xs text-right" placeholder="g/100g" value={comp.grams_per_100g || ""} onChange={(e) => updateComponent(idx, "grams_per_100g", parseFloat(e.target.value) || 0)} />
+                    <span className="text-xs text-gray-400">g</span>
+                  </div>
+                  <button onClick={() => removeComponent(idx)} className="text-red-400 hover:text-red-600 text-xs px-1">×</button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button onClick={submit} className="rounded bg-green-600 px-3 py-1.5 text-sm text-white">Save</button>
+            <button onClick={cancel} className="rounded border px-3 py-1.5 text-sm">Cancel</button>
+          </div>
+        </div>
+      )}
+
       <div className="overflow-hidden rounded-lg border">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
@@ -283,15 +397,15 @@ function FormulasTab({
               <th className="px-3 py-2">Type</th>
               <th className="px-3 py-2">Version</th>
               <th className="px-3 py-2">Components</th>
-              <th className="px-3 py-2 w-16">Actions</th>
+              <th className="px-3 py-2 w-20">Actions</th>
             </tr>
           </thead>
           <tbody>
             {formulas.map((f) => {
               const color = colors.find((c) => c.id === f.color_id);
               return (
-                <>
-                  <tr key={f.id} className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => setExpanded(expanded === f.id ? null : f.id)}>
+                <Fragment key={f.id}>
+                  <tr className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => setExpanded(expanded === f.id ? null : f.id)}>
                     <td className="px-3 py-2 text-xs text-gray-400">{expanded === f.id ? "▼" : "▶"}</td>
                     <td className="px-3 py-2 font-mono text-xs">{f.id}</td>
                     <td className="px-3 py-2 text-xs max-w-[200px] truncate" title={color?.color_name}>{color?.color_name || f.color_id}</td>
@@ -299,7 +413,8 @@ function FormulasTab({
                     <td className="px-3 py-2 text-xs">{f.formula_type}</td>
                     <td className="px-3 py-2 text-xs">{f.version}</td>
                     <td className="px-3 py-2 text-xs text-gray-500">{f.components.length} toners</td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 flex gap-1">
+                      <button onClick={(e) => { e.stopPropagation(); startEdit(f); }} className="text-blue-600 hover:underline text-xs">Edit</button>
                       <button onClick={(e) => { e.stopPropagation(); handleDelete(f); }} className="text-red-600 hover:underline text-xs">Del</button>
                     </td>
                   </tr>
@@ -326,7 +441,7 @@ function FormulasTab({
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>
