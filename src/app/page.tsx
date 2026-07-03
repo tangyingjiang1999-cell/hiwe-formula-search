@@ -82,58 +82,32 @@ export default function Home() {
         </div>
 
         <div className="mx-auto w-full max-w-7xl px-5 lg:px-10">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            {/* 左侧：文字 + 搜索 */}
-            <div className="space-y-8">
-              {/* 徽标 */}
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#006565]/10 px-4 py-1.5">
-                <svg className="h-4 w-4 text-[#006565]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-xs font-semibold tracking-widest text-[#006565] uppercase">
-                  Professional Standard
-                </span>
-              </div>
-
-              {/* 大标题 */}
-              <h1 className="text-4xl font-bold leading-tight text-[#181c1e] sm:text-5xl lg:text-6xl">
-                Find Your<br />
-                <span className="text-[#006565]">Perfect Match</span>
-              </h1>
-
-              {/* 副标题 */}
-              <p className="max-w-lg text-lg leading-relaxed text-[#3e4949]">
-                Access the industry&apos;s most accurate automotive refinishing database.
-                Over 100,000 OEM formulas updated daily.
-              </p>
-
-              {/* 搜索表单卡片 */}
-              <div className="max-w-xl rounded-xl border border-[#bdc9c8]/50 bg-white p-6 shadow-sm">
-                <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
-              </div>
+          <div className="mx-auto max-w-3xl space-y-8 text-center">
+            {/* 徽标 */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#006565]/10 px-4 py-1.5">
+              <svg className="h-4 w-4 text-[#006565]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-xs font-semibold tracking-widest text-[#006565] uppercase">
+                Professional Standard
+              </span>
             </div>
 
-            {/* 右侧：视觉装饰色块 */}
-            <div className="hidden lg:block">
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-full bg-[#006565]/5 blur-3xl" />
-                <div className="relative rotate-2 rounded-2xl border border-[#bdc9c8] bg-white p-4 shadow-2xl transition-transform duration-500 hover:rotate-0">
-                  {/* 色彩渐变展示块 */}
-                  <div className="aspect-square overflow-hidden rounded-xl">
-                    <div className="h-full w-full bg-gradient-to-br from-[#006565] via-[#008080] to-[#76d6d5]" />
-                  </div>
-                  <div className="mt-4 flex items-center justify-between px-2">
-                    <div>
-                      <p className="text-sm font-semibold text-[#006565]">Teal Metallic</p>
-                      <p className="text-xs text-[#3e4949]">Formula Code: HW-092-X</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-6 w-6 rounded-full bg-[#006565]" />
-                      <div className="h-6 w-6 rounded-full bg-[#3e4949]" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* 大标题 */}
+            <h1 className="text-4xl font-bold leading-tight text-[#181c1e] sm:text-5xl lg:text-6xl">
+              Find Your<br />
+              <span className="text-[#006565]">Perfect Match</span>
+            </h1>
+
+            {/* 副标题 */}
+            <p className="mx-auto max-w-lg text-lg leading-relaxed text-[#3e4949]">
+              Access the industry&apos;s most accurate automotive refinishing database.
+              Over 100,000 OEM formulas updated daily.
+            </p>
+
+            {/* 搜索表单卡片 */}
+            <div className="mx-auto max-w-3xl rounded-xl border border-[#bdc9c8]/50 bg-white p-6 shadow-sm">
+              <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
             </div>
           </div>
         </div>
