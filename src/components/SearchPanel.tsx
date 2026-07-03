@@ -29,7 +29,7 @@ function PillSelect({
 }) {
   return (
     <div className={`relative ${widthClass}`}>
-      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-blue-600">
+      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-[#006565]">
         <span className="shrink-0 text-muji-body text-gray-600">
           {label}
         </span>
@@ -68,7 +68,7 @@ function PillInput({
 }) {
   return (
     <div className={`relative ${widthClass}`}>
-      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-blue-600">
+      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-[#006565]">
         <span className="shrink-0 text-muji-body text-gray-600">
           {label}
         </span>
@@ -216,8 +216,8 @@ export default function SearchPanel({
                 className={[
                   "rounded border px-4 py-1.5 transition-colors",
                   isSelected
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-blue-600",
+                    ? "border-[#006565] bg-[#006565] text-white"
+                    : "border-gray-300 bg-white text-gray-700 hover:border-[#006565]",
                 ].join(" ")}
               >
                 {labelMap[opt.value] ?? opt.label}
@@ -231,7 +231,7 @@ export default function SearchPanel({
           disabled={isLoading}
           className={[
             "flex items-center gap-2 rounded px-6 py-2.5 text-muji-heading text-white transition-colors",
-            "bg-blue-600 hover:bg-blue-700",
+            "bg-[#006565] hover:bg-[#008080]",
             "disabled:cursor-not-allowed disabled:opacity-60",
           ].join(" ")}
         >
@@ -245,7 +245,7 @@ export default function SearchPanel({
           disabled={isLoading}
           className={[
             "flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-2.5 text-muji-heading text-gray-700 transition-colors",
-            "hover:border-blue-600 hover:text-blue-600",
+            "hover:border-[#006565] hover:text-[#006565]",
             "disabled:cursor-not-allowed disabled:opacity-60",
           ].join(" ")}
         >

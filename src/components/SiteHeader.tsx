@@ -30,45 +30,72 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
     window.location.href = "/login";
   }
 
-  return (
-    <header
-      className="flex h-auto min-h-[64px] flex-col items-center gap-2 px-4 py-3 sm:h-[96px] sm:flex-row sm:px-[40px]"
-      style={{ background: "linear-gradient(to right, #8B5CF6, #0D9488)" }}
-    >
-      <div className="flex items-center gap-3">
-        <img
-          src="/haiwen.png"
-          alt="HAIWEN"
-          className="h-10 w-10 object-contain brightness-0 invert sm:h-[54px] sm:w-[54px]"
-        />
-        <span className="text-muji-title text-white">
-          HAIWEN MIX{subtitle ? ` ${subtitle}` : ""}
-        </span>
-      </div>
+  const navLinks = [
+    { href: "/", label: "Formula Search" },
+    { href: "/color-library", label: "Color Visual Library" },
+    { href: "/application-guide", label: "Application Guide" },
+  ];
 
-      <div className="ml-0 flex items-center gap-3 sm:ml-auto sm:gap-4">
-        {authUser && (
-          <div className="flex items-center gap-2">
-            <span className="text-muji-micro text-white/80 sm:text-muji-caption">
-              {authUser.username}
-              {authUser.role === "admin" && (
-                <a
-                  href="/admin/users"
-                  className="ml-1 text-[10px] text-white/60 hover:text-white sm:ml-2"
-                >
-                  管理
-                </a>
-              )}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="rounded border border-white/40 px-2 py-0.5 text-muji-micro text-white transition-colors hover:bg-white/10 sm:px-3 sm:py-1"
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#bdc9c8] bg-white/95 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 lg:px-10">
+        {/* 左侧 Logo */}
+        <a href="/" className="flex items-center gap-3">
+          <img
+            src="/haiwen.png"
+            alt="HAIWEN"
+            className="h-9 w-9 object-contain sm:h-10 sm:w-10"
+          />
+          <span className="text-lg font-bold text-[#006565] sm:text-xl">
+            HAIWEN MIX{subtitle ? ` ${subtitle}` : ""}
+          </span>
+        </a>
+
+        {/* 桌面导航 */}
+        <nav className="hidden items-center gap-8 md:flex">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-[#3e4949] transition-colors hover:text-[#006565]"
             >
-              退出
-            </button>
-          </div>
-        )}
-        <LanguageSwitcher />
+              {link.label}
+            </a>
+          ))}
+          {authUser?.role === "admin" && (
+            <a
+              href="/admin/formulas"
+              className="text-sm font-medium text-[#3e4949] transition-colors hover:text-[#006565]"
+            >
+              Admin
+            </a>
+          )}
+        </nav>
+
+        {/* 右侧操作区 */}
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+          {authUser ? (
+            <div className="flex items-center gap-2">
+              <span className="hidden text-xs text-[#3e4949] sm:inline">
+                {authUser.username}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="rounded px-3 py-1.5 text-xs font-medium text-[#006565] transition-colors hover:bg-[#006565]/10"
+              >
+                退出
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/login"
+              className="rounded-lg bg-[#006565] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Login
+            </a>
+          )}
+        </div>
       </div>
     </header>
   );
