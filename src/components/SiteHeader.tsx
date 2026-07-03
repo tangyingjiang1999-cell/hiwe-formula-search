@@ -65,7 +65,7 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
           {authUser?.role === "admin" && (
             <a
               href="/admin/formulas"
-              className="rounded-lg border border-[#006565] px-4 py-1.5 text-base font-semibold text-[#006565] transition-colors hover:bg-[#006565]/10"
+              className="text-base font-semibold text-[#3e4949] transition-colors hover:text-[#006565]"
             >
               Admin
             </a>
@@ -80,9 +80,17 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
               <span className="hidden text-xs text-[#3e4949] sm:inline">
                 {authUser.username}
               </span>
+              {authUser.role === "admin" && (
+                <a
+                  href="/admin/formulas"
+                  className="rounded-lg bg-[#006565] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                >
+                  Admin
+                </a>
+              )}
               <button
                 onClick={handleLogout}
-                className="rounded-lg border border-[#006565] px-4 py-1.5 text-sm font-semibold text-[#006565] transition-colors hover:bg-[#006565]/10"
+                className="rounded-lg bg-[#006565] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
                 退出
               </button>
