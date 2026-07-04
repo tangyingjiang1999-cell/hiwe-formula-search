@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
-import { i18n, type Lang } from "@/lib/i18n";
+import { i18n, LANGS, type Lang } from "@/lib/i18n";
 
 // 服务器端和客户端首次渲染统一用 "en"，避免 hydration mismatch
 // 真实语言在 useEffect 中从 localStorage 读取
@@ -9,11 +9,12 @@ import { i18n, type Lang } from "@/lib/i18n";
 // ============================================================
 // Language Context
 // ============================================================
-type Translations = typeof i18n.en;
+type Translations = (typeof i18n)["en"];
 
 interface LanguageContextValue {
   lang: Lang;
   t: Translations;
+  dir: "ltr" | "rtl";
   setLang: (lang: Lang) => void;
 }
 
@@ -22,7 +23,12 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
 
-  const setLang = useCallback((l: Lang) => setLangState(l), []);
+  const setLang = useCallback((l: Lang) => {
+    setLangState(l);
+    try {
+      localStorage.setItem("site-language", l);
+    } catch { /* noop */ }
+  }, []);
 
   // 客户端挂载后从 localStorage 读取真实语言，避免 SSR/客户端不一致
   useEffect(() => {
@@ -34,10 +40,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     } catch { /* noop */ }
   }, []);
 
-  // 调试：语言变化时打印日志
+  // 同步 <html lang> 与 dir 属性（阿语/希语切到 RTL）
+  const dir = LANGS.find((l) => l.code === lang)?.dir ?? "ltr";
   useEffect(() => {
-    console.log('[LanguageContext] language changed to:', lang);
-  }, [lang]);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = dir;
+    }
+  }, [lang, dir]);
 
   // 不支持的语言回退到英文翻译
   const translations = (i18n as Record<string, unknown>)[lang] ?? i18n.en;
@@ -45,6 +55,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const value: LanguageContextValue = {
     lang,
     t: translations as unknown as Translations,
+    dir,
     setLang,
   };
 

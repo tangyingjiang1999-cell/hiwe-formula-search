@@ -47,7 +47,7 @@ export default function SearchResults({
   if (!hasSearched) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
-        <p className="text-muji-caption">{t.searchHint}</p>
+        <p className="text-[11px] text-gray-500">{t.searchHint}</p>
       </div>
     );
   }
@@ -78,8 +78,8 @@ export default function SearchResults({
             ?
           </text>
         </svg>
-        <p className="text-muji-body font-muji-500 text-[#6B7280]">{t.noResults}</p>
-        <p className="mt-1 text-muji-caption">{t.noResultsHint}</p>
+        <p className="text-xs font-medium text-[#6B7280]">{t.noResults}</p>
+        <p className="mt-1 text-[11px] text-gray-500">{t.noResultsHint}</p>
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function SearchResults({
 
   return (
     <div>
-      <p className="mb-3 text-muji-caption">
+      <p className="mb-3 text-[11px] text-gray-500">
         {t.foundCount(results.length)}
       </p>
 
@@ -104,7 +104,7 @@ export default function SearchResults({
       </div>
 
       {truncated && (
-        <p className="mt-4 text-center text-muji-caption">
+        <p className="mt-4 text-center text-[11px] text-gray-500">
           {t.truncatedHint(MAX_SEARCH_RESULTS)}
         </p>
       )}

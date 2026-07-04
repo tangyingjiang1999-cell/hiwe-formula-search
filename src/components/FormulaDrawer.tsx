@@ -64,6 +64,8 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
 
   useEffect(() => {
     if (result) {
+      // result 变化时重置选中配方索引，属于派生状态同步
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFormulaIdx(0);
       requestAnimationFrame(() => setVisible(true));
       document.getElementById("page-content")?.classList.add("blur-bg");
@@ -156,10 +158,10 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
             style={{ backgroundColor: color.hex_preview }}
           />
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-muji-subtitle text-[#0F172A]">
+            <h2 className="truncate text-sm font-semibold text-[#0F172A]">
               {color.color_name}
             </h2>
-            <p className="text-muji-caption">{color.color_code}</p>
+            <p className="text-[11px] text-gray-500">{color.color_code}</p>
           </div>
           <button
             onClick={handleClose}
@@ -184,7 +186,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
 
         <div className="flex-1 overflow-y-auto px-8 py-6" style={{ padding: "24px 32px" }}>
           <div className="mb-6">
-            <h3 className="mb-3 text-muji-caption font-muji-600 uppercase tracking-wider text-[#94A3B8]">
+            <h3 className="mb-3 text-[11px] text-gray-500 font-semibold uppercase tracking-wider text-[#94A3B8]">
               {t.colorInfo}
             </h3>
             <div className="space-y-2 text-sm">
@@ -192,7 +194,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
               <KV label={t.typeLabel}>
                 <span
                   className={[
-                    "rounded-[6px] px-2 py-0.5 text-muji-micro font-muji-500",
+                    "rounded-[6px] px-2 py-0.5 text-[10px] font-medium font-medium",
                     typeInfo.badge,
                   ].join(" ")}
                 >
@@ -205,7 +207,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
           </div>
 
           <div className="mb-5">
-          <h3 className="mb-3 text-muji-caption font-muji-600 uppercase tracking-wider text-[#94A3B8]">
+          <h3 className="mb-3 text-[11px] text-gray-500 font-semibold uppercase tracking-wider text-[#94A3B8]">
             {t.formulaVariants}
           </h3>
             <div className="flex flex-col gap-1.5">
@@ -226,10 +228,10 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
                         : "bg-slate-50 text-[#64748B] hover:bg-slate-100",
                     ].join(" ")}
                   >
-                    <span className="font-muji-600">{variantName}</span>
+                    <span className="font-semibold">{variantName}</span>
                     <span
                       className={[
-                        "rounded px-1.5 py-px text-muji-micro font-semibold",
+                        "rounded px-1.5 py-px text-[10px] font-medium font-semibold",
                         f.paint_system === "2K"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-emerald-100 text-emerald-700",
@@ -245,16 +247,16 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
 
           {activeFormula && (
             <div className="animate-[fadeIn_150ms_ease-in-out]">
-              <h3 className="mb-3 text-muji-caption font-muji-600 uppercase tracking-wider text-[#94A3B8]">
+              <h3 className="mb-3 text-[11px] text-gray-500 font-semibold uppercase tracking-wider text-[#94A3B8]">
                 {t.components}
               </h3>
 
-              <div className="mb-3 flex items-center gap-2 text-muji-caption text-[#64748B]">
+              <div className="mb-3 flex items-center gap-2 text-[11px] text-gray-500 text-[#64748B]">
                 <span>{t.version} {activeFormula.version}</span>
                 <span className="text-[#CBD5E1]">|</span>
                 <span
                   className={[
-                    "rounded px-1.5 py-px text-muji-micro font-semibold",
+                    "rounded px-1.5 py-px text-[10px] font-medium font-semibold",
                     activeFormula.paint_system === "2K"
                       ? "bg-blue-100 text-blue-700"
                       : "bg-emerald-100 text-emerald-700",
@@ -268,14 +270,14 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
 
               {activeFormula.notes && (
                 <div className="mt-4 rounded-md border border-amber-200 bg-amber-50/50 px-4 py-3">
-                  <p className="text-muji-caption font-muji-600 text-amber-800">{t.notesLabel}</p>
-                  <p className="mt-1 text-muji-caption text-amber-700">
+                  <p className="text-[11px] text-gray-500 font-semibold text-amber-800">{t.notesLabel}</p>
+                  <p className="mt-1 text-[11px] text-gray-500 text-amber-700">
                     {activeFormula.notes}
                   </p>
                 </div>
               )}
 
-              <p className="mt-3 text-muji-caption text-zinc-400">
+              <p className="mt-3 text-[11px] text-gray-500 text-zinc-400">
                 {t.updatedLabel} {activeFormula.updated_at}
               </p>
             </div>
@@ -285,7 +287,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
         <div className="flex gap-3 border-t border-[#e5e7eb] px-5 py-4">
           <button
             onClick={handlePrint}
-            className="flex flex-1 items-center justify-center gap-2 rounded-md border border-[#e5e7eb] bg-white px-4 py-2.5 text-muji-heading text-[#1f2937] transition-colors hover:bg-zinc-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-md border border-[#e5e7eb] bg-white px-4 py-2.5 text-xs font-semibold text-[#1f2937] transition-colors hover:bg-zinc-50"
           >
             <svg
               className="h-4 w-4"
@@ -304,7 +306,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
           </button>
           <button
             onClick={handleCopy}
-            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-[#1a1a2e] px-4 py-2.5 text-muji-heading text-white transition-colors hover:bg-[#1a1a2e]/90"
+            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-[#0D9488] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0F766E]"
           >
             <svg
               className="h-4 w-4"
@@ -342,8 +344,8 @@ function KV({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="w-[140px] shrink-0 text-muji-caption text-[#6b7280]">{label}</span>
-      {children ?? <span className="text-muji-body text-[#1f2937]">{value}</span>}
+      <span className="w-[140px] shrink-0 text-[11px] text-gray-500 text-[#6b7280]">{label}</span>
+      {children ?? <span className="text-xs text-[#1f2937]">{value}</span>}
     </div>
   );
 }

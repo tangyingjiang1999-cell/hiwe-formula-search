@@ -1,5 +1,6 @@
 // 为 better-sqlite3 和 jsonwebtoken 提供简易类型声明
 // better-sqlite3 是原生模块，无官方 @types 包
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare module "better-sqlite3" {
   interface Statement {

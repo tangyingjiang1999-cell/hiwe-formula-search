@@ -8,14 +8,14 @@ import Navigation from "@/components/Navigation";
 import type { GuideItem } from "@/lib/guide-data";
 
 function GuideContent({ guide }: { guide: GuideItem }) {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
 
   const content = lang === "zh" ? guide.contentZh : guide.content;
   const lines = content.split("\n");
 
   return (
     <div className="prose max-w-none">
-      <h1 className="mb-4 text-muji-subtitle font-bold">
+      <h1 className="mb-4 text-sm font-semibold font-bold">
         {lang === "zh" ? guide.titleZh : guide.title}
       </h1>
 
@@ -23,7 +23,7 @@ function GuideContent({ guide }: { guide: GuideItem }) {
         {lines.map((line, index) => {
           if (line.endsWith(":") && !line.startsWith(" ")) {
             return (
-              <h3 key={index} className="mt-6 mb-2 text-muji-body font-muji-600">
+              <h3 key={index} className="mt-6 mb-2 text-xs font-semibold">
                 {line}
               </h3>
             );
@@ -31,7 +31,7 @@ function GuideContent({ guide }: { guide: GuideItem }) {
 
           if (line.match(/^\d+\./)) {
             return (
-              <div key={index} className="ml-4 text-muji-body">
+              <div key={index} className="ml-4 text-xs">
                 {line}
               </div>
             );
@@ -42,7 +42,7 @@ function GuideContent({ guide }: { guide: GuideItem }) {
           }
 
           return (
-            <p key={index} className="text-muji-body leading-relaxed">
+            <p key={index} className="text-xs leading-relaxed">
               {line}
             </p>
           );
@@ -53,7 +53,7 @@ function GuideContent({ guide }: { guide: GuideItem }) {
 }
 
 export default function ApplicationGuidePage() {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedGuide, setSelectedGuide] = useState<GuideItem | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,30 +79,30 @@ export default function ApplicationGuidePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SiteHeader subtitle="Application Guide" />
+      <SiteHeader />
       <Navigation />
 
-      <div className="bg-white px-6 py-4">
+      <div className="bg-white px-6 pt-20 pb-4">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={lang === "zh" ? "搜索指南..." : "Search guides..."}
-          className="w-full rounded-lg border px-4 py-2 text-muji-body"
+          className="w-full rounded-lg border px-4 py-2 text-xs"
         />
       </div>
 
-      <div className="flex">
-        <div className="w-64 border-r bg-white p-4">
-          <h3 className="mb-3 text-muji-caption font-muji-600 text-gray-600">
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-full lg:w-64 border-r border-b lg:border-b-0 bg-white p-4">
+          <h3 className="mb-3 text-[11px] text-gray-500 font-semibold text-gray-600">
             {lang === "zh" ? "分类" : "Categories"}
           </h3>
           <ul className="space-y-1">
             <li>
               <button
                 onClick={() => setSelectedCategory("")}
-                className={`w-full rounded px-3 py-2 text-left text-muji-body ${
-                  selectedCategory === "" ? "bg-teal-50 text-teal-700 font-muji-600" : "text-gray-700 hover:bg-gray-50"
+                className={`w-full rounded px-3 py-2 text-left text-xs ${
+                  selectedCategory === "" ? "bg-teal-50 text-teal-700 font-semibold" : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
                 {lang === "zh" ? "全部分类" : "All Categories"}
@@ -112,8 +112,8 @@ export default function ApplicationGuidePage() {
               <li key={cat.id}>
                 <button
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`w-full rounded px-3 py-2 text-left text-muji-body ${
-                    selectedCategory === cat.id ? "bg-teal-50 text-teal-700 font-muji-600" : "text-gray-700 hover:bg-gray-50"
+                  className={`w-full rounded px-3 py-2 text-left text-xs ${
+                    selectedCategory === cat.id ? "bg-teal-50 text-teal-700 font-semibold" : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {lang === "zh" ? cat.nameZh : cat.name}
@@ -123,8 +123,8 @@ export default function ApplicationGuidePage() {
           </ul>
         </div>
 
-        <div className="w-80 border-r bg-gray-50 p-4">
-          <h3 className="mb-3 text-muji-caption font-muji-600 text-gray-600">
+        <div className="w-full lg:w-80 border-r border-b lg:border-b-0 bg-gray-50 p-4">
+          <h3 className="mb-3 text-[11px] text-gray-500 font-semibold text-gray-600">
             {lang === "zh" ? "指南列表" : "Guide List"} ({filteredGuides.length})
           </h3>
           <ul className="space-y-2">
@@ -138,8 +138,8 @@ export default function ApplicationGuidePage() {
                     : "border-gray-200 bg-white hover:border-teal-600"
                 }`}
               >
-                <p className="text-muji-body font-muji-600">{lang === "zh" ? guide.titleZh : guide.title}</p>
-                <p className="mt-1 text-muji-caption text-gray-500">
+                <p className="text-xs font-semibold">{lang === "zh" ? guide.titleZh : guide.title}</p>
+                <p className="mt-1 text-[11px] text-gray-500 text-gray-500">
                   {guideCategories.find((c) => c.id === guide.category)?.[lang === "zh" ? "nameZh" : "name"] || guide.category}
                 </p>
               </li>
@@ -152,7 +152,7 @@ export default function ApplicationGuidePage() {
             <GuideContent guide={selectedGuide} />
           ) : (
             <div className="flex h-64 items-center justify-center text-gray-400">
-              <p className="text-muji-body">{lang === "zh" ? "请从左侧选择指南" : "Please select a guide from the left"}</p>
+              <p className="text-xs">{lang === "zh" ? "请从左侧选择指南" : "Please select a guide from the left"}</p>
             </div>
           )}
         </div>

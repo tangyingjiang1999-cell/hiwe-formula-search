@@ -11,7 +11,7 @@ export default function Navigation() {
     { label: t.navFormulaSearch, href: "/" },
     { label: t.navColorLibrary, href: "/color-library" },
     { label: t.navAppGuide, href: "/application-guide" },
-    { label: "Admin", href: "/admin/formulas" },
+    { label: t.navAdmin, href: "/admin/formulas" },
   ];
 
   return (
@@ -28,8 +28,8 @@ export default function Navigation() {
             className={[
               "mr-[40px] pb-[14px] pt-[14px] transition-all duration-200 ease-out",
               isActive
-                ? "border-b-[2px] border-[#006565] font-muji-600 text-[#006565]"
-                : "font-muji-400 text-[#6B7280] hover:text-[#006565]",
+                ? "border-b-[2px] border-[#0D9488] font-semibold text-[#0D9488]"
+                : " text-[#6B7280] hover:text-[#0D9488]",
             ].join(" ")}
           >
             {item.label}

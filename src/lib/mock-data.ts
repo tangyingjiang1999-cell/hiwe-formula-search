@@ -1,7 +1,6 @@
 import {
   CarMake,
   Color,
-  ColorVariant,
   Formula,
   FormulaComponent,
   SearchParams,

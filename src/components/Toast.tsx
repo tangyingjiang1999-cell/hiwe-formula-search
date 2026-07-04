@@ -27,8 +27,8 @@ export default function Toast({
   return (
     <div
       className={[
-        "fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-lg px-5 py-2.5 text-muji-body font-muji-500 text-white transition-all duration-300",
-        "bg-[#1a1a2e]",
+        "fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-lg px-5 py-2.5 text-xs font-medium text-white transition-all duration-300",
+      "bg-[#0D9488]",
         entering ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
       ].join(" ")}
     >

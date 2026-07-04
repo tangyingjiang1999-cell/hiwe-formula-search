@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useLang } from "@/components/LanguageContext";
 
 function UserIcon({ className = "w-5 h-5" }: { className?: string }) {
@@ -78,25 +79,27 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
-      {/* ===== 左侧品牌区 (40%) ===== */}
+      {/* ===== 左侧渐变区 (40%) ===== */}
       <div
-        className="fluid-gradient relative flex flex-col justify-between px-10 py-12 lg:w-[33%]"
+        className="fluid-gradient relative flex flex-col justify-between px-10 py-12 lg:w-[40%]"
       >
         <div className="fluid-blob" />
 
-        {/* 移动端 - 紧凑头部 */}
+        {/* Logo - 移动端 */}
         <div className="relative z-10 flex items-center gap-3 lg:hidden">
-          <img
+          <Image
             src="/haiwen-logo.png"
             alt="HAIWEN"
+            width={40}
+            height={40}
             className="h-10 w-10 object-contain brightness-0 invert"
           />
-          <span className="text-muji-title text-white">
+          <span className="text-base font-semibold text-white">
             HAIWEN MIX
           </span>
         </div>
 
-        {/* 桌面端 - 顶部品牌文字 */}
+        {/* 主标题 - 桌面端展示 */}
         <div className="relative z-10 hidden lg:block text-left">
           <h1
             className="text-white"
@@ -124,13 +127,13 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* 底部链接 */}
-        <div className="relative z-10 hidden lg:block" style={{ position: "absolute", bottom: "79px", left: "40px" }}>
+        {/* 底部官网链接 */}
+        <div className="relative z-10 hidden lg:block">
           <a
             href="https://www.hiwe.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block text-muji-body font-muji-600 text-white transition-colors hover:text-white/80"
+            className="inline-block text-xs font-semibold text-white transition-colors hover:text-white/80"
             style={{
               color: "white",
               textDecoration: "underline",
@@ -146,40 +149,43 @@ export default function LoginPage() {
       {/* ===== 右侧表单区 (60%) ===== */}
       <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 lg:px-16">
         <div className="w-full max-w-sm">
-          {/* 桌面端小标题 */}
+          {/* 主标题与副标题 */}
           <div className="mb-10 hidden lg:block text-center">
-            <img
+            <Image
               src="/haiwen-logo.png"
               alt="HAIWEN"
-              className="mx-auto h-[104px] w-auto object-contain"
-              style={{ marginBottom: "24px", marginTop: "-80px" }}
+              width={80}
+              height={80}
+              className="mx-auto h-20 w-auto object-contain mb-6"
             />
-            <h2 className="mt-2 text-muji-title text-gray-900">
+            <h2 className="mt-2 text-base font-semibold text-gray-900">
               {t.loginWelcome}
             </h2>
-            <p className="mt-1 text-muji-body text-gray-500">
+            <p className="mt-1 text-xs text-gray-500">
               {t.loginSubtitle}
             </p>
           </div>
 
-          {/* 移动端 */}
+          {/* Logo */}
           <div className="mb-8 lg:hidden">
-            <img
+            <Image
               src="/haiwen-logo.png"
               alt="HAIWEN"
+              width={56}
+              height={56}
               className="mb-4 h-14 w-auto object-contain"
             />
-            <h1 className="text-muji-title text-gray-900">
+            <h1 className="text-base font-semibold text-gray-900">
               Welcome to HAIWEN
             </h1>
-            <p className="mt-1 text-muji-body text-gray-500">Formula Search</p>
+            <p className="mt-1 text-xs text-gray-500">Formula Search</p>
           </div>
 
-          {/* 表单 */}
+          {/* 登录表单 */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email / Username */}
             <div>
-              <label className="mb-1.5 block text-muji-body font-muji-500 text-gray-700">
+              <label className="mb-1.5 block text-xs font-medium text-gray-700">
                 {t.loginEmail}
               </label>
               <div className="relative">
@@ -194,14 +200,14 @@ export default function LoginPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={t.loginPlaceholderEmail}
                   autoFocus
-                  className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-muji-body text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                  className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="mb-1.5 block text-muji-body font-muji-500 text-gray-700">
+              <label className="mb-1.5 block text-xs font-medium text-gray-700">
                 {t.loginPassword}
               </label>
               <div className="relative">
@@ -215,7 +221,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.loginPlaceholderPassword}
-                  className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-muji-body text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                  className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
                 />
                 <button
                   type="button"
@@ -230,7 +236,7 @@ export default function LoginPage() {
 
             {/* 错误提示 */}
             {error && (
-              <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-muji-body text-red-600">
+              <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-xs text-red-600">
                 {error}
               </div>
             )}
@@ -239,7 +245,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center rounded-lg bg-[#0D9488] text-muji-heading font-muji-600 text-white transition-all duration-200 hover:bg-[#0F766E] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-12 w-full items-center justify-center rounded-lg bg-[#0D9488] text-xs font-semibold font-semibold text-white transition-all duration-200 hover:bg-[#0F766E] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center gap-2">

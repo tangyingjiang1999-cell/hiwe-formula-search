@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback, type FormEvent } from "react";
-import { mockCarMakes } from "@/lib/mock-data";
 import { COLOR_TYPE_OPTIONS } from "@/lib/constants";
 import { useLang } from "@/components/LanguageContext";
-import type { SearchParams } from "@/types";
+import type { CarMake, SearchParams } from "@/types";
 
 export interface SearchPanelProps {
   onSearch: (params: SearchParams) => void;
@@ -29,15 +28,15 @@ function PillSelect({
 }) {
   return (
     <div className={`relative ${widthClass}`}>
-      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-[#006565]">
-        <span className="shrink-0 text-muji-body text-gray-600">
+      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-[#0D9488]">
+        <span className="shrink-0 text-xs text-gray-600">
           {label}
         </span>
         <span className="mx-3 h-4 w-px bg-gray-200 shrink-0" />
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-full flex-1 appearance-none bg-transparent text-muji-body text-gray-900 outline-none cursor-pointer"
+          className="h-full flex-1 appearance-none bg-transparent text-xs text-gray-900 outline-none cursor-pointer"
         >
           <option value="">{placeholder || "All"}</option>
           {options.map((opt) => (
@@ -68,8 +67,8 @@ function PillInput({
 }) {
   return (
     <div className={`relative ${widthClass}`}>
-      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-[#006565]">
-        <span className="shrink-0 text-muji-body text-gray-600">
+      <div className="flex h-11 items-center border border-gray-300 bg-white px-4 transition-colors hover:border-[#0D9488]">
+        <span className="shrink-0 text-xs text-gray-600">
           {label}
         </span>
         <span className="mx-3 h-4 w-px bg-gray-200 shrink-0" />
@@ -79,18 +78,12 @@ function PillInput({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           maxLength={maxLength}
-          className="h-full flex-1 bg-transparent text-muji-body text-gray-900 outline-none placeholder:text-gray-400"
+          className="h-full flex-1 bg-transparent text-xs text-gray-900 outline-none placeholder:text-gray-400"
         />
       </div>
     </div>
   );
 }
-
-const ChevronDown = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-);
 
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -119,6 +112,15 @@ export default function SearchPanel({
   const [colorName, setColorName] = useState("");
   const [colorType, setColorType] = useState("");
   const [year, setYear] = useState("");
+  // 品牌列表从 API 加载，使 Data Management 的增删改能同步到下拉框
+  const [carMakes, setCarMakes] = useState<CarMake[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/brands")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: CarMake[]) => setCarMakes(data))
+      .catch(() => setCarMakes([]));
+  }, []);
 
   const isCodeTooLong = colorCode.replace(/\s/g, "").length > 10;
 
@@ -171,15 +173,15 @@ export default function SearchPanel({
           label={t.make}
           value={makeId}
           onChange={setMakeId}
-          options={mockCarMakes.map((m) => ({ value: m.id, label: m.name }))}
+          options={carMakes.map((m) => ({ value: m.id, label: m.name }))}
           placeholder=""
           widthClass="w-full"
         />
         <PillInput
-          label={t.colorCode}
+label={t.colorCode}
           value={colorCode}
           onChange={handleColorCodeChange}
-          placeholder=""
+          placeholder={t.colorCodePlaceholder}
           widthClass="w-full"
           maxLength={20}
         />
@@ -187,21 +189,21 @@ export default function SearchPanel({
           label={t.colorName}
           value={colorName}
           onChange={(v) => setColorName(v)}
-          placeholder=""
+          placeholder={t.colorNamePlaceholder}
           widthClass="w-full"
         />
         <PillInput
           label={t.year}
           value={year}
           onChange={(v) => setYear(v)}
-          placeholder=""
+          placeholder={t.yearPlaceholder}
           widthClass="w-full"
           maxLength={9}
         />
       </div>
 
       {isCodeTooLong && (
-        <p className="mt-2 text-muji-micro text-orange-500">{t.codeTooLong}</p>
+        <p className="mt-2 text-[10px] font-medium text-orange-500">{t.codeTooLong}</p>
       )}
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -216,8 +218,8 @@ export default function SearchPanel({
                 className={[
                   "rounded border px-4 py-1.5 transition-colors",
                   isSelected
-                    ? "border-[#006565] bg-[#006565] text-white"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-[#006565]",
+                    ? "border-[#0D9488] bg-[#0D9488] text-white"
+                    : "border-gray-300 bg-white text-gray-700 hover:border-[#0D9488]",
                 ].join(" ")}
               >
                 {labelMap[opt.value] ?? opt.label}
@@ -230,8 +232,8 @@ export default function SearchPanel({
           type="submit"
           disabled={isLoading}
           className={[
-            "flex items-center gap-2 rounded px-6 py-2.5 text-muji-heading text-white transition-colors",
-            "bg-[#006565] hover:bg-[#008080]",
+            "flex items-center gap-2 rounded px-6 py-2.5 text-xs font-semibold text-white transition-colors",
+            "bg-[#0D9488] hover:bg-[#0F766E]",
             "disabled:cursor-not-allowed disabled:opacity-60",
           ].join(" ")}
         >
@@ -244,8 +246,8 @@ export default function SearchPanel({
           onClick={handleReset}
           disabled={isLoading}
           className={[
-            "flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-2.5 text-muji-heading text-gray-700 transition-colors",
-            "hover:border-[#006565] hover:text-[#006565]",
+            "flex items-center gap-2 rounded border border-gray-300 bg-white px-6 py-2.5 text-xs font-semibold text-gray-700 transition-colors",
+            "hover:border-[#0D9488] hover:text-[#0D9488]",
             "disabled:cursor-not-allowed disabled:opacity-60",
           ].join(" ")}
         >

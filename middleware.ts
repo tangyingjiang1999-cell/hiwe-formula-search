@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // 简单解码 JWT payload（不验证签名，仅用于中间件路由判断）
-function decodeJwtPayload(token: string): Record<string, any> | null {
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
     const parts = token.split(".");
     if (parts.length !== 3) return null;

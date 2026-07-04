@@ -1,7 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/components/AuthContext";
+import { useLang } from "@/components/LanguageContext";
 
 interface SiteHeaderProps {
   subtitle?: string;
@@ -9,71 +13,85 @@ interface SiteHeaderProps {
 
 export default function SiteHeader({ subtitle }: SiteHeaderProps) {
   const { user: authUser, logout } = useAuth();
+  const { t } = useLang();
+  const pathname = usePathname();
 
-  const navLinks = [
-    { href: "/", label: "Formula Search" },
-    { href: "/color-library", label: "Color Visual Library" },
-    { href: "/application-guide", label: "Application Guide" },
-    { href: "/admin/formulas", label: "Formula Data Management" },
+  // 顶部导航链接，与 HAIWEN MIX 同行水平对齐
+  const navItems: { label: string; href: string; requireAdmin?: boolean }[] = [
+    { label: t.navFormulaSearch, href: "/" },
+    { label: t.navColorLibrary, href: "/color-library" },
+    { label: t.navAppGuide, href: "/application-guide" },
+    { label: t.navAdmin, href: "/admin/formulas", requireAdmin: true },
   ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#bdc9c8] bg-white/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 lg:px-10">
-        {/* 左侧 Logo */}
-        <a href="/" className="flex items-center gap-3">
-          <img
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-10 lg:px-20">
+        {/* Logo - 左侧 */}
+        <Link href="/" className="flex items-center gap-3">
+          <Image
             src="/haiwen.png"
             alt="HAIWEN"
+            width={56}
+            height={56}
             className="h-12 w-12 object-contain sm:h-14 sm:w-14"
           />
-          <span className="text-lg font-bold text-[#006565] sm:text-xl">
-            HAIWEN MIX{subtitle ? ` ${subtitle}` : ""}
+          <span className="text-lg font-bold text-[#0D9488] sm:text-xl">
+            HAIWEN MIX{subtitle ? " " + subtitle : ""}
           </span>
-        </a>
+        </Link>
 
-        {/* 桌面导航 */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-base font-semibold text-[#3e4949] transition-colors hover:text-[#006565]"
-            >
-              {link.label}
-            </a>
-          ))}
+        {/* 中间导航链接 - 与 HAIWEN MIX 水平对齐 */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => {
+            // 管理员功能仅 admin 角色可见
+            if (item.requireAdmin && authUser?.role !== "admin") return null;
+            const isActive =
+              (item.href === "/" && pathname === "/") ||
+              (item.href !== "/" && pathname?.startsWith(item.href));
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={[
+                  "text-sm font-medium transition-colors",
+                  isActive
+                    ? "text-[#0D9488] font-semibold"
+                    : "text-[#6B7280] hover:text-[#0D9488]",
+                ].join(" ")}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* 右侧操作区 */}
+        {/* Right side actions */}
         <div className="flex items-center gap-3">
           {authUser ? (
             <div className="flex items-center gap-2">
-              <span className="hidden text-xs text-[#3e4949] sm:inline">
-                {authUser.username}
-              </span>
               {authUser.role === "admin" && (
-                <a
+                <Link
                   href="/admin/users"
-                  className="rounded-lg bg-[#006565] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  className="rounded-lg bg-[#0D9488] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 >
-                  用户管理
-                </a>
+                  {authUser.username}
+                </Link>
               )}
               <button
                 onClick={logout}
-                className="rounded-lg bg-[#006565] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="rounded-lg bg-[#0D9488] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
-                退出
+                {t.logout}
               </button>
             </div>
           ) : (
-            <a
+            <Link
               href="/login"
-              className="rounded-lg bg-[#006565] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-lg bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Login
-            </a>
+            </Link>
           )}
           <LanguageSwitcher />
         </div>

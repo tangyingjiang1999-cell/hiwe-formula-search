@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { mockColors, mockCarMakes } from "@/lib/mock-data";
+import { useState, useEffect } from "react";
 import { useLang } from "@/components/LanguageContext";
 import SiteHeader from "@/components/SiteHeader";
 import Navigation from "@/components/Navigation";
-import type { Color } from "@/types";
+import type { CarMake, Color } from "@/types";
 
 function ColorCard({ color, onClick }: { color: Color; onClick: (color: Color) => void }) {
   const { t } = useLang();
@@ -28,26 +27,26 @@ function ColorCard({ color, onClick }: { color: Color; onClick: (color: Color) =
 
       <div className="space-y-1">
         <div className="flex items-center justify-between">
-          <span className="text-muji-subtitle text-gray-900">{color.color_code}</span>
-          <span className="rounded bg-gray-100 px-2 py-0.5 text-muji-caption font-muji-500 text-gray-600">
+          <span className="text-sm font-semibold text-gray-900">{color.color_code}</span>
+          <span className="rounded bg-gray-100 px-2 py-0.5 text-[11px] text-gray-500 font-medium text-gray-600">
             {typeLabels[color.color_type] || color.color_type}
           </span>
         </div>
-        <p className="text-muji-body text-gray-700">{color.color_name}</p>
+        <p className="text-xs text-gray-700">{color.color_name}</p>
       </div>
     </div>
   );
 }
 
-function ColorDetailModal({ color, onClose }: { color: Color; onClose: () => void }) {
+function ColorDetailModal({ color, onClose, carMakes }: { color: Color; onClose: () => void; carMakes: CarMake[] }) {
   const { t } = useLang();
-  const make = mockCarMakes.find((m) => m.id === color.make_id);
+  const make = carMakes.find((m) => m.id === color.make_id);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="mb-4 text-muji-body text-gray-500 hover:text-gray-700">
-          ✕ Close
+        <button onClick={onClose} className="mb-4 text-xs text-gray-500 hover:text-gray-700">
+          閴?Close
         </button>
 
         <div
@@ -55,19 +54,19 @@ function ColorDetailModal({ color, onClose }: { color: Color; onClose: () => voi
           style={{ backgroundColor: color.hex_preview }}
         />
 
-        <h2 className="mb-4 text-muji-subtitle font-bold text-gray-900">{color.color_name}</h2>
-        <div className="space-y-2 text-muji-body">
+        <h2 className="mb-4 text-sm font-semibold font-bold text-gray-900">{color.color_name}</h2>
+        <div className="space-y-2 text-xs">
           <p><strong>{t.makeLabel}:</strong> {make?.name || color.make_id}</p>
           <p><strong>{t.codeLabel}:</strong> {color.color_code}</p>
           <p><strong>{t.typeLabel}:</strong> {color.color_type}</p>
         </div>
 
         <div className="mt-6">
-          <h3 className="mb-2 text-muji-subtitle font-semibold">{t.formulaVariants}</h3>
+          <h3 className="mb-2 text-sm font-semibold font-semibold">{t.formulaVariants}</h3>
           {color.variants.map((variant) => (
             <div key={variant.id} className="mb-2 rounded border p-3">
-              <p className="text-muji-body font-muji-600">{variant.name}</p>
-              <p className="text-muji-caption text-gray-600">{t.yearsLabel}: {variant.year_range}</p>
+              <p className="text-xs font-semibold">{variant.name}</p>
+              <p className="text-[11px] text-gray-500 text-gray-600">{t.yearsLabel}: {variant.year_range}</p>
             </div>
           ))}
         </div>
@@ -81,8 +80,26 @@ export default function ColorLibraryPage() {
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [filterMake, setFilterMake] = useState("");
   const [filterType, setFilterType] = useState("");
+  // 从 API 加载，使 Data Management 的增删改能同步
+  const [colors, setColors] = useState<Color[]>([]);
+  const [carMakes, setCarMakes] = useState<CarMake[]>([]);
 
-  const filteredColors = mockColors.filter((color) => {
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/colors").then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/admin/brands").then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([c, m]: [Color[], CarMake[]]) => {
+        setColors(c);
+        setCarMakes(m);
+      })
+      .catch(() => {
+        setColors([]);
+        setCarMakes([]);
+      });
+  }, []);
+
+  const filteredColors = colors.filter((color) => {
     if (filterMake && color.make_id !== filterMake) return false;
     if (filterType && color.color_type !== filterType) return false;
     return true;
@@ -90,23 +107,23 @@ export default function ColorLibraryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SiteHeader subtitle="Color Visual Library" />
+      <SiteHeader />
       <Navigation />
 
-      <div className="bg-white px-6 py-4">
+      <div className="bg-gray-50 border-b border-gray-200 px-4 pt-20 pb-3 lg:px-6">
         <div className="flex items-center gap-4">
           <select
             value={filterMake}
             onChange={(e) => setFilterMake(e.target.value)}
-            className="rounded border px-3 py-2 text-muji-body"
+            className="rounded border px-3 py-2 text-xs"
           >
             <option value="">{t.allMakes}</option>
-            {mockCarMakes.map((make) => (
+            {carMakes.map((make) => (
               <option key={make.id} value={make.id}>{make.name}</option>
             ))}
           </select>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {(["", "solid", "metallic", "pearl", "matte", "candy"] as const).map((type) => {
               const labels: Record<string, string> = {
                 "": t.colorTypeAll, solid: t.colorTypeSolid, metallic: t.colorTypeMetallic,
@@ -130,14 +147,14 @@ export default function ColorLibraryPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-6 p-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 lg:p-6">
         {filteredColors.map((color) => (
           <ColorCard key={color.id} color={color} onClick={setSelectedColor} />
         ))}
       </div>
 
       {selectedColor && (
-        <ColorDetailModal color={selectedColor} onClose={() => setSelectedColor(null)} />
+        <ColorDetailModal color={selectedColor} onClose={() => setSelectedColor(null)} carMakes={carMakes} />
       )}
     </div>
   );

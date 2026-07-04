@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import Navigation from "@/components/Navigation";
 import type { CarMake, Color, Formula, FormulaComponent, AppSettings } from "@/types";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
+import { useToast } from "@/components/Toast";
 
 // ---------- sub-components ----------
 
@@ -39,24 +40,25 @@ function Spinner() {
   return <div className="flex justify-center py-12 text-gray-400">Loading...</div>;
 }
 
-function alertSucceeded(msg: string) {
-  // Tiny in-page toast; for now just alert
-  alert(msg);
-}
+
 
 // ============= BRANDS TAB =============
 function BrandsTab({
   brands,
   setBrands,
   colors,
+  setColors,
   formulas,
+  setFormulas,
   saving,
   onSave,
 }: {
   brands: CarMake[];
   setBrands: (b: CarMake[]) => void;
   colors: Color[];
+  setColors: (c: Color[]) => void;
   formulas: Formula[];
+  setFormulas: (f: Formula[]) => void;
   saving: boolean;
   onSave: (b: CarMake[]) => Promise<void>;
 }) {
@@ -86,12 +88,20 @@ function BrandsTab({
     cancel();
   }
   async function handleDelete(b: CarMake) {
-    if (
-      colors.some((c) => c.make_id === b.id) ||
-      !confirm(`Delete "${b.name}"? This will not affect colors.`)
-    )
-      return;
+    // 级联删除：先收集该品牌下所有受影响的颜色和配方
+    const relatedColors = colors.filter((c) => c.make_id === b.id);
+    const relatedColorIds = new Set(relatedColors.map((c) => c.id));
+    const relatedFormulas = formulas.filter((f) => relatedColorIds.has(f.color_id));
+
+    const msg = relatedColors.length > 0
+      ? `Delete "${b.name}"?\n\n⚠️ This will CASCADE delete:\n  • ${relatedColors.length} color(s)\n  • ${relatedFormulas.length} formula(s)\n\nThis action cannot be undone.`
+      : `Delete "${b.name}"?`;
+
+    if (!confirm(msg)) return;
+
     setBrands(brands.filter((x) => x.id !== b.id));
+    setColors(colors.filter((c) => c.make_id !== b.id));
+    setFormulas(formulas.filter((f) => !relatedColorIds.has(f.color_id)));
   }
 
   return (
@@ -543,6 +553,7 @@ export default function AdminFormulasPage() {
   const [tab, setTab] = useState("brands");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { showToast, toastElement } = useToast();
 
   useEffect(() => {
     async function load() {
@@ -568,7 +579,7 @@ export default function AdminFormulasPage() {
     try {
       const res = await fetch("/api/admin/brands", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       if (res.status === 401) { router.push("/login"); return; }
-      if (res.ok) alertSucceeded("Brands saved!");
+      if (res.ok) showToast("Brands saved!");
     } catch (err) { console.error(err); }
     finally { setSaving(false); }
   }
@@ -578,7 +589,7 @@ export default function AdminFormulasPage() {
     try {
       const res = await fetch("/api/admin/colors", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       if (res.status === 401) { router.push("/login"); return; }
-      if (res.ok) alertSucceeded("Colors saved!");
+      if (res.ok) showToast("Colors saved!");
     } catch (err) { console.error(err); }
     finally { setSaving(false); }
   }
@@ -588,7 +599,7 @@ export default function AdminFormulasPage() {
     try {
       const res = await fetch("/api/admin/formulas", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       if (res.status === 401) { router.push("/login"); return; }
-      if (res.ok) alertSucceeded("Formulas saved!");
+      if (res.ok) showToast("Formulas saved!");
     } catch (err) { console.error(err); }
     finally { setSaving(false); }
   }
@@ -598,24 +609,25 @@ export default function AdminFormulasPage() {
     try {
       const res = await fetch("/api/admin/formula-settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       if (res.status === 401) { router.push("/login"); return; }
-      if (res.ok) alertSucceeded("Settings saved!");
+      if (res.ok) showToast("Settings saved!");
     } catch (err) { console.error(err); }
     finally { setSaving(false); }
   }
 
-  if (loading) return <div className="min-h-screen bg-gray-50"><SiteHeader subtitle="· Data Management" /><Navigation /><Spinner /></div>;
+  if (loading) return <div className="min-h-screen bg-gray-50"><SiteHeader /><Navigation /><Spinner /></div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SiteHeader subtitle="· Data Management" />
+      <SiteHeader />
       <Navigation />
       <div className="mx-auto max-w-6xl px-6 py-8">
         <h2 className="text-lg font-bold text-gray-900 mb-6">Formula Data Management</h2>
         <TabBar active={tab} onChange={setTab} />
-        {tab === "brands" && <BrandsTab brands={brands} setBrands={setBrands} colors={colors} formulas={formulas} saving={saving} onSave={saveBrands} />}
+        {tab === "brands" && <BrandsTab brands={brands} setBrands={setBrands} colors={colors} setColors={setColors} formulas={formulas} setFormulas={setFormulas} saving={saving} onSave={saveBrands} />}
         {tab === "colors" && <ColorsTab colors={colors} setColors={setColors} brands={brands} saving={saving} onSave={saveColors} />}
         {tab === "formulas" && <FormulasTab formulas={formulas} setFormulas={setFormulas} colors={colors} saving={saving} onSave={saveFormulas} />}
         {tab === "settings" && <SettingsTab settings={settings} setSettings={setSettings} saving={saving} onSave={saveSettings} />}
+        {toastElement}
       </div>
     </div>
   );

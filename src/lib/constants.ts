@@ -5,10 +5,10 @@
 
 // 配色方案
 export const COLORS = {
-  /** 主色调：深石板色 */
-  primary: "#0F172A",
-  /** 强调色：工业红 */
-  accent: "#e84545",
+  /** 主色调：品牌 teal */
+  primary: "#0D9488",
+  /** 强调色：与主色一致 */
+  accent: "#0D9488",
   /** 文字主色 */
   textPrimary: "#0F172A",
   /** 文字次色 */
