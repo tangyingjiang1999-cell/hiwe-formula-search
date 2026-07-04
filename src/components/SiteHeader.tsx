@@ -66,7 +66,6 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
 
         {/* 右侧操作区 */}
         <div className="flex items-center gap-3">
-          <LanguageSwitcher />
           {authUser ? (
             <div className="flex items-center gap-2">
               <span className="hidden text-xs text-[#3e4949] sm:inline">
@@ -74,7 +73,7 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
               </span>
               {authUser.role === "admin" && (
                 <a
-                  href="/admin/formulas"
+                  href="/admin/users"
                   className="rounded-lg bg-[#006565] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 >
                   用户管理
@@ -95,6 +94,7 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
               Login
             </a>
           )}
+          <LanguageSwitcher />
         </div>
       </div>
     </header>
