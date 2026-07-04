@@ -23,15 +23,20 @@ interface UserRecord {
 // better-sqlite3 的实例类型（从构造函数推导，兼容 @types/better-sqlite3 的 export = 语法）
 type SqliteDatabase = ReturnType<typeof Database.prototype.constructor>;
 
-// ====== 存储后端选择 ======
-// - 生产（Vercel）：检测到 KV_URL / KV_REST_API_URL 时用 Vercel KV（Redis）
-// - 本地开发：用 data/hiwe.db（SQLite 文件，重启不丢）
+// ====== 存储后端选择（三层兜底）======
+// 1. Vercel KV（生产持久化，需配置 KV_URL）
+// 2. 内存 Map（Vercel 无 KV 时兜底，重启丢失但至少能用）
+// 3. SQLite（本地开发，data/hiwe.db 持久化）
 
 function isKVAvailable(): boolean {
   return !!(process.env.KV_URL || process.env.KV_REST_API_URL);
 }
 
-// ====== SQLite 本地存储（开发兜底）======
+function isVercel(): boolean {
+  return !!process.env.VERCEL;
+}
+
+// ====== SQLite 本地存储 ======
 
 let dbInstance: SqliteDatabase | null = null;
 
@@ -66,12 +71,40 @@ function rowToUser(row: UserRecord): User {
   return rest;
 }
 
+// ====== 内存 Map（Vercel 无 KV 时兜底）======
+
+let localNextId = 1;
+const localUsers = new Map<number, UserRecord>();
+const localUserByName = new Map<string, number>();
+const localUserIds = new Set<string>();
+
+function initLocalDefaultAdmin() {
+  if (localUserByName.has("admin")) return;
+  const hash = bcrypt.hashSync("admin123", 10);
+  const now = new Date().toISOString();
+  const admin: UserRecord = {
+    id: 1,
+    username: "admin",
+    password_hash: hash,
+    role: "admin",
+    created_at: now,
+    updated_at: now,
+  };
+  localUsers.set(1, admin);
+  localUserByName.set("admin", 1);
+  localUserIds.add("1");
+  localNextId = 2;
+}
+
+// 判断用 SQLite 还是内存 Map
+function useSqlite(): boolean {
+  return !isKVAvailable() && !isVercel();
+}
+
 // ====== 用户 CRUD ======
 
-// 获取所有用户（不含密码哈希）
 export async function getUsers(): Promise<User[]> {
   if (isKVAvailable()) {
-    // ===== Vercel KV 路径 =====
     const ids = await kv.smembers("users:ids");
     if (!ids || ids.length === 0) {
       await initDefaultAdminKV();
@@ -84,15 +117,24 @@ export async function getUsers(): Promise<User[]> {
       .sort((a, b) => a.id - b.id);
   }
 
-  // ===== SQLite 本地路径 =====
-  const db = getDb();
-  const rows = db.prepare(
-    "SELECT id, username, role, created_at, updated_at FROM users ORDER BY id"
-  ).all() as UserRecord[];
-  return rows.map(rowToUser);
+  if (useSqlite()) {
+    const db = getDb();
+    const rows = db.prepare(
+      "SELECT id, username, role, created_at, updated_at FROM users ORDER BY id"
+    ).all() as UserRecord[];
+    return rows.map(rowToUser);
+  }
+
+  // Vercel 无 KV → 内存 Map
+  if (localUserIds.size === 0) initLocalDefaultAdmin();
+  const users: User[] = [];
+  for (const [, user] of localUsers) {
+    const { password_hash: _ph, ...rest } = user;
+    users.push(rest as User);
+  }
+  return users.sort((a, b) => a.id - b.id);
 }
 
-// 根据用户名获取用户（含密码哈希，用于登录校验）
 export async function getUserByUsername(
   username: string
 ): Promise<(User & { password_hash: string }) | null> {
@@ -103,14 +145,20 @@ export async function getUserByUsername(
     return user ?? null;
   }
 
-  const db = getDb();
-  const row = db.prepare("SELECT * FROM users WHERE username = ?").get(username) as
-    | UserRecord
-    | undefined;
-  return row ?? null;
+  if (useSqlite()) {
+    const db = getDb();
+    const row = db.prepare("SELECT * FROM users WHERE username = ?").get(username) as
+      | UserRecord
+      | undefined;
+    return row ?? null;
+  }
+
+  if (localUserIds.size === 0) initLocalDefaultAdmin();
+  const id = localUserByName.get(username);
+  if (id === undefined) return null;
+  return localUsers.get(id) ?? null;
 }
 
-// 根据 id 获取用户
 export async function getUserById(id: number): Promise<User | null> {
   if (isKVAvailable()) {
     const user = await kv.get<UserRecord>(`user:${id}`);
@@ -119,14 +167,20 @@ export async function getUserById(id: number): Promise<User | null> {
     return rest;
   }
 
-  const db = getDb();
-  const row = db.prepare(
-    "SELECT id, username, role, created_at, updated_at FROM users WHERE id = ?"
-  ).get(id) as UserRecord | undefined;
-  return row ? rowToUser(row) : null;
+  if (useSqlite()) {
+    const db = getDb();
+    const row = db.prepare(
+      "SELECT id, username, role, created_at, updated_at FROM users WHERE id = ?"
+    ).get(id) as UserRecord | undefined;
+    return row ? rowToUser(row) : null;
+  }
+
+  const user = localUsers.get(id);
+  if (!user) return null;
+  const { password_hash: _ph, ...rest } = user;
+  return rest;
 }
 
-// 创建用户
 export async function createUser(
   username: string,
   password_hash: string,
@@ -150,18 +204,40 @@ export async function createUser(
     return rest;
   }
 
-  const db = getDb();
-  const result = db.prepare(
-    "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)"
-  ).run(username, password_hash, role);
-  const newId = Number(result.lastInsertRowid);
-  const row = db.prepare(
-    "SELECT id, username, role, created_at, updated_at FROM users WHERE id = ?"
-  ).get(newId) as UserRecord;
-  return rowToUser(row);
+  if (useSqlite()) {
+    const db = getDb();
+    const result = db.prepare(
+      "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)"
+    ).run(username, password_hash, role);
+    const newId = Number(result.lastInsertRowid);
+    const row = db.prepare(
+      "SELECT id, username, role, created_at, updated_at FROM users WHERE id = ?"
+    ).get(newId) as UserRecord;
+    return rowToUser(row);
+  }
+
+  // 内存 Map
+  if (localUserIds.size === 0) initLocalDefaultAdmin();
+  if (localUserByName.has(username)) {
+    throw new Error("用户名已存在");
+  }
+  const id = localNextId++;
+  const now = new Date().toISOString();
+  const user: UserRecord = {
+    id,
+    username,
+    password_hash,
+    role,
+    created_at: now,
+    updated_at: now,
+  };
+  localUsers.set(id, user);
+  localUserByName.set(username, id);
+  localUserIds.add(String(id));
+  const { password_hash: _ph, ...rest } = user;
+  return rest;
 }
 
-// 更新用户（username / password_hash / role 任选）
 export async function updateUser(
   id: number,
   fields: { username?: string; password_hash?: string; role?: string }
@@ -181,28 +257,42 @@ export async function updateUser(
     return;
   }
 
-  const db = getDb();
-  const sets: string[] = [];
-  const values: (string | number)[] = [];
+  if (useSqlite()) {
+    const db = getDb();
+    const sets: string[] = [];
+    const values: (string | number)[] = [];
+    if (fields.username) {
+      sets.push("username = ?");
+      values.push(fields.username);
+    }
+    if (fields.password_hash) {
+      sets.push("password_hash = ?");
+      values.push(fields.password_hash);
+    }
+    if (fields.role) {
+      sets.push("role = ?");
+      values.push(fields.role);
+    }
+    if (sets.length === 0) return;
+    sets.push("updated_at = datetime('now', 'localtime')");
+    values.push(id);
+    db.prepare(`UPDATE users SET ${sets.join(", ")} WHERE id = ?`).run(...values);
+    return;
+  }
+
+  // 内存 Map
+  const user = localUsers.get(id);
+  if (!user) return;
   if (fields.username) {
-    sets.push("username = ?");
-    values.push(fields.username);
+    localUserByName.delete(user.username);
+    user.username = fields.username;
+    localUserByName.set(user.username, id);
   }
-  if (fields.password_hash) {
-    sets.push("password_hash = ?");
-    values.push(fields.password_hash);
-  }
-  if (fields.role) {
-    sets.push("role = ?");
-    values.push(fields.role);
-  }
-  if (sets.length === 0) return;
-  sets.push("updated_at = datetime('now', 'localtime')");
-  values.push(id);
-  db.prepare(`UPDATE users SET ${sets.join(", ")} WHERE id = ?`).run(...values);
+  if (fields.password_hash) user.password_hash = fields.password_hash;
+  if (fields.role) user.role = fields.role;
+  user.updated_at = new Date().toISOString();
 }
 
-// 删除用户（保护 admin 账号不能删）
 export async function deleteUser(id: number): Promise<void> {
   if (isKVAvailable()) {
     const user = await kv.get<UserRecord>(`user:${id}`);
@@ -213,15 +303,24 @@ export async function deleteUser(id: number): Promise<void> {
     return;
   }
 
-  const db = getDb();
-  const row = db.prepare("SELECT username FROM users WHERE id = ?").get(id) as
-    | { username: string }
-    | undefined;
-  if (!row || row.username === "admin") return;
-  db.prepare("DELETE FROM users WHERE id = ?").run(id);
+  if (useSqlite()) {
+    const db = getDb();
+    const row = db.prepare("SELECT username FROM users WHERE id = ?").get(id) as
+      | { username: string }
+      | undefined;
+    if (!row || row.username === "admin") return;
+    db.prepare("DELETE FROM users WHERE id = ?").run(id);
+    return;
+  }
+
+  // 内存 Map
+  const user = localUsers.get(id);
+  if (!user || user.username === "admin") return;
+  localUserByName.delete(user.username);
+  localUserIds.delete(String(id));
+  localUsers.delete(id);
 }
 
-// 初始化默认管理员（KV 首次启动时调用）
 async function initDefaultAdminKV(): Promise<void> {
   const admin = await getUserByUsername("admin");
   if (!admin) {
@@ -231,11 +330,12 @@ async function initDefaultAdminKV(): Promise<void> {
   }
 }
 
-// 兼容旧调用：本地开发由 getDb 自动初始化，KV 由 getUsers 触发
 export async function initDefaultAdmin(): Promise<void> {
   if (isKVAvailable()) {
     await initDefaultAdminKV();
-  } else {
+  } else if (useSqlite()) {
     getDb();
+  } else {
+    initLocalDefaultAdmin();
   }
 }
