@@ -17,11 +17,10 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
   const pathname = usePathname();
 
   // 顶部导航链接，与 HAIWEN MIX 同行水平对齐
-  const navItems: { label: string; href: string; requireAdmin?: boolean }[] = [
+  const navItems: { label: string; href: string }[] = [
     { label: t.navFormulaSearch, href: "/" },
     { label: t.navColorLibrary, href: "/color-library" },
     { label: t.navAppGuide, href: "/application-guide" },
-    { label: t.navAdmin, href: "/admin/formulas", requireAdmin: true },
   ];
 
   return (
@@ -30,11 +29,11 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
         {/* Logo - 左侧 */}
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/haiwen.png"
+            src="/haiwenall.png"
             alt="HAIWEN"
             width={56}
             height={56}
-            className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+            className="h-8 w-8 object-contain sm:h-9 sm:w-9"
           />
           <span className="text-lg font-bold text-[#0D9488] sm:text-xl">
             HAIWEN MIX{subtitle ? " " + subtitle : ""}
@@ -44,8 +43,6 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
         {/* 中间导航链接 - 与 HAIWEN MIX 水平对齐 */}
         <nav className="hidden md:flex items-center gap-8">
           {navItems.map((item) => {
-            // 管理员功能仅 admin 角色可见
-            if (item.requireAdmin && authUser?.role !== "admin") return null;
             const isActive =
               (item.href === "/" && pathname === "/") ||
               (item.href !== "/" && pathname?.startsWith(item.href));
@@ -90,7 +87,7 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
               href="/login"
               className="rounded-lg bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
-              Login
+              {t.login}
             </Link>
           )}
           <LanguageSwitcher />

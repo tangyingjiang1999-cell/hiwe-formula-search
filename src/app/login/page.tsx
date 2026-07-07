@@ -123,7 +123,7 @@ export default function LoginPage() {
               marginTop: "4px",
             }}
           >
-            CAR REFINISH FORMULA SYSTEM
+            {t.brandSlogan}
           </p>
         </div>
 
@@ -141,7 +141,7 @@ export default function LoginPage() {
               fontFamily: "Arial, sans-serif",
             }}
           >
-            Official website www.hiwe.com
+            {t.officialWebsite} www.hiwe.com
           </a>
         </div>
       </div>
@@ -176,9 +176,9 @@ export default function LoginPage() {
               className="mb-4 h-14 w-auto object-contain"
             />
             <h1 className="text-base font-semibold text-gray-900">
-              Welcome to HAIWEN
+              {t.loginMobileTitle}
             </h1>
-            <p className="mt-1 text-xs text-gray-500">Formula Search</p>
+            <p className="mt-1 text-xs text-gray-500">{t.panelTitle}</p>
           </div>
 
           {/* 登录表单 */}

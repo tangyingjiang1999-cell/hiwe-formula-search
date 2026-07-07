@@ -1,10 +1,12 @@
-import { neon, neonConfig } from "@neondatabase/serverless";
-import Database from "better-sqlite3";
-import path from "path";
-import { mockCarMakes, mockColors, mockFormulas } from "./mock-data";
-import type { CarMake, Color, Formula, AppSettings } from "@/types";
-
-type SqliteDatabase = ReturnType<typeof Database.prototype.constructor>;
+import { supabase } from "./supabase-client";
+import type {
+  CarMake,
+  Color,
+  ColorVariant,
+  Formula,
+  FormulaComponent,
+  AppSettings,
+} from "@/types";
 
 const DEFAULT_SETTINGS: AppSettings = {
   finishes: ["Solid", "Metallic", "Pearl", "Matte", "Candy"],
@@ -13,204 +15,103 @@ const DEFAULT_SETTINGS: AppSettings = {
   yearMax: 2026,
 };
 
-function isNeonAvailable(): boolean {
-  return !!process.env.POSTGRES_URL;
-}
-
-function isVercel(): boolean {
-  return !!process.env.VERCEL;
-}
-
-function useSqlite(): boolean {
-  return !isNeonAvailable() && !isVercel();
-}
-
-// ====== Neon Postgres =======
-
-let neonSql: ReturnType<typeof neon> | null = null;
-let neonInitPromise: Promise<void> | null = null;
-
-function getNeonSql() {
-  if (!neonSql) {
-    neonConfig.fetchConnectionCache = true;
-    neonSql = neon(process.env.POSTGRES_URL!);
-  }
-  return neonSql;
-}
-
-async function ensureNeonSchema(): Promise<void> {
-  if (neonInitPromise) return neonInitPromise;
-  neonInitPromise = (async () => {
-    const sql = getNeonSql();
-    // 单表 JSON 存储，与 SQLite 方案对齐（4 张表）
-    await sql`
-      CREATE TABLE IF NOT EXISTS formula_store (
-        key TEXT PRIMARY KEY,
-        value JSONB NOT NULL,
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      )
-    `;
-    // 首次启动 seed mock 数据
-    const countRows = (await sql`SELECT COUNT(*) as c FROM formula_store`) as Array<{ c: number | string }>;
-    if (Number(countRows[0].c) === 0) {
-      await sql`INSERT INTO formula_store (key, value) VALUES ('brands', ${JSON.stringify(mockCarMakes)}::jsonb)`;
-      await sql`INSERT INTO formula_store (key, value) VALUES ('colors', ${JSON.stringify(mockColors)}::jsonb)`;
-      await sql`INSERT INTO formula_store (key, value) VALUES ('formulas', ${JSON.stringify(mockFormulas)}::jsonb)`;
-      await sql`INSERT INTO formula_store (key, value) VALUES ('settings', ${JSON.stringify(DEFAULT_SETTINGS)}::jsonb)`;
-      console.log("✅ [Neon] 配方数据已从 mock seed");
-    }
-  })();
-  return neonInitPromise;
-}
-
-// ====== SQLite 本地存储 =======
-
-let dbInstance: SqliteDatabase | null = null;
-
-function getDb(): SqliteDatabase {
-  if (dbInstance) return dbInstance;
-  const dbPath = path.join(process.cwd(), "data", "hiwe.db");
-  dbInstance = new Database(dbPath);
-  dbInstance.pragma("journal_mode = WAL");
-  dbInstance.exec(`
-    CREATE TABLE IF NOT EXISTS formula_brands (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS formula_colors (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS formula_formulas (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS formula_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-  `);
-  const row = dbInstance.prepare("SELECT COUNT(*) as c FROM formula_brands").get() as { c: number };
-  if (row.c === 0) {
-    dbInstance.prepare("INSERT OR REPLACE INTO formula_brands (key, value) VALUES ('data', ?)").run(JSON.stringify(mockCarMakes));
-    dbInstance.prepare("INSERT OR REPLACE INTO formula_colors (key, value) VALUES ('data', ?)").run(JSON.stringify(mockColors));
-    dbInstance.prepare("INSERT OR REPLACE INTO formula_formulas (key, value) VALUES ('data', ?)").run(JSON.stringify(mockFormulas));
-    dbInstance.prepare("INSERT OR REPLACE INTO formula_settings (key, value) VALUES ('data', ?)").run(JSON.stringify(DEFAULT_SETTINGS));
-    console.log("✅ [SQLite] 配方数据已从 mock seed");
-  }
-  return dbInstance;
-}
-
-function sqliteGet(table: string): string | null {
-  const db = getDb();
-  const row = db.prepare(`SELECT value FROM ${table} WHERE key = 'data'`).get() as
-    | { value: string }
-    | undefined;
-  return row?.value ?? null;
-}
-
-function sqliteSet(table: string, value: string): void {
-  const db = getDb();
-  db.prepare(`INSERT OR REPLACE INTO ${table} (key, value) VALUES ('data', ?)`).run(value);
-}
-
 // ====== Brands ======
-export async function getBrands(): Promise<CarMake[]> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    const rows = (await getNeonSql()`SELECT value FROM formula_store WHERE key = 'brands'`) as Array<{ value: CarMake[] }>;
-    return rows[0]?.value ?? mockCarMakes;
-  }
-  const stored = sqliteGet("formula_brands");
-  return stored ? JSON.parse(stored) : mockCarMakes;
-}
 
-export async function saveBrands(data: CarMake[]): Promise<void> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    await getNeonSql()`
-      INSERT INTO formula_store (key, value, updated_at)
-      VALUES ('brands', ${JSON.stringify(data)}::jsonb, NOW())
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
-    `;
-    return;
-  }
-  sqliteSet("formula_brands", JSON.stringify(data));
+export async function getBrands(): Promise<CarMake[]> {
+  const { data, error } = await supabase
+    .from("brands")
+    .select("*")
+    .order("name", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as CarMake[];
 }
 
 // ====== Colors ======
-export async function getColors(): Promise<Color[]> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    const rows = (await getNeonSql()`SELECT value FROM formula_store WHERE key = 'colors'`) as Array<{ value: Color[] }>;
-    return rows[0]?.value ?? mockColors;
-  }
-  const stored = sqliteGet("formula_colors");
-  return stored ? JSON.parse(stored) : mockColors;
-}
 
-export async function saveColors(data: Color[]): Promise<void> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    await getNeonSql()`
-      INSERT INTO formula_store (key, value, updated_at)
-      VALUES ('colors', ${JSON.stringify(data)}::jsonb, NOW())
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
-    `;
-    return;
-  }
-  sqliteSet("formula_colors", JSON.stringify(data));
+export async function getColors(): Promise<Color[]> {
+  const { data, error } = await supabase
+    .from("colors")
+    .select("*, color_variant_map(color_variants(*))")
+    .order("color_code", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapColorRow);
 }
 
 // ====== Formulas ======
-export async function getFormulas(): Promise<Formula[]> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    const rows = (await getNeonSql()`SELECT value FROM formula_store WHERE key = 'formulas'`) as Array<{ value: Formula[] }>;
-    return rows[0]?.value ?? mockFormulas;
-  }
-  const stored = sqliteGet("formula_formulas");
-  return stored ? JSON.parse(stored) : mockFormulas;
-}
 
-export async function saveFormulas(data: Formula[]): Promise<void> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    await getNeonSql()`
-      INSERT INTO formula_store (key, value, updated_at)
-      VALUES ('formulas', ${JSON.stringify(data)}::jsonb, NOW())
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
-    `;
-    return;
-  }
-  sqliteSet("formula_formulas", JSON.stringify(data));
+export async function getFormulas(): Promise<Formula[]> {
+  const { data, error } = await supabase
+    .from("formulas")
+    .select("*, formula_components(*)")
+    .order("updated_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(mapFormulaRow);
 }
 
 // ====== Settings ======
+
 export async function getSettings(): Promise<AppSettings> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    const rows = (await getNeonSql()`SELECT value FROM formula_store WHERE key = 'settings'`) as Array<{ value: AppSettings }>;
-    return rows[0]?.value ?? DEFAULT_SETTINGS;
-  }
-  const stored = sqliteGet("formula_settings");
-  return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
+  const { data, error } = await supabase
+    .from("settings")
+    .select("*")
+    .eq("id", 1)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return DEFAULT_SETTINGS;
+  return {
+    finishes: data.finishes ?? DEFAULT_SETTINGS.finishes,
+    types: data.types ?? DEFAULT_SETTINGS.types,
+    yearMin: data.year_min ?? DEFAULT_SETTINGS.yearMin,
+    yearMax: data.year_max ?? DEFAULT_SETTINGS.yearMax,
+  };
 }
 
-export async function saveSettings(data: AppSettings): Promise<void> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    await getNeonSql()`
-      INSERT INTO formula_store (key, value, updated_at)
-      VALUES ('settings', ${JSON.stringify(data)}::jsonb, NOW())
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
-    `;
-    return;
-  }
-  sqliteSet("formula_settings", JSON.stringify(data));
+// ====== 内部辅助 ======
+
+function mapColorRow(row: Record<string, unknown>): Color {
+  const map =
+    (row.color_variant_map as Array<{ color_variants: ColorVariant } | null> | null) ?? [];
+  const variants: ColorVariant[] = map
+    .map((m) => m?.color_variants)
+    .filter((v): v is ColorVariant => v != null);
+  return {
+    id: row.id as string,
+    make_id: row.make_id as string,
+    color_code: row.color_code as string,
+    color_name: row.color_name as string,
+    color_type: row.color_type as Color["color_type"],
+    hex_preview: row.hex_preview as string,
+    variants,
+  };
 }
 
-// ====== Force seed from mock data ======
-export async function seedFromMockData(): Promise<void> {
-  if (isNeonAvailable()) {
-    await ensureNeonSchema();
-    await getNeonSql()`TRUNCATE formula_store`;
-    await getNeonSql()`INSERT INTO formula_store (key, value) VALUES ('brands', ${JSON.stringify(mockCarMakes)}::jsonb)`;
-    await getNeonSql()`INSERT INTO formula_store (key, value) VALUES ('colors', ${JSON.stringify(mockColors)}::jsonb)`;
-    await getNeonSql()`INSERT INTO formula_store (key, value) VALUES ('formulas', ${JSON.stringify(mockFormulas)}::jsonb)`;
-    await getNeonSql()`INSERT INTO formula_store (key, value) VALUES ('settings', ${JSON.stringify(DEFAULT_SETTINGS)}::jsonb)`;
-    return;
-  }
-  sqliteSet("formula_brands", JSON.stringify(mockCarMakes));
-  sqliteSet("formula_colors", JSON.stringify(mockColors));
-  sqliteSet("formula_formulas", JSON.stringify(mockFormulas));
-  sqliteSet("formula_settings", JSON.stringify(DEFAULT_SETTINGS));
+function mapFormulaRow(row: Record<string, unknown>): Formula {
+  const comps =
+    (row.formula_components as Array<Record<string, unknown>> | null) ?? [];
+  const components: FormulaComponent[] = comps.map((c) => {
+    const comp: FormulaComponent = {
+      toner_code: c.toner_code as string,
+      toner_name: c.toner_name as string,
+      percentage: Number(c.percentage),
+      grams_per_100g: Number(c.grams_per_100g),
+    };
+    if (c.density != null) comp.density = Number(c.density);
+    if (c.rgb_r != null) {
+      comp.rgb_r = c.rgb_r as number;
+      comp.rgb_g = c.rgb_g as number;
+      comp.rgb_b = c.rgb_b as number;
+    }
+    return comp;
+  });
+  return {
+    id: row.id as string,
+    color_id: row.color_id as string,
+    variant_id: row.variant_id as string,
+    version: row.version as string,
+    paint_system: row.paint_system as Formula["paint_system"],
+    formula_type: row.formula_type as Formula["formula_type"],
+    components,
+    notes: (row.notes as string) ?? "",
+    updated_at: row.updated_at as string,
+  };
 }

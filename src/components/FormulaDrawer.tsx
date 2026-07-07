@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { SearchResult, Formula } from "@/types";
-import { mockCarMakes } from "@/lib/mock-data";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
 import { useLang } from "@/components/LanguageContext";
 import FormulaComponentsTable from "./FormulaComponentsTable";
@@ -16,10 +15,9 @@ interface FormulaDrawerProps {
 function formatFormulaAsText(
   result: SearchResult,
   activeFormula: Formula,
+  makeName: string,
 ): string {
-  const make =
-    mockCarMakes.find((m) => m.id === result.color.make_id)?.name ??
-    result.color.make_id;
+  const make = makeName;
   const variantName =
     result.color.variants.find((v) => v.id === activeFormula.variant_id)
       ?.name ?? activeFormula.variant_id;
@@ -55,6 +53,14 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
   const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
   const [visible, setVisible] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/brands")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setBrands(data))
+      .catch(() => setBrands([]));
+  }, []);
 
   const typeLabelMap: Record<string, string> = {
     solid: t.colorTypeSolidLabel, metallic: t.colorTypeMetallicLabel,
@@ -101,13 +107,13 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
   };
   const typeLabel = typeLabelMap[color.color_type] ?? color.color_type;
   const make =
-    mockCarMakes.find((m) => m.id === color.make_id)?.name ?? color.make_id;
+    brands.find((m) => m.id === color.make_id)?.name ?? color.make_id;
   const activeFormula = formulas[activeFormulaIdx];
   const years = color.variants.map((v) => v.year_range).join(", ");
 
   function handleCopy() {
     if (!activeFormula) return;
-    const text = formatFormulaAsText(result!, activeFormula);
+    const text = formatFormulaAsText(result!, activeFormula, make);
     navigator.clipboard.writeText(text).then(
       () => setToastMsg(t.copySuccess),
       () => setToastMsg(t.copyFail),
@@ -166,7 +172,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
           <button
             onClick={handleClose}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#94A3B8] transition-colors hover:text-[#0F172A]"
-            aria-label="Close"
+            aria-label={t.close}
           >
             <svg
               className="h-6 w-6"

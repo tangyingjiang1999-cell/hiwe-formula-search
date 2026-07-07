@@ -53,7 +53,7 @@ function GuideContent({ guide }: { guide: GuideItem }) {
 }
 
 export default function ApplicationGuidePage() {
-  const { lang } = useLang();
+  const { t, lang } = useLang();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedGuide, setSelectedGuide] = useState<GuideItem | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,7 +87,7 @@ export default function ApplicationGuidePage() {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={lang === "zh" ? "搜索指南..." : "Search guides..."}
+          placeholder={t.guideSearchPlaceholder}
           className="w-full rounded-lg border px-4 py-2 text-xs"
         />
       </div>
@@ -95,7 +95,7 @@ export default function ApplicationGuidePage() {
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-64 border-r border-b lg:border-b-0 bg-white p-4">
           <h3 className="mb-3 text-[11px] text-gray-500 font-semibold text-gray-600">
-            {lang === "zh" ? "分类" : "Categories"}
+            {t.guideCategories}
           </h3>
           <ul className="space-y-1">
             <li>
@@ -105,7 +105,7 @@ export default function ApplicationGuidePage() {
                   selectedCategory === "" ? "bg-teal-50 text-teal-700 font-semibold" : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
-                {lang === "zh" ? "全部分类" : "All Categories"}
+                {t.guideAllCategories}
               </button>
             </li>
             {guideCategories.map((cat) => (
@@ -125,7 +125,7 @@ export default function ApplicationGuidePage() {
 
         <div className="w-full lg:w-80 border-r border-b lg:border-b-0 bg-gray-50 p-4">
           <h3 className="mb-3 text-[11px] text-gray-500 font-semibold text-gray-600">
-            {lang === "zh" ? "指南列表" : "Guide List"} ({filteredGuides.length})
+            {t.guideListLabel} ({filteredGuides.length})
           </h3>
           <ul className="space-y-2">
             {filteredGuides.map((guide) => (
@@ -152,7 +152,7 @@ export default function ApplicationGuidePage() {
             <GuideContent guide={selectedGuide} />
           ) : (
             <div className="flex h-64 items-center justify-center text-gray-400">
-              <p className="text-xs">{lang === "zh" ? "请从左侧选择指南" : "Please select a guide from the left"}</p>
+              <p className="text-xs">{t.guideSelectHint}</p>
             </div>
           )}
         </div>

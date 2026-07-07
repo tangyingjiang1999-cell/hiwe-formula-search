@@ -112,11 +112,11 @@ export default function SearchPanel({
   const [colorName, setColorName] = useState("");
   const [colorType, setColorType] = useState("");
   const [year, setYear] = useState("");
-  // 品牌列表从 API 加载，使 Data Management 的增删改能同步到下拉框
+  // 品牌列表从公开 API 加载，使 Data Management 的增删改能同步到下拉框
   const [carMakes, setCarMakes] = useState<CarMake[]>([]);
 
   useEffect(() => {
-    fetch("/api/admin/brands")
+    fetch("/api/brands")
       .then((r) => (r.ok ? r.json() : []))
       .then((data: CarMake[]) => setCarMakes(data))
       .catch(() => setCarMakes([]));

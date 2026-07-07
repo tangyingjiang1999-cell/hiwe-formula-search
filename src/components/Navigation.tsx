@@ -11,7 +11,6 @@ export default function Navigation() {
     { label: t.navFormulaSearch, href: "/" },
     { label: t.navColorLibrary, href: "/color-library" },
     { label: t.navAppGuide, href: "/application-guide" },
-    { label: t.navAdmin, href: "/admin/formulas" },
   ];
 
   return (

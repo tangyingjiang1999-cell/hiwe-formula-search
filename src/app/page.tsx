@@ -1,59 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SearchPanel from "@/components/SearchPanel";
 import SearchResults from "@/components/SearchResults";
 import FormulaDrawer from "@/components/FormulaDrawer";
 import SiteHeader from "@/components/SiteHeader";
+import { useLang } from "@/components/LanguageContext";
 import type { Color, Formula, SearchParams, SearchResult } from "@/types";
 
 export default function Home() {
+  const { t } = useLang();
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [drawerResult, setDrawerResult] = useState<SearchResult | null>(null);
 
-  // 从 API 加载 colors + formulas，客户端按 SearchParams 过滤
-  // 这样 Data Management 的增删改能实时同步到搜索结果
-  async function handleSearch(params: SearchParams) {
+  // colors + formulas 只加载一次，后续搜索复用缓存（避免每次搜索都请求 API）
+  const dataPromiseRef = useRef<Promise<{ colors: Color[]; formulas: Formula[] }> | null>(null);
+
+  function loadData() {
+    if (!dataPromiseRef.current) {
+      dataPromiseRef.current = Promise.all([
+        fetch("/api/colors").then((r) => (r.ok ? r.json() : [])),
+        fetch("/api/formulas").then((r) => (r.ok ? r.json() : [])),
+      ]).then(([c, f]) => ({
+        colors: c as Color[],
+        formulas: f as Formula[],
+      }));
+    }
+    return dataPromiseRef.current;
+  }
+
+  // 页面打开即预加载，用户点搜索时数据通常已就绪
+  useEffect(() => {
+    loadData().catch(() => {});
+  }, []);
+
+  // 按已加载的数据做客户端过滤，不再每次请求 API
+  function handleSearch(params: SearchParams) {
     setIsLoading(true);
     setHasSearched(true);
-    try {
-      const [colorsRes, formulasRes] = await Promise.all([
-        fetch("/api/admin/colors"),
-        fetch("/api/admin/formulas"),
-      ]);
-      const colors: Color[] = colorsRes.ok ? await colorsRes.json() : [];
-      const formulas: Formula[] = formulasRes.ok ? await formulasRes.json() : [];
+    loadData()
+      .then(({ colors, formulas }) => {
+        let filtered = colors;
+        if (params.make_id) filtered = filtered.filter((c) => c.make_id === params.make_id);
+        if (params.color_code) {
+          const code = params.color_code!.toUpperCase();
+          filtered = filtered.filter((c) => c.color_code.toUpperCase().includes(code));
+        }
+        if (params.color_name) {
+          const name = params.color_name!.toLowerCase();
+          filtered = filtered.filter((c) => c.color_name.toLowerCase().includes(name));
+        }
+        if (params.color_type) filtered = filtered.filter((c) => c.color_type === params.color_type);
+        if (params.year) {
+          filtered = filtered.filter((c) => c.variants.some((v) => v.year_range.includes(params.year!)));
+        }
 
-      let filtered = colors;
-      if (params.make_id) filtered = filtered.filter((c) => c.make_id === params.make_id);
-      if (params.color_code) {
-        const code = params.color_code!.toUpperCase();
-        filtered = filtered.filter((c) => c.color_code.toUpperCase().includes(code));
-      }
-      if (params.color_name) {
-        const name = params.color_name!.toLowerCase();
-        filtered = filtered.filter((c) => c.color_name.toLowerCase().includes(name));
-      }
-      if (params.color_type) filtered = filtered.filter((c) => c.color_type === params.color_type);
-      if (params.year) {
-        filtered = filtered.filter((c) => c.variants.some((v) => v.year_range.includes(params.year!)));
-      }
-
-      const results: SearchResult[] = filtered.map((color) => ({
-        color,
-        formulas: formulas.filter((f) => f.color_id === color.id),
-      }));
-      setSearchResults(results);
-    } catch (err) {
-      console.error(err);
-      setSearchResults([]);
-    } finally {
-      setIsLoading(false);
-    }
+        const results: SearchResult[] = filtered.map((color) => ({
+          color,
+          formulas: formulas.filter((f) => f.color_id === color.id),
+        }));
+        setSearchResults(results);
+      })
+      .catch((err) => {
+        console.error(err);
+        setSearchResults([]);
+      })
+      .finally(() => setIsLoading(false));
   }
 
   function handleOpenDetail(result: SearchResult) {
@@ -77,7 +93,7 @@ export default function Home() {
         <div className="mx-auto w-full max-w-7xl px-5 lg:px-10">
           <div className="mx-auto w-full space-y-6 text-center">
             <h1 className="text-3xl font-bold leading-tight text-[#181c1e] sm:text-4xl lg:text-5xl">
-              Find Your <span className="text-[#0D9488]">Perfect Match</span>
+              {t.heroTitlePrefix} <span className="text-[#0D9488]">{t.heroTitleHighlight}</span>
             </h1>
 
             <div className="rounded-xl border border-[#bdc9c8]/50 bg-white p-6 shadow-sm">
@@ -169,9 +185,9 @@ export default function Home() {
           {/* Quick Links */}
           <div>
             <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-              <li><Link href="/" className="transition-colors hover:text-white">Formula Search</Link></li>
-              <li><Link href="/color-library" className="transition-colors hover:text-white">Color Visual Library</Link></li>
-              <li><Link href="/application-guide" className="transition-colors hover:text-white">Application Guide</Link></li>
+              <li><Link href="/" className="transition-colors hover:text-white">{t.navFormulaSearch}</Link></li>
+              <li><Link href="/color-library" className="transition-colors hover:text-white">{t.navColorLibrary}</Link></li>
+              <li><Link href="/application-guide" className="transition-colors hover:text-white">{t.navAppGuide}</Link></li>
             </ul>
           </div>
         </div>

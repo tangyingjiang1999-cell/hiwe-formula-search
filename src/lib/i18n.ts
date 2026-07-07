@@ -32,6 +32,8 @@ interface I18nDict {
   // Header
   brandName: string;
   brandNameShort: string;
+  heroTitlePrefix: string;
+  heroTitleHighlight: string;
   navSearch: string;
   navProducts: string;
   navAbout: string;
@@ -53,6 +55,11 @@ interface I18nDict {
   loginPlaceholderPassword: string;
   loginButton: string;
   loginSigningIn: string;
+  login: string;
+  close: string;
+  brandSlogan: string;
+  officialWebsite: string;
+  loginMobileTitle: string;
   loginErrorEmpty: string;
   loginErrorNetwork: string;
   loginErrorFailed: string;
@@ -124,6 +131,13 @@ interface I18nDict {
   totalFormula: (c: number, f: number) => string;
   colorsBadge: (n: number) => string;
   formulasBadge: (n: number) => string;
+
+  // Guide
+  guideSearchPlaceholder: string;
+  guideCategories: string;
+  guideAllCategories: string;
+  guideListLabel: string;
+  guideSelectHint: string;
 }
 
 // 通用复数（粗略按 n>1 处理）
@@ -151,6 +165,18 @@ export const i18n: Record<Lang, I18nDict> = {
   en: dict({
     brandName: "HIWE Formula Search",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Find Your",
+    heroTitleHighlight: "Perfect Match",
+    login: "Login",
+    close: "Close",
+    brandSlogan: "CAR REFINISH FORMULA SYSTEM",
+    officialWebsite: "Official website",
+    loginMobileTitle: "Welcome to HAIWEN",
+    guideSearchPlaceholder: "Search guides...",
+    guideCategories: "Categories",
+    guideAllCategories: "All Categories",
+    guideListLabel: "Guide List",
+    guideSelectHint: "Please select a guide from the left",
     navSearch: "Search", navProducts: "Products", navAbout: "About",
 
     navFormulaSearch: "Formula Search",
@@ -205,6 +231,18 @@ export const i18n: Record<Lang, I18nDict> = {
   zh: dict({
     brandName: "HIWE 配方搜索",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "寻找你的",
+    heroTitleHighlight: "完美匹配",
+    login: "登录",
+    close: "关闭",
+    brandSlogan: "汽车修补漆配方系统",
+    officialWebsite: "官方网站",
+    loginMobileTitle: "欢迎使用 HAIWEN",
+    guideSearchPlaceholder: "搜索指南...",
+    guideCategories: "分类",
+    guideAllCategories: "全部分类",
+    guideListLabel: "指南列表",
+    guideSelectHint: "请从左侧选择指南",
     navSearch: "配方搜索", navProducts: "产品", navAbout: "关于",
 
     navFormulaSearch: "Formula Search",
@@ -263,6 +301,18 @@ export const i18n: Record<Lang, I18nDict> = {
   fr: dict({
     brandName: "HIWE Recherche de formule",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Trouvez votre",
+    heroTitleHighlight: "correspondance parfaite",
+    login: "Connexion",
+    close: "Fermer",
+    brandSlogan: "SYSTÈME DE FORMULE DE RETOUCHE AUTO",
+    officialWebsite: "Site officiel",
+    loginMobileTitle: "Bienvenue sur HAIWEN",
+    guideSearchPlaceholder: "Rechercher des guides...",
+    guideCategories: "Catégories",
+    guideAllCategories: "Toutes les catégories",
+    guideListLabel: "Liste des guides",
+    guideSelectHint: "Veuillez sélectionner un guide à gauche",
     navSearch: "Recherche", navProducts: "Produits", navAbout: "À propos",
     navFormulaSearch: "Recherche de formule",
     navColorLibrary: "Bibliothèque de couleurs",
@@ -314,6 +364,18 @@ export const i18n: Record<Lang, I18nDict> = {
   de: dict({
     brandName: "HIWE Formelsuche",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Finden Sie Ihr",
+    heroTitleHighlight: "perfektes Match",
+    login: "Anmelden",
+    close: "Schließen",
+    brandSlogan: "AUTOLACKIER-FORMELSYSTEM",
+    officialWebsite: "Offizielle Website",
+    loginMobileTitle: "Willkommen bei HAIWEN",
+    guideSearchPlaceholder: "Leitfäden suchen...",
+    guideCategories: "Kategorien",
+    guideAllCategories: "Alle Kategorien",
+    guideListLabel: "Leitfadenliste",
+    guideSelectHint: "Bitte links einen Leitfaden auswählen",
     navSearch: "Suche", navProducts: "Produkte", navAbout: "Über uns",
     navFormulaSearch: "Formelsuche",
     navColorLibrary: "Farbvisualisierungsbibliothek",
@@ -365,6 +427,18 @@ export const i18n: Record<Lang, I18nDict> = {
   es: dict({
     brandName: "HIWE Búsqueda de fórmulas",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Encuentra tu",
+    heroTitleHighlight: "coincidencia perfecta",
+    login: "Iniciar sesión",
+    close: "Cerrar",
+    brandSlogan: "SISTEMA DE FÓRMULAS DE RETOQUE AUTO",
+    officialWebsite: "Sitio web oficial",
+    loginMobileTitle: "Bienvenido a HAIWEN",
+    guideSearchPlaceholder: "Buscar guías...",
+    guideCategories: "Categorías",
+    guideAllCategories: "Todas las categorías",
+    guideListLabel: "Lista de guías",
+    guideSelectHint: "Seleccione una guía a la izquierda",
     navSearch: "Buscar", navProducts: "Productos", navAbout: "Acerca de",
     navFormulaSearch: "Búsqueda de fórmulas",
     navColorLibrary: "Biblioteca visual de colores",
@@ -416,6 +490,18 @@ export const i18n: Record<Lang, I18nDict> = {
   pt: dict({
     brandName: "HIWE Pesquisa de fórmulas",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Encontre sua",
+    heroTitleHighlight: "correspondência perfeita",
+    login: "Entrar",
+    close: "Fechar",
+    brandSlogan: "SISTEMA DE FÓRMULAS DE RETOQUE AUTOMOTIVO",
+    officialWebsite: "Site oficial",
+    loginMobileTitle: "Bem-vindo à HAIWEN",
+    guideSearchPlaceholder: "Pesquisar guias...",
+    guideCategories: "Categorias",
+    guideAllCategories: "Todas as categorias",
+    guideListLabel: "Lista de guias",
+    guideSelectHint: "Selecione um guia à esquerda",
     navSearch: "Pesquisar", navProducts: "Produtos", navAbout: "Sobre",
     navFormulaSearch: "Pesquisa de fórmulas",
     navColorLibrary: "Biblioteca visual de cores",
@@ -467,6 +553,18 @@ export const i18n: Record<Lang, I18nDict> = {
   it: dict({
     brandName: "HIWE Ricerca formule",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Trova la tua",
+    heroTitleHighlight: "corrispondenza perfetta",
+    login: "Accedi",
+    close: "Chiudi",
+    brandSlogan: "SISTEMA DI FORMULE PER RITOUCHI AUTO",
+    officialWebsite: "Sito ufficiale",
+    loginMobileTitle: "Benvenuto su HAIWEN",
+    guideSearchPlaceholder: "Cerca guide...",
+    guideCategories: "Categorie",
+    guideAllCategories: "Tutte le categorie",
+    guideListLabel: "Elenco guide",
+    guideSelectHint: "Seleziona una guida a sinistra",
     navSearch: "Cerca", navProducts: "Prodotti", navAbout: "Informazioni",
     navFormulaSearch: "Ricerca formule",
     navColorLibrary: "Libreria visiva dei colori",
@@ -518,6 +616,18 @@ export const i18n: Record<Lang, I18nDict> = {
   ru: dict({
     brandName: "HIWE Поиск формул",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Найдите своё",
+    heroTitleHighlight: "идеальное совпадение",
+    login: "Войти",
+    close: "Закрыть",
+    brandSlogan: "СИСТЕМА ПОИСКА АВТОЭМАЛЕЙ",
+    officialWebsite: "Официальный сайт",
+    loginMobileTitle: "Добро пожаловать в HAIWEN",
+    guideSearchPlaceholder: "Поиск руководств...",
+    guideCategories: "Категории",
+    guideAllCategories: "Все категории",
+    guideListLabel: "Список руководств",
+    guideSelectHint: "Выберите руководство слева",
     navSearch: "Поиск", navProducts: "Продукты", navAbout: "О нас",
     navFormulaSearch: "Поиск формул",
     navColorLibrary: "Визуальная библиотека цветов",
@@ -581,6 +691,18 @@ export const i18n: Record<Lang, I18nDict> = {
   sl: dict({
     brandName: "HIWE Iskanje formul",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Poiščite svoje",
+    heroTitleHighlight: "popolno ujemanje",
+    login: "Prijava",
+    close: "Zapri",
+    brandSlogan: "SISTEM FORMUL ZA POPRAVILA LAKA",
+    officialWebsite: "Uradna spletna stran",
+    loginMobileTitle: "Dobrodošli v HAIWEN",
+    guideSearchPlaceholder: "Iskanje vodnikov...",
+    guideCategories: "Kategorije",
+    guideAllCategories: "Vse kategorije",
+    guideListLabel: "Seznam vodnikov",
+    guideSelectHint: "Izberite vodnik na levi",
     navSearch: "Iskanje", navProducts: "Izdelki", navAbout: "O nas",
     navFormulaSearch: "Iskanje formul",
     navColorLibrary: "Vizualna knjižnica barv",
@@ -632,6 +754,18 @@ export const i18n: Record<Lang, I18nDict> = {
   tr: dict({
     brandName: "HIWE Formül Arama",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Bul",
+    heroTitleHighlight: "kusursuz eşleşme",
+    login: "Giriş",
+    close: "Kapat",
+    brandSlogan: "OTO BOYA FORMÜL SİSTEMİ",
+    officialWebsite: "Resmi web sitesi",
+    loginMobileTitle: "HAIWEN'a hoş geldiniz",
+    guideSearchPlaceholder: "Kılavuzları ara...",
+    guideCategories: "Kategoriler",
+    guideAllCategories: "Tüm Kategoriler",
+    guideListLabel: "Kılavuz Listesi",
+    guideSelectHint: "Soldan bir kılavuz seçin",
     navSearch: "Ara", navProducts: "Ürünler", navAbout: "Hakkında",
     navFormulaSearch: "Formül Arama",
     navColorLibrary: "Renk Görsel Kitaplığı",
@@ -683,6 +817,18 @@ export const i18n: Record<Lang, I18nDict> = {
   he: dict({
     brandName: "HIWE חיפוש פורמולות",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "מצא את",
+    heroTitleHighlight: "ההתאמה המושלמת",
+    login: "התחבר",
+    close: "סגור",
+    brandSlogan: "מערכת פורמולות לצבעי ריטאץ' אוטו",
+    officialWebsite: "אתר רשמי",
+    loginMobileTitle: "ברוכים הבאים ל-HAIWEN",
+    guideSearchPlaceholder: "חיפוש מדריכים...",
+    guideCategories: "קטגוריות",
+    guideAllCategories: "כל הקטגוריות",
+    guideListLabel: "רשימת מדריכים",
+    guideSelectHint: "אנא בחר מדריך משמאל",
     navSearch: "חיפוש", navProducts: "מוצרים", navAbout: "אודות",
     navFormulaSearch: "חיפוש פורמולות",
     navColorLibrary: "ספריית צבעים חזותית",
@@ -734,6 +880,18 @@ export const i18n: Record<Lang, I18nDict> = {
   ar: dict({
     brandName: "HIWE بحث التركيبات",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "ابحث عن",
+    heroTitleHighlight: "التطابق المثالي",
+    login: "تسجيل الدخول",
+    close: "إغلاق",
+    brandSlogan: "نظام تركيبات إصلاح طلاء السيارات",
+    officialWebsite: "الموقع الرسمي",
+    loginMobileTitle: "مرحبًا بك في HAIWEN",
+    guideSearchPlaceholder: "ابحث عن أدلة...",
+    guideCategories: "الفئات",
+    guideAllCategories: "كل الفئات",
+    guideListLabel: "قائمة الأدلة",
+    guideSelectHint: "يرجى اختيار دليل من اليسار",
     navSearch: "بحث", navProducts: "منتجات", navAbout: "حول",
     navFormulaSearch: "بحث التركيبات",
     navColorLibrary: "مكتبة الألوان المرئية",
@@ -795,6 +953,18 @@ export const i18n: Record<Lang, I18nDict> = {
   nl: dict({
     brandName: "HIWE Formule zoeken",
     brandNameShort: "HIWE",
+    heroTitlePrefix: "Vind uw",
+    heroTitleHighlight: "perfecte match",
+    login: "Inloggen",
+    close: "Sluiten",
+    brandSlogan: "AUTORETOUCHE FORMULESYSTEEM",
+    officialWebsite: "Officiële website",
+    loginMobileTitle: "Welkom bij HAIWEN",
+    guideSearchPlaceholder: "Gidsen zoeken...",
+    guideCategories: "Categorieën",
+    guideAllCategories: "Alle categorieën",
+    guideListLabel: "Gidsenlijst",
+    guideSelectHint: "Selecteer links een gids",
     navSearch: "Zoeken", navProducts: "Producten", navAbout: "Over ons",
     navFormulaSearch: "Formule zoeken",
     navColorLibrary: "Kleurenbibliotheek",
