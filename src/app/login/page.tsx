@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useLang } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthContext";
 
 function UserIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -48,6 +49,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { t } = useLang();
+  const { login } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -65,8 +67,10 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        if (data.user) {
+          login(data.user);
+        }
         router.push("/");
-        router.refresh();
       } else {
         setError(data.error || t.loginErrorFailed);
       }

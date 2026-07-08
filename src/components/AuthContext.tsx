@@ -12,6 +12,7 @@ interface AuthUser {
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
+  login: (user: AuthUser) => void;
   logout: () => Promise<void>;
 }
 
@@ -33,6 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
+  // 登录成功后同步写入全局状态，避免刷新页面才显示 admin 入口
+  const login = useCallback((newUser: AuthUser) => {
+    setUser(newUser);
+  }, []);
+
   // 退出登录：清除 cookie 并跳转到登录页
   const logout = useCallback(async () => {
     await fetch("/api/auth/me", { method: "DELETE" });
@@ -41,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
