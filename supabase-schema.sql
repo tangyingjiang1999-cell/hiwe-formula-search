@@ -8,12 +8,21 @@ CREATE TABLE IF NOT EXISTS public.users (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 启用行级安全（RLS），但我们用 service role key 绕过
+-- 启用行级安全（RLS）。写操作走 service_role（默认 BYPASSRLS），公开角色一律拒绝
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
--- 允许 service role 完全访问
+-- 仅 service_role 可完全访问（显式声明；service_role 默认 BYPASSRLS，不受影响）
+DROP POLICY IF EXISTS "service_role_all" ON public.users;
 CREATE POLICY "service_role_all" ON public.users
-  FOR ALL USING (true) WITH CHECK (true);
+  FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- 显式拒绝 anon / authenticated 任何访问（双保险，防止公开角色越权读 users）
+DROP POLICY IF EXISTS "deny_public" ON public.users;
+CREATE POLICY "deny_public" ON public.users
+  FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+
+-- 撤销 anon / authenticated 对 users 表的权限（保留 service_role / postgres，不影响登录）
+REVOKE ALL ON public.users FROM anon, authenticated;
 
 -- 插入默认管理员账号（密码：admin123）
 INSERT INTO public.users (username, password_hash, role)

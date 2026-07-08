@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/components/Toast";
+import { useLang } from "@/components/LanguageContext";
 
 interface User {
   id: number;
@@ -15,6 +16,7 @@ interface User {
 }
 
 export default function AdminUsersPage() {
+  const { t } = useLang();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -32,11 +34,11 @@ export default function AdminUsersPage() {
     } else if (res.status === 401) {
       router.push("/login");
     } else if (res.status === 403) {
-      showToast("无权限访问");
+      showToast(t.adminNoPermission);
       router.push("/");
     }
     setLoading(false);
-  }, [router, showToast]);
+  }, [router, showToast, t]);
 
   useEffect(() => {
     // 初始加载用户列表；fetchUsers 内部会 setState，属于标准数据获取模式
@@ -66,7 +68,7 @@ export default function AdminUsersPage() {
       : { ...form };
 
     if (!editingUser && !form.password) {
-      setError("新建用户必须设置密码");
+      setError(t.adminPasswordRequired);
       return;
     }
 
@@ -86,10 +88,10 @@ export default function AdminUsersPage() {
 
   async function handleDelete(user: User) {
     if (user.username === "admin") {
-      showToast("不能删除超级管理员");
+      showToast(t.adminCannotDeleteAdmin);
       return;
     }
-    if (!confirm(`确定删除用户 "${user.username}" 吗？`)) return;
+    if (!confirm(t.adminConfirmDelete(user.username))) return;
     const res = await fetch("/api/admin/users", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -101,7 +103,7 @@ export default function AdminUsersPage() {
   }
 
   if (loading) {
-    return <div className="p-8 text-center text-xs text-gray-500">加载中...</div>;
+    return <div className="p-8 text-center text-xs text-gray-500">{t.adminLoading}</div>;
   }
 
   return (
@@ -111,12 +113,12 @@ export default function AdminUsersPage() {
 
       <div className="mx-auto max-w-4xl px-8 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">用户列表</h2>
+          <h2 className="text-base font-semibold text-gray-900">{t.adminTitle}</h2>
           <button
             onClick={openCreate}
             className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold font-semibold text-white transition-colors hover:bg-[#0F766E]"
           >
-            + 新建用户
+            + {t.adminNewUser}
           </button>
         </div>
 
@@ -124,11 +126,11 @@ export default function AdminUsersPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50 text-left text-[11px] text-gray-500 font-medium uppercase tracking-wider text-gray-500">
-                <th className="px-4 py-3">ID</th>
-                <th className="px-4 py-3">用户名</th>
-                <th className="px-4 py-3">角色</th>
-                <th className="px-4 py-3">创建时间</th>
-                <th className="px-4 py-3 text-right">操作</th>
+                <th className="px-4 py-3">{t.adminColId}</th>
+                <th className="px-4 py-3">{t.adminColUsername}</th>
+                <th className="px-4 py-3">{t.adminColRole}</th>
+                <th className="px-4 py-3">{t.adminColCreatedAt}</th>
+                <th className="px-4 py-3 text-right">{t.adminColActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -144,7 +146,7 @@ export default function AdminUsersPage() {
                           : "bg-gray-100 text-gray-700"
                       }`}
                     >
-                      {user.role === "admin" ? "管理员" : "普通用户"}
+                      {user.role === "admin" ? t.adminRoleAdmin : t.adminRoleUser}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-500">{user.created_at}</td>
@@ -153,14 +155,14 @@ export default function AdminUsersPage() {
                       onClick={() => openEdit(user)}
                       className="mr-3 text-xs text-blue-600 hover:text-blue-800"
                     >
-                      编辑
+                      {t.adminEdit}
                     </button>
                     <button
                       onClick={() => handleDelete(user)}
                       className="text-xs text-red-600 hover:text-red-800"
                       disabled={user.username === "admin"}
                     >
-                      删除
+                      {t.adminDelete}
                     </button>
                   </td>
                 </tr>
@@ -175,12 +177,12 @@ export default function AdminUsersPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-[400px] rounded-lg bg-white p-6 shadow-lg">
             <h3 className="mb-4 text-sm font-semibold text-gray-900">
-              {editingUser ? "编辑用户" : "新建用户"}
+              {editingUser ? t.adminEditTitle : t.adminNewUser}
             </h3>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-gray-700">用户名</label>
+                <label className="block text-xs font-medium text-gray-700">{t.adminColUsername}</label>
                 <input
                   type="text"
                   value={form.username}
@@ -191,25 +193,25 @@ export default function AdminUsersPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700">
-                  密码 {editingUser ? "（留空表示不修改）" : ""}
+                  {t.adminLabelPassword} {editingUser ? t.adminPasswordHint : ""}
                 </label>
                 <input
                   type="password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs text-gray-900 outline-none focus:border-[#0D9488]"
-                  placeholder={editingUser ? "留空则不修改" : ""}
+                  placeholder={editingUser ? t.adminPasswordPlaceholder : ""}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">角色</label>
+                <label className="block text-xs font-medium text-gray-700">{t.adminLabelRole}</label>
                 <select
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
                   className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs text-gray-900 outline-none focus:border-[#0D9488]"
                 >
-                  <option value="user">普通用户</option>
-                  <option value="admin">管理员</option>
+                  <option value="user">{t.adminRoleUser}</option>
+                  <option value="admin">{t.adminRoleAdmin}</option>
                 </select>
               </div>
             </div>
@@ -221,13 +223,13 @@ export default function AdminUsersPage() {
                 onClick={() => setShowModal(false)}
                 className="rounded border border-gray-300 px-4 py-2 text-xs text-gray-700 transition-colors hover:bg-gray-50"
               >
-                取消
+                {t.adminCancel}
               </button>
               <button
                 onClick={handleSave}
                 className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold font-semibold text-white transition-colors hover:bg-[#0F766E]"
               >
-                {editingUser ? "保存" : "创建"}
+                {editingUser ? t.adminSave : t.adminCreate}
               </button>
             </div>
           </div>
