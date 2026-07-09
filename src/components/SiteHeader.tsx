@@ -8,17 +8,15 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/components/AuthContext";
 import { useLang } from "@/components/LanguageContext";
 
-interface SiteHeaderProps {
-  subtitle?: string;
-}
+interface SiteHeaderProps {}
 
-export default function SiteHeader({ subtitle }: SiteHeaderProps) {
+export default function SiteHeader({}: SiteHeaderProps) {
   const { user: authUser, logout } = useAuth();
   const { t } = useLang();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // 顶部导航链接，与 HAIWEN MIX 同行水平对齐
+  // 顶部导航链接，与 Logo 同行水平对齐
   const navItems: { label: string; href: string }[] = [
     { label: t.navFormulaSearch, href: "/" },
     { label: t.navColorLibrary, href: "/color-library" },
@@ -29,17 +27,14 @@ export default function SiteHeader({ subtitle }: SiteHeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#bdc9c8] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-10 lg:px-20">
         {/* Logo - 左侧 */}
-        <Link href="/" className="flex items-center gap-2 md:gap-3">
+        <Link href="/" className="flex items-center">
           <Image
-            src="/haiwenall.png"
-            alt="HAIWEN"
-            width={56}
-            height={56}
-            className="h-8 w-8 object-contain sm:h-9 sm:w-9"
+            src="/HIWE_Logo.png"
+            alt="HIWE MIX"
+            width={1893}
+            height={334}
+            className="h-7 w-auto object-contain sm:h-8 md:h-9"
           />
-          <span className="text-base font-bold text-[#0D9488] sm:text-lg md:text-xl">
-            HAIWEN MIX{subtitle ? " " + subtitle : ""}
-          </span>
         </Link>
 
         {/* 中间导航链接 - 桌面端 */}

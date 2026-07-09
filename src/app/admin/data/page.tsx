@@ -47,20 +47,22 @@ export default function DataManagementPage() {
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-8">
         <h2 className="mb-4 text-base font-semibold text-gray-900">数据管理</h2>
 
-        <div className="mb-6 flex gap-6 border-b border-gray-200">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`pb-3 text-xs font-medium transition-colors ${
-                activeTab === tab.key
-                  ? "border-b-2 border-[#0D9488] text-[#0D9488]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="mb-6 overflow-x-auto scrollbar-hide">
+          <div className="flex w-max gap-6 border-b border-gray-200">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`whitespace-nowrap pb-3 text-xs font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? "border-b-2 border-[#0D9488] text-[#0D9488]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="py-2">

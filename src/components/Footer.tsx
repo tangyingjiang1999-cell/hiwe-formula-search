@@ -78,22 +78,15 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Quick Links + Data Management 按钮 */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-            <li><Link href="/" className="transition-colors hover:text-white">{t.navFormulaSearch}</Link></li>
-            <li><Link href="/color-library" className="transition-colors hover:text-white">{t.navColorLibrary}</Link></li>
-            <li><Link href="/application-guide" className="transition-colors hover:text-white">{t.navAppGuide}</Link></li>
-          </ul>
-          {user?.role === "admin" && (
-            <Link
-              href="/admin/data"
-              className="rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-gray-100"
-            >
-              {t.navAdmin}
-            </Link>
-          )}
-        </div>
+        {/* 管理员入口 */}
+        {user?.role === "admin" && (
+          <Link
+            href="/admin/data"
+            className="whitespace-nowrap rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-gray-100"
+          >
+            {t.navAdmin}
+          </Link>
+        )}
       </div>
     </footer>
   );

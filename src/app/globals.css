@@ -78,11 +78,11 @@ html[dir="ltr"] .rtl-only { display: none; }
 }
 
 @media print {
-  header, aside, footer, nav, button, [aria-hidden="true"], .mobile-fab {
+  header, aside, footer, nav, button, [aria-hidden="true"], .mobile-fab, script, style {
     display: none !important;
   }
 
-  body > *, main {
+  body > *:not(script):not(style) {
     display: block !important;
     max-width: 100% !important;
     padding: 0 !important;
@@ -113,4 +113,9 @@ html[dir="ltr"] .rtl-only { display: none; }
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* 标题折行优化：在词边界换行，避免单词被拆成两行 */
+h1, h2, h3 {
+  text-wrap: balance;
 }

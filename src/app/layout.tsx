@@ -12,6 +12,9 @@ const notoSansHebrew = Noto_Sans_Hebrew({ subsets: ["hebrew"], variable: "--font
 export const metadata: Metadata = {
   title: "HAIWEN MIX - Formula Search",
   description: "Car refinish paint formula search system",
+  icons: {
+    icon: "/weblogo.png",
+  },
 };
 
 export default function RootLayout({

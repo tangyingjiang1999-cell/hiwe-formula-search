@@ -91,7 +91,7 @@ export default function Home() {
 
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-10">
           <div className="mx-auto w-full space-y-6 text-center">
-            <h1 className="text-3xl font-bold leading-tight text-[#181c1e] sm:text-4xl lg:text-5xl">
+            <h1 className="text-balance text-2xl font-semibold leading-snug text-[#181c1e] sm:text-3xl sm:font-bold md:text-4xl lg:text-5xl">
               {t.heroTitlePrefix} <span className="text-[#0D9488]">{t.heroTitleHighlight}</span>
             </h1>
 

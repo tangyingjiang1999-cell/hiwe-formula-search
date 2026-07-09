@@ -92,13 +92,13 @@ export default function FormulaComponentsTable({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[360px] text-xs">
+        <table className="w-full min-w-[300px] text-xs">
           <thead>
           <tr className="border-b border-[#E2E8F0] text-left text-[#64748B]">
-            <th className="pb-2 pr-2 text-[11px] text-gray-500 font-medium">{t.tonerCode}</th>
-            <th className="pb-2 pr-2 text-[11px] text-gray-500 font-medium">{t.tonerName}</th>
-            <th className="pb-2 pr-2 text-[11px] text-gray-500 font-medium">{t.percentage}</th>
-            <th className="pb-2 text-[11px] text-gray-500 font-medium">{t.actualAmount}</th>
+            <th className="pb-2 pr-2 whitespace-nowrap text-[11px] text-gray-500 font-medium">{t.tonerCode}</th>
+            <th className="pb-2 pr-2 whitespace-nowrap text-[11px] text-gray-500 font-medium">{t.tonerName}</th>
+            <th className="pb-2 pr-2 whitespace-nowrap text-[11px] text-gray-500 font-medium">{t.percentage}</th>
+            <th className="pb-2 whitespace-nowrap text-[11px] text-gray-500 font-medium">{t.actualAmount}</th>
           </tr>
         </thead>
         <tbody>
