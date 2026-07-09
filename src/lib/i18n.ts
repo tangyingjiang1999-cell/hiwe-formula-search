@@ -63,6 +63,18 @@ interface I18nDict {
   loginErrorEmpty: string;
   loginErrorNetwork: string;
   loginErrorFailed: string;
+  loginRegisterLink: string;
+  registerTitle: string;
+  registerButton: string;
+  registerConfirmLabel: string;
+  registerConfirmPlaceholder: string;
+  registerSuccess: string;
+  registerErrorExists: string;
+  registerErrorFormat: string;
+  registerErrorPassword: string;
+  registerErrorMismatch: string;
+  registerLoginLink: string;
+  registerErrorFailed: string;
 
   // SearchPanel
   panelTitle: string;
@@ -169,13 +181,33 @@ interface I18nDict {
 // 通用复数（粗略按 n>1 处理）
 const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
 
-const dict = (d: Omit<I18nDict, "formulasCount" | "foundCount" | "truncatedHint" | "totalFormula" | "colorsBadge" | "formulasBadge"> & {
+const dict = (d: Omit<I18nDict,
+  "formulasCount" | "foundCount" | "truncatedHint" | "totalFormula" | "colorsBadge" | "formulasBadge"
+  | "loginEmail" | "loginPlaceholderEmail"
+  | "loginRegisterLink" | "registerTitle" | "registerButton" | "registerConfirmLabel"
+  | "registerConfirmPlaceholder" | "registerSuccess" | "registerErrorExists" | "registerErrorFormat"
+  | "registerErrorPassword" | "registerErrorMismatch" | "registerLoginLink" | "registerErrorFailed"
+> & {
   formulasCount?: (n: number) => string;
   foundCount?: (n: number) => string;
   truncatedHint?: (max: number) => string;
   totalFormula?: (c: number, f: number) => string;
   colorsBadge?: (n: number) => string;
   formulasBadge?: (n: number) => string;
+  loginEmail?: string;
+  loginPlaceholderEmail?: string;
+  loginRegisterLink?: string;
+  registerTitle?: string;
+  registerButton?: string;
+  registerConfirmLabel?: string;
+  registerConfirmPlaceholder?: string;
+  registerSuccess?: string;
+  registerErrorExists?: string;
+  registerErrorFormat?: string;
+  registerErrorPassword?: string;
+  registerErrorMismatch?: string;
+  registerLoginLink?: string;
+  registerErrorFailed?: string;
 }): I18nDict => ({
   formulasCount: d.formulasCount ?? ((n) => plural(n, "formula", "formulas")),
   foundCount: d.foundCount ?? ((n) => `Found ${n} color${n > 1 ? "s" : ""}`),
@@ -183,6 +215,21 @@ const dict = (d: Omit<I18nDict, "formulasCount" | "foundCount" | "truncatedHint"
   totalFormula: d.totalFormula ?? ((c, f) => `Found ${c} color${c > 1 ? "s" : ""}, ${f} formula${f > 1 ? "s" : ""}`),
   colorsBadge: d.colorsBadge ?? ((n) => `${n} Colors`),
   formulasBadge: d.formulasBadge ?? ((n) => `${n} Formulas`),
+  // 登录标签与注册相关文案：默认英文，各语言可覆盖（见 zh）
+  loginEmail: d.loginEmail ?? "Username",
+  loginPlaceholderEmail: d.loginPlaceholderEmail ?? "Enter your username",
+  loginRegisterLink: d.loginRegisterLink ?? "No account? Register",
+  registerTitle: d.registerTitle ?? "Create account",
+  registerButton: d.registerButton ?? "Register",
+  registerConfirmLabel: d.registerConfirmLabel ?? "Confirm Password",
+  registerConfirmPlaceholder: d.registerConfirmPlaceholder ?? "Re-enter password",
+  registerSuccess: d.registerSuccess ?? "Registration successful, signing in...",
+  registerErrorExists: d.registerErrorExists ?? "Username already exists",
+  registerErrorFormat: d.registerErrorFormat ?? "Username must be 3-20 chars: start with a letter, only letters/numbers/_",
+  registerErrorPassword: d.registerErrorPassword ?? "Password must be at least 8 characters",
+  registerErrorMismatch: d.registerErrorMismatch ?? "Passwords do not match",
+  registerLoginLink: d.registerLoginLink ?? "Already have an account? Sign in",
+  registerErrorFailed: d.registerErrorFailed ?? "Registration failed",
   ...d,
 });
 
@@ -304,13 +351,26 @@ export const i18n: Record<Lang, I18nDict> = {
 
     loginWelcome: "欢迎回来",
     loginSubtitle: "请输入账号信息登录系统",
-    loginEmail: "邮箱", loginPassword: "密码",
-    loginPlaceholderEmail: "请输入邮箱",
+    loginPassword: "密码",
     loginPlaceholderPassword: "请输入密码",
     loginButton: "登录", loginSigningIn: "登录中...",
     loginErrorEmpty: "请输入用户名和密码",
     loginErrorNetwork: "网络错误，请重试",
     loginErrorFailed: "登录失败",
+    loginEmail: "用户名",
+    loginPlaceholderEmail: "请输入用户名",
+    loginRegisterLink: "还没有账号？立即注册",
+    registerTitle: "注册账号",
+    registerButton: "注册",
+    registerConfirmLabel: "确认密码",
+    registerConfirmPlaceholder: "请再次输入密码",
+    registerSuccess: "注册成功，正在登录...",
+    registerErrorExists: "该用户名已被注册",
+    registerErrorFormat: "用户名需 3-20 位：以字母开头，仅含字母、数字、下划线",
+    registerErrorPassword: "密码至少 8 位",
+    registerErrorMismatch: "两次输入的密码不一致",
+    registerLoginLink: "已有账号？去登录",
+    registerErrorFailed: "注册失败",
 
     panelTitle: "配方搜索",
     make: "品牌", colorCode: "颜色代码", colorName: "颜色名称", colorType: "漆面类型",

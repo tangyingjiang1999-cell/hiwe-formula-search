@@ -1,4 +1,4 @@
-"use client";
+"use use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -41,9 +41,13 @@ function EyeOffIcon() {
   );
 }
 
-export default function LoginPage() {
+// 与后端保持一致：字母开头，3-20 位，仅字母、数字、下划线
+const USERNAME_RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
+
+export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -54,25 +58,44 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!username || !password) {
-      setError(t.loginErrorEmpty);
+    if (!USERNAME_RE.test(username)) {
+      setError(t.registerErrorFormat);
+      return;
+    }
+    if (password.length < 8) {
+      setError(t.registerErrorPassword);
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError(t.registerErrorMismatch);
       return;
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      // 1) 注册
+      const regRes = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, confirmPassword }),
+      });
+      const regData = await regRes.json();
+      if (!regRes.ok || !regData.success) {
+        setError(regData.error || t.registerErrorFailed);
+        return;
+      }
+      // 2) 注册成功后自动登录
+      const loginRes = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        if (data.user) {
-          login(data.user);
-        }
+      const loginData = await loginRes.json();
+      if (loginRes.ok && loginData.success && loginData.user) {
+        login(loginData.user);
         router.push("/");
       } else {
-        setError(data.error || t.loginErrorFailed);
+        // 注册成功但自动登录失败，跳登录页由用户手动登录
+        router.push("/login");
       }
     } catch {
       setError(t.loginErrorNetwork);
@@ -84,67 +107,22 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* ===== 左侧渐变区 (40%) ===== */}
-      <div
-        className="fluid-gradient relative flex flex-col justify-between px-6 py-8 lg:px-10 lg:py-12 lg:w-[40%]"
-      >
+      <div className="fluid-gradient relative flex flex-col justify-between px-6 py-8 lg:px-10 lg:py-12 lg:w-[40%]">
         <div className="fluid-blob" />
-
-        {/* Logo - 移动端 */}
         <div className="relative z-10 flex items-center gap-3 lg:hidden">
-          <Image
-            src="/haiwen-logo.png"
-            alt="HAIWEN"
-            width={40}
-            height={40}
-            className="h-10 w-10 object-contain brightness-0 invert"
-          />
-          <span className="text-base font-semibold text-white">
-            HAIWEN MIX
-          </span>
+          <Image src="/haiwen-logo.png" alt="HAIWEN" width={40} height={40} className="h-10 w-10 object-contain brightness-0 invert" />
+          <span className="text-base font-semibold text-white">HAIWEN MIX</span>
         </div>
-
-        {/* 主标题 - 桌面端展示 */}
         <div className="relative z-10 hidden lg:block text-left">
-          <h1
-            className="text-white"
-            style={{
-              fontFamily: "Arial, sans-serif",
-              fontSize: "52px",
-              fontWeight: 700,
-              letterSpacing: "2px",
-              lineHeight: 1.1,
-            }}
-          >
+          <h1 className="text-white" style={{ fontFamily: "Arial, sans-serif", fontSize: "52px", fontWeight: 700, letterSpacing: "2px", lineHeight: 1.1 }}>
             HAIWEN MIX
           </h1>
-          <p
-            className="text-white"
-            style={{
-              fontFamily: "Arial, sans-serif",
-              fontSize: "13px",
-              fontWeight: 600,
-              letterSpacing: "3px",
-              marginTop: "4px",
-            }}
-          >
+          <p className="text-white" style={{ fontFamily: "Arial, sans-serif", fontSize: "13px", fontWeight: 600, letterSpacing: "3px", marginTop: "4px" }}>
             {t.brandSlogan}
           </p>
         </div>
-
-        {/* 底部官网链接 */}
         <div className="relative z-10 hidden lg:block">
-          <a
-            href="https://www.hiwe.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block text-xs font-semibold text-white transition-colors hover:text-white/80"
-            style={{
-              color: "white",
-              textDecoration: "underline",
-              textUnderlineOffset: "3px",
-              fontFamily: "Arial, sans-serif",
-            }}
-          >
+          <a href="https://www.hiwe.com" target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold text-white transition-colors hover:text-white/80" style={{ color: "white", textDecoration: "underline", textUnderlineOffset: "3px", fontFamily: "Arial, sans-serif" }}>
             {t.officialWebsite} www.hiwe.com
           </a>
         </div>
@@ -153,45 +131,19 @@ export default function LoginPage() {
       {/* ===== 右侧表单区 (60%) ===== */}
       <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 lg:px-16">
         <div className="w-full max-w-sm">
-          {/* 主标题与副标题 */}
           <div className="mb-10 hidden lg:block text-center">
-            <Image
-              src="/haiwen-logo.png"
-              alt="HAIWEN"
-              width={80}
-              height={80}
-              className="mx-auto h-20 w-auto object-contain mb-6"
-            />
-            <h2 className="mt-2 text-base font-semibold text-gray-900">
-              {t.loginWelcome}
-            </h2>
-            <p className="mt-1 text-xs text-gray-500">
-              {t.loginSubtitle}
-            </p>
+            <Image src="/haiwen-logo.png" alt="HAIWEN" width={80} height={80} className="mx-auto h-20 w-auto object-contain mb-6" />
+            <h2 className="mt-2 text-base font-semibold text-gray-900">{t.registerTitle}</h2>
           </div>
-
-          {/* Logo */}
           <div className="mb-8 lg:hidden">
-            <Image
-              src="/haiwen-logo.png"
-              alt="HAIWEN"
-              width={56}
-              height={56}
-              className="mb-4 h-14 w-auto object-contain"
-            />
-            <h1 className="text-base font-semibold text-gray-900">
-              {t.loginMobileTitle}
-            </h1>
-            <p className="mt-1 text-xs text-gray-500">{t.panelTitle}</p>
+            <Image src="/haiwen-logo.png" alt="HAIWEN" width={56} height={56} className="mb-4 h-14 w-auto object-contain" />
+            <h1 className="text-base font-semibold text-gray-900">{t.registerTitle}</h1>
           </div>
 
-          {/* 登录表单 */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email / Username */}
+            {/* 用户名 */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-gray-700">
-                {t.loginEmail}
-              </label>
+              <label className="mb-1.5 block text-xs font-medium text-gray-700">{t.loginEmail}</label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <UserIcon />
@@ -209,11 +161,9 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Password */}
+            {/* 密码 */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-gray-700">
-                {t.loginPassword}
-              </label>
+              <label className="mb-1.5 block text-xs font-medium text-gray-700">{t.loginPassword}</label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <LockIcon />
@@ -227,12 +177,29 @@ export default function LoginPage() {
                   placeholder={t.loginPlaceholderPassword}
                   className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  tabIndex={-1}
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" tabIndex={-1}>
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
+            </div>
+
+            {/* 确认密码 */}
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-gray-700">{t.registerConfirmLabel}</label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <LockIcon />
+                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder={t.registerConfirmPlaceholder}
+                  className="block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/10"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" tabIndex={-1}>
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
@@ -245,11 +212,11 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Get started */}
+            {/* 注册按钮 */}
             <button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center rounded-lg bg-[#0D9488] text-xs font-semibold font-semibold text-white transition-all duration-200 hover:bg-[#0F766E] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-12 w-full items-center justify-center rounded-lg bg-[#0D9488] text-xs font-semibold text-white transition-all duration-200 hover:bg-[#0F766E] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -260,13 +227,13 @@ export default function LoginPage() {
                   {t.loginSigningIn}
                 </span>
               ) : (
-                t.loginButton
+                t.registerButton
               )}
             </button>
 
-            {/* 注册入口 */}
+            {/* 已有账号？去登录 */}
             <p className="text-center text-xs text-gray-500">
-              <a href="/register" className="font-medium text-[#0D9488] hover:text-[#0F766E]">{t.loginRegisterLink}</a>
+              <a href="/login" className="font-medium text-[#0D9488] hover:text-[#0F766E]">{t.registerLoginLink}</a>
             </p>
           </form>
         </div>

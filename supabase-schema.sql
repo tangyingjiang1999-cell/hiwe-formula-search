@@ -26,7 +26,7 @@ REVOKE ALL ON public.users FROM anon, authenticated;
 
 -- 插入默认管理员账号（密码：admin123）
 INSERT INTO public.users (username, password_hash, role)
-VALUES ('admin', '$2a$10$8xMxQvZCKqLZkrQqlZ0QOeHvZCGx3zHJ1N1xZ5Q6xZ0QOeHvZCG.', 'admin')
+VALUES ('admin', '$2b$10$xq5ADBjJwyv9lCTbGgtZQ.QFo4nF0oATwQ84HcNM7g7MUcsxVq5H6', 'admin')
 ON CONFLICT (username) DO NOTHING;
 
 -- 创建更新 updated_at 的触发器
