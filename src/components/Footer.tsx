@@ -17,10 +17,10 @@ export default function Footer() {
         {/* 品牌 Logo + 社交图标 */}
         <div className="flex items-center gap-6">
           <Image
-            src="/haiwen-logo.png"
-            alt="HAIWEN MIX"
-            width={120}
-            height={32}
+            src="/hiwe.png"
+            alt="HIWE"
+            width={1206}
+            height={334}
             className="h-8 w-auto object-contain brightness-0 invert"
           />
           {/* 社交媒体链接 */}
