@@ -4,27 +4,27 @@
 
 export type Lang = "en" | "zh" | "fr" | "ru" | "ar" | "es" | "pt" | "it" | "sl" | "he" | "de" | "tr" | "nl";
 
-// 语言元信息：显示名、国旗 emoji、文本方向
+// 语言元信息：显示名、国旗 ISO 代码（用于 SVG 图标）、文本方向
 export interface LangMeta {
   code: Lang;
   name: string;       // 用当地文字显示
-  flag: string;       // 国旗 emoji
+  flag: string;       // 国旗 ISO 3166-1 alpha-2 代码，如 "GB"
   dir: "ltr" | "rtl";
 }
 
 export const LANGS: LangMeta[] = [
-  { code: "en", name: "English",  flag: "🇬🇧", dir: "ltr" },
-  { code: "zh", name: "中文",      flag: "🇨🇳", dir: "ltr" },
-  { code: "fr", name: "Français", flag: "🇫🇷", dir: "ltr" },
-  { code: "de", name: "Deutsch",  flag: "🇩🇪", dir: "ltr" },
-  { code: "es", name: "Español",  flag: "🇪🇸", dir: "ltr" },
-  { code: "pt", name: "Português",flag: "🇵🇹", dir: "ltr" },
-  { code: "it", name: "Italiano", flag: "🇮🇹", dir: "ltr" },
-  { code: "ru", name: "Русский",  flag: "🇷🇺", dir: "ltr" },
-  { code: "sl", name: "Slovenščina", flag: "🇸🇮", dir: "ltr" },
-  { code: "tr", name: "Türkçe",   flag: "🇹🇷", dir: "ltr" },
-  { code: "he", name: "עברית",     flag: "🇮🇱", dir: "rtl" },
-  { code: "ar", name: "العربية",   flag: "🇸🇦", dir: "rtl" },
+  { code: "en", name: "English",   flag: "GB", dir: "ltr" },
+  { code: "zh", name: "中文",      flag: "CN", dir: "ltr" },
+  { code: "fr", name: "Français",  flag: "FR", dir: "ltr" },
+  { code: "de", name: "Deutsch",   flag: "DE", dir: "ltr" },
+  { code: "es", name: "Español",   flag: "ES", dir: "ltr" },
+  { code: "pt", name: "Português", flag: "PT", dir: "ltr" },
+  { code: "it", name: "Italiano",  flag: "IT", dir: "ltr" },
+  { code: "ru", name: "Русский",   flag: "RU", dir: "ltr" },
+  { code: "sl", name: "Slovenščina", flag: "SI", dir: "ltr" },
+  { code: "tr", name: "Türkçe",    flag: "TR", dir: "ltr" },
+  { code: "he", name: "עברית",     flag: "IL", dir: "rtl" },
+  { code: "ar", name: "العربية",   flag: "SA", dir: "rtl" },
 ];
 
 // 单一文案结构（必须 12 种语言都提供所有 key）

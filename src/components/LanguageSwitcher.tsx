@@ -4,6 +4,30 @@ import { useState, useRef, useEffect } from "react";
 import { useLang } from "@/components/LanguageContext";
 import { LANGS, type Lang } from "@/lib/i18n";
 
+// SVG 国旗图标，避免 Windows 将 emoji 国旗退化成字母（GB/CN 等）
+import GB from "country-flag-icons/react/3x2/GB";
+import CN from "country-flag-icons/react/3x2/CN";
+import FR from "country-flag-icons/react/3x2/FR";
+import DE from "country-flag-icons/react/3x2/DE";
+import ES from "country-flag-icons/react/3x2/ES";
+import PT from "country-flag-icons/react/3x2/PT";
+import IT from "country-flag-icons/react/3x2/IT";
+import RU from "country-flag-icons/react/3x2/RU";
+import SI from "country-flag-icons/react/3x2/SI";
+import TR from "country-flag-icons/react/3x2/TR";
+import IL from "country-flag-icons/react/3x2/IL";
+import SA from "country-flag-icons/react/3x2/SA";
+
+const FLAG_MAP: Record<string, React.FC<{ className?: string }>> = {
+  GB, CN, FR, DE, ES, PT, IT, RU, SI, TR, IL, SA,
+};
+
+function FlagIcon({ code, className }: { code: string; className?: string }) {
+  const Flag = FLAG_MAP[code];
+  if (!Flag) return null;
+  return <Flag className={className} />;
+}
+
 export default function LanguageSwitcher() {
   const { lang, setLang } = useLang();
   const [open, setOpen] = useState(false);
@@ -37,8 +61,8 @@ export default function LanguageSwitcher() {
         aria-expanded={open}
         aria-label="Select language"
       >
-        <span className="text-base leading-none" aria-hidden="true">
-          {current.flag}
+        <span aria-hidden="true">
+          <FlagIcon code={current.flag} className="h-4 w-auto rounded-sm" />
         </span>
         <span className="hidden sm:inline">{current.code.toUpperCase()}</span>
         <svg
@@ -76,8 +100,8 @@ export default function LanguageSwitcher() {
                   role="option"
                   aria-selected={active}
                 >
-                  <span className="text-base leading-none" aria-hidden="true">
-                    {l.flag}
+                  <span aria-hidden="true">
+                    <FlagIcon code={l.flag} className="h-4 w-auto rounded-sm" />
                   </span>
                   <span className="flex-1">{l.name}</span>
                   {active && (
