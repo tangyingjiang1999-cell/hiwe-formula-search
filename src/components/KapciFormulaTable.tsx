@@ -158,14 +158,13 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
           </tbody>
           <tfoot>
             <tr className="border-t-2 border-[#E2E8F0] bg-[#F8FAFC]">
-              <td colSpan={2} className="py-3 pr-3"></td>
-              <td className="py-3 pr-3 text-center text-[11px] font-medium text-[#64748B]">
+              <td className="py-3 pr-3 text-left text-xs font-bold text-[#0F172A]">
                 {t.totalWeightLabel}
               </td>
-              <td className="py-3 pr-3 text-left tabular-nums text-xs font-semibold text-[#0F172A]">
+              <td className="py-3 pr-3 text-left tabular-nums text-xs font-bold text-[#0F172A]">
                 {totalWeight.toFixed(1)} g
               </td>
-              <td className="py-3"></td>
+              <td colSpan={3}></td>
             </tr>
           </tfoot>
         </table>
