@@ -108,11 +108,11 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
         <table className="w-full min-w-[400px] text-xs">
           <thead>
             <tr className="border-b border-[#E2E8F0] text-left text-[#64748B]">
-              <th className="whitespace-nowrap pb-2 pr-2 text-[11px] font-medium">{t.tonerCode}</th>
-              <th className="whitespace-nowrap pb-2 pr-2 text-[11px] font-medium">{t.tonerName}</th>
-              <th className="whitespace-nowrap pb-2 pr-2 text-[11px] font-medium">{t.weight}</th>
-              <th className="whitespace-nowrap pb-2 pr-2 text-[11px] font-medium">{t.accum}</th>
-              <th className="whitespace-nowrap pb-2 text-[11px] font-medium">{t.massTone}</th>
+              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.tonerCode}</th>
+              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.tonerName}</th>
+              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.weight}</th>
+              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.accum}</th>
+              <th className="align-middle whitespace-nowrap pb-3 text-[11px] font-medium">{t.massTone}</th>
             </tr>
           </thead>
           <tbody>
@@ -124,24 +124,24 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
 
               return (
                 <tr key={comp.toner_code} className="border-b border-zinc-100 last:border-b-0">
-                  <td className="py-2 pr-2 font-mono text-[11px] text-[#94A3B8]">{comp.toner_code}</td>
-                  <td className="py-2 pr-2 text-xs text-[#0F172A]">{comp.toner_name}</td>
-                  <td className="py-2 pr-2">
+                  <td className="align-middle h-11 py-2 pr-3 font-mono text-[11px] text-[#94A3B8]">{comp.toner_code}</td>
+                  <td className="align-middle h-11 py-2 pr-3 text-xs text-[#0F172A]">{comp.toner_name}</td>
+                  <td className="align-middle h-11 py-2 pr-3">
                     <input
                       type="number"
                       min={0}
                       step={0.1}
                       value={weights[idx] ?? ""}
                       onChange={(e) => handleWeightChange(idx, e.target.value)}
-                      className="h-7 w-20 rounded-md border border-[#E2E8F0] bg-white px-2 text-right text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+                      className="h-8 w-24 rounded-md border border-[#E2E8F0] bg-white px-2 text-right text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
                     />
                   </td>
-                  <td className="py-2 pr-2 text-right tabular-nums text-xs font-medium text-[#0F172A]">
+                  <td className="align-middle h-11 py-2 pr-3 text-right tabular-nums text-xs font-medium text-[#0F172A]">
                     {running.toFixed(1)}
                   </td>
-                  <td className="py-2">
+                  <td className="align-middle h-11 py-2">
                     <div
-                      className="h-5 w-10 rounded border border-[#E2E8F0]"
+                      className="h-7 w-14 rounded border border-[#E2E8F0]"
                       style={{ backgroundColor: massToneColor(comp) }}
                     />
                   </td>

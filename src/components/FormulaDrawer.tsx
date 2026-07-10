@@ -76,7 +76,7 @@ function ColorPreviewPanel({
         {label}
       </h3>
       <div
-        className="h-40 w-full rounded-lg border border-[#E2E8F0] shadow-inner sm:h-48"
+        className="h-56 w-full rounded-lg border border-[#E2E8F0] shadow-inner sm:h-80"
         style={{ backgroundColor: previewColor }}
       />
       <div className="mt-3">
@@ -260,7 +260,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
       <div
         className={cn(
           "fixed left-1/2 top-1/2 flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl",
-          "w-[95vw] max-w-5xl max-h-[90vh]",
+          "w-[95vw] max-w-[85rem] max-h-[90vh]",
           "transition-all duration-200 ease-out",
           visible
             ? "opacity-100 scale-100"
@@ -273,16 +273,16 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
             : "translate(-50%, -50%) scale(0.96)",
         }}
       >
-        <div className="flex shrink-0 items-center gap-3 border-b border-[#E2E8F0] px-4 py-4 sm:px-8 sm:py-5">
+        <div className="flex shrink-0 items-center gap-3 border-b border-[#E2E8F0] px-5 py-5 sm:px-8 sm:py-6">
           <div
-            className="h-10 w-10 shrink-0 rounded-[6px] border border-[#E2E8F0]"
+            className="h-12 w-12 shrink-0 rounded-[6px] border border-[#E2E8F0]"
             style={{ backgroundColor: previewColor }}
           />
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-sm font-semibold text-[#0F172A]">
+            <h2 className="truncate text-base font-semibold text-[#0F172A]">
               {color.color_name}
             </h2>
-            <p className="text-[11px] text-gray-500">{color.color_code}</p>
+            <p className="text-xs text-gray-500">{color.color_code}</p>
           </div>
           <button
             onClick={handleClose}
@@ -307,7 +307,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
 
         <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
           {/* 左侧：配方表 */}
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto border-b border-[#E2E8F0] px-4 py-4 sm:px-8 sm:py-6 lg:border-b-0 lg:border-r">
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto border-b border-[#E2E8F0] px-5 py-5 sm:px-10 sm:py-8 lg:border-b-0 lg:border-r">
             {formulas.length > 1 && (
               <div className="mb-4 flex flex-wrap gap-1.5">
                 {formulas.map((f, idx) => {
@@ -375,7 +375,7 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
           </div>
 
           {/* 右侧：颜色预览与信息 */}
-          <div className="flex w-full shrink-0 flex-col overflow-y-auto lg:w-80">
+          <div className="flex w-full shrink-0 flex-col overflow-y-auto lg:w-[420px]">
             <ColorPreviewPanel
               hexInput={hexInput}
               onChange={setHexInput}
