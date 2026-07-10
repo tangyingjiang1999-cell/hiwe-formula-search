@@ -143,7 +143,7 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
                       className="h-8 w-full rounded-md border border-[#E2E8F0] bg-white px-2 text-left text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
                     />
                   </td>
-                  <td className="align-middle h-11 py-2 pr-3 text-right tabular-nums text-xs font-medium text-[#0F172A]">
+                  <td className="align-middle h-11 py-2 pr-3 text-left tabular-nums text-xs font-medium text-[#0F172A]">
                     {running.toFixed(1)}
                   </td>
                   <td className="align-middle h-11 py-2">
@@ -162,7 +162,7 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
               <td className="py-3 pr-3 text-center text-[11px] font-medium text-[#64748B]">
                 {t.totalWeightLabel}
               </td>
-              <td className="py-3 pr-3 text-center tabular-nums text-xs font-semibold text-[#0F172A]">
+              <td className="py-3 pr-3 text-left tabular-nums text-xs font-semibold text-[#0F172A]">
                 {totalWeight.toFixed(1)} g
               </td>
               <td className="py-3"></td>
