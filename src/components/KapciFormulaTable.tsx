@@ -133,14 +133,14 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
                 <tr key={comp.toner_code} className="border-b border-zinc-100 last:border-b-0">
                   <td className="align-middle h-11 py-2 pr-3 font-mono text-[11px] text-[#94A3B8]">{comp.toner_code}</td>
                   <td className="align-middle h-11 py-2 pr-3 text-xs text-[#0F172A]">{comp.toner_name}</td>
-                  <td className="align-middle h-11 py-2 pr-3 text-right">
+                  <td className="align-middle h-11 py-2 pr-3 text-left">
                     <input
                       type="number"
                       min={0}
                       step={0.1}
                       value={weights[idx] ?? ""}
                       onChange={(e) => handleWeightChange(idx, e.target.value)}
-                      className="h-8 w-full rounded-md border border-[#E2E8F0] bg-white px-2 text-right text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+                      className="h-8 w-full rounded-md border border-[#E2E8F0] bg-white px-2 text-left text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
                     />
                   </td>
                   <td className="align-middle h-11 py-2 pr-3 text-right tabular-nums text-xs font-medium text-[#0F172A]">
