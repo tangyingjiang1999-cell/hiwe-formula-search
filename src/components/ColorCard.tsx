@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, useState } from "react";
-import type { SearchResult, Formula } from "@/types";
+import { memo } from "react";
+import type { SearchResult } from "@/types";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
 import { useLang } from "@/components/LanguageContext";
-import FormulaComponentsTable from "./FormulaComponentsTable";
 
 interface ColorCardProps {
   result: SearchResult;
@@ -17,8 +16,6 @@ const ColorCard = memo(function ColorCard({
 }: ColorCardProps) {
   const { color, formulas } = result;
   const { t } = useLang();
-  const [expanded, setExpanded] = useState(false);
-  const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
 
   const typeInfo = COLOR_TYPE_MAP[color.color_type] ?? {
     label: color.color_type,
@@ -31,21 +28,23 @@ const ColorCard = memo(function ColorCard({
   };
   const typeLabel = typeLabelMap[color.color_type] ?? color.color_type;
 
-  function toggleExpanded() {
-    setExpanded(!expanded);
-    if (expanded) setActiveFormulaIdx(0);
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpenDetail(result);
+    }
   }
 
-  const activeFormula: Formula | undefined = formulas[activeFormulaIdx];
-
   return (
-    <div className="mb-3 rounded-xl border border-[#E5E7EB] bg-white transition-shadow duration-200 ease-out hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] last:mb-0">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpenDetail(result)}
+      onKeyDown={handleKeyDown}
+      className="mb-3 cursor-pointer rounded-xl border border-[#E5E7EB] bg-white transition-shadow duration-200 ease-out hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] last:mb-0"
+    >
       <div className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
-        <button
-          type="button"
-          onClick={toggleExpanded}
-          className="flex min-w-0 flex-1 items-center gap-4 text-left"
-        >
+        <div className="flex min-w-0 flex-1 items-center gap-4 text-left">
           <div
             className="h-10 w-10 shrink-0 rounded-[6px] border border-[#E5E7EB]"
             style={{ backgroundColor: color.hex_preview }}
@@ -56,12 +55,12 @@ const ColorCard = memo(function ColorCard({
             </p>
             <p className="text-[11px] text-gray-500">{color.color_code}</p>
           </div>
-        </button>
+        </div>
 
         <div className="flex items-center gap-2">
           <span
             className={[
-              "shrink-0 rounded-[6px] px-2 py-0.5 text-[10px] font-medium font-medium",
+              "shrink-0 rounded-[6px] px-2 py-0.5 text-[10px] font-medium",
               typeInfo.badge,
             ].join(" ")}
           >
@@ -72,103 +71,15 @@ const ColorCard = memo(function ColorCard({
             {t.formulasCount(formulas.length)}
           </span>
 
-          <button
-            type="button"
-            onClick={toggleExpanded}
-            className="shrink-0"
-            aria-label={expanded ? t.collapse : t.expand}
+          <svg
+            className="h-4 w-4 text-[#9CA3AF]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-            <svg
-              className={[
-                "h-4 w-4 text-[#9CA3AF] transition-transform duration-150",
-                expanded ? "rotate-180" : "",
-              ].join(" ")}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDetail(result);
-            }}
-            className="shrink-0 rounded-md border border-[#D1D5DB] px-2.5 py-1 text-[11px] text-gray-500 font-medium text-[#111827] transition-all duration-200 ease-out hover:bg-[#F9FAFB]"
-          >
-            {t.detail}
-          </button>
-        </div>
-      </div>
-
-      <div
-        className={[
-          "overflow-hidden transition-all duration-150 ease-in-out",
-          expanded ? "max-h-[1200px] opacity-100" : "max-h-0 opacity-0",
-        ].join(" ")}
-      >
-        <div className="border-t border-[#E5E7EB] px-5 pb-4 pt-3">
-          {formulas.length > 1 ? (
-            <div className="mb-3 flex flex-wrap gap-1.5">
-              {formulas.map((f, idx) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => setActiveFormulaIdx(idx)}
-                  className={[
-                    "flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all duration-200 ease-out",
-                    idx === activeFormulaIdx
-                      ? "bg-[#111827] text-white"
-                      : "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]",
-                  ].join(" ")}
-                >
-                  {color.variants.find((v) => v.id === f.variant_id)?.name ??
-                    f.variant_id}
-                </button>
-              ))}
-            </div>
-          ) : null}
-
-          {activeFormula && (
-            <div className="animate-[fadeIn_150ms_ease-in-out]">
-              <div className="mb-3 flex items-center gap-2 text-[11px] text-gray-500 text-[#6B7280]">
-                <span>
-                  {color.variants.find(
-                    (v) => v.id === activeFormula.variant_id,
-                  )?.name ?? activeFormula.variant_id}
-                </span>
-                <span className="text-[#D1D5DB]">|</span>
-                <span>{t.version} {activeFormula.version}</span>
-                <span className="text-[#D1D5DB]">|</span>
-                <span
-                  className={[
-                    "rounded px-1.5 py-px text-[10px] font-medium font-semibold",
-                    activeFormula.paint_system === "2K"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-emerald-100 text-emerald-700",
-                  ].join(" ")}
-                >
-                  {activeFormula.paint_system}
-                </span>
-              </div>
-
-              <FormulaComponentsTable formula={activeFormula} />
-
-              {activeFormula.notes && (
-                <p className="mt-3 text-[11px] text-gray-500 text-[#6B7280]">
-                  <span className="font-semibold text-[#111827]">{t.paintSystemNotes}: </span>
-                  {activeFormula.notes}
-                </p>
-              )}
-              <p className="mt-1 text-[11px] text-gray-500 text-[#9CA3AF]">
-                {t.updatedLabel} {activeFormula.updated_at}
-              </p>
-            </div>
-          )}
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
         </div>
       </div>
     </div>

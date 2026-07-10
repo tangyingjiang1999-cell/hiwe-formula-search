@@ -139,6 +139,19 @@ interface I18nDict {
   copySuccess: string;
   copyFail: string;
 
+  // Kapci-style formula modal
+  weight: string;
+  accum: string;
+  massTone: string;
+  colorPreview: string;
+  hexInputLabel: string;
+  tabColorInfo: string;
+  tabColorDocs: string;
+  tabPlasticParts: string;
+  manufacturerLabel: string;
+  emptyState: string;
+  totalWeightLabel: string;
+
   // SearchResults
   searchHint: string;
   noResults: string;
@@ -193,6 +206,9 @@ const dict = (d: Omit<I18nDict,
   | "registerButton" | "registerConfirmLabel" | "registerConfirmPlaceholder" | "registerSuccess"
   | "registerErrorExists" | "registerErrorFormat" | "registerErrorPassword" | "registerErrorMismatch"
   | "registerLoginLink" | "registerErrorFailed" | "backToLogin" | "haveAccount" | "loginLink"
+  | "weight" | "accum" | "massTone" | "colorPreview" | "hexInputLabel"
+  | "tabColorInfo" | "tabColorDocs" | "tabPlasticParts"
+  | "manufacturerLabel" | "emptyState" | "totalWeightLabel"
 > & {
   formulasCount?: (n: number) => string;
   foundCount?: (n: number) => string;
@@ -219,6 +235,17 @@ const dict = (d: Omit<I18nDict,
   registerErrorMismatch?: string;
   registerLoginLink?: string;
   registerErrorFailed?: string;
+  weight?: string;
+  accum?: string;
+  massTone?: string;
+  colorPreview?: string;
+  hexInputLabel?: string;
+  tabColorInfo?: string;
+  tabColorDocs?: string;
+  tabPlasticParts?: string;
+  manufacturerLabel?: string;
+  emptyState?: string;
+  totalWeightLabel?: string;
 }): I18nDict => ({
   formulasCount: d.formulasCount ?? ((n) => plural(n, "formula", "formulas")),
   foundCount: d.foundCount ?? ((n) => `Found ${n} color${n > 1 ? "s" : ""}`),
@@ -246,6 +273,18 @@ const dict = (d: Omit<I18nDict,
   backToLogin: d.backToLogin ?? "Back to login",
   haveAccount: d.haveAccount ?? "Already have an account?",
   loginLink: d.loginLink ?? "Log in",
+  // Kapci-style formula modal defaults
+  weight: d.weight ?? "Weight",
+  accum: d.accum ?? "Accum",
+  massTone: d.massTone ?? "Mass Tone",
+  colorPreview: d.colorPreview ?? "Color Preview",
+  hexInputLabel: d.hexInputLabel ?? "Hex Color",
+  tabColorInfo: d.tabColorInfo ?? "Color Information",
+  tabColorDocs: d.tabColorDocs ?? "Color Documents",
+  tabPlasticParts: d.tabPlasticParts ?? "Plastic Parts",
+  manufacturerLabel: d.manufacturerLabel ?? "Manufacturer",
+  emptyState: d.emptyState ?? "No data available",
+  totalWeightLabel: d.totalWeightLabel ?? "Total",
   ...d,
 });
 
@@ -327,6 +366,11 @@ export const i18n: Record<Lang, I18nDict> = {
     colorTypeSolidLabel: "Solid", colorTypeMetallicLabel: "Metallic", colorTypePearlLabel: "Pearl",
     colorTypeMatteLabel: "Matte", colorTypeCandyLabel: "Candy", colorTypeSpecialLabel: "Special",
     copySuccess: "Copied to clipboard", copyFail: "Copy failed, please retry",
+
+    weight: "Weight", accum: "Accum", massTone: "Mass Tone",
+    colorPreview: "Color Preview", hexInputLabel: "Hex Color",
+    tabColorInfo: "Color Information", tabColorDocs: "Color Documents", tabPlasticParts: "Plastic Parts",
+    manufacturerLabel: "Manufacturer", emptyState: "No data available", totalWeightLabel: "Total",
 
     searchHint: "Enter search criteria on the left",
     noResults: "No matching colors found",
@@ -433,6 +477,11 @@ export const i18n: Record<Lang, I18nDict> = {
     colorTypeSolidLabel: "实色", colorTypeMetallicLabel: "金属漆", colorTypePearlLabel: "珠光漆",
     colorTypeMatteLabel: "哑光", colorTypeCandyLabel: "糖果漆", colorTypeSpecialLabel: "特殊漆",
     copySuccess: "已复制到剪贴板", copyFail: "复制失败，请重试",
+
+    weight: "用量(g)", accum: "累计(g)", massTone: "色相",
+    colorPreview: "颜色预览", hexInputLabel: "色值",
+    tabColorInfo: "颜色信息", tabColorDocs: "颜色文档", tabPlasticParts: "塑料件",
+    manufacturerLabel: "品牌厂商", emptyState: "暂无数据", totalWeightLabel: "总计",
 
     searchHint: "请在左侧输入搜索条件",
     noResults: "未找到匹配的颜色配方",

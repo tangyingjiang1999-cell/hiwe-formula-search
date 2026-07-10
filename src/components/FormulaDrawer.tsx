@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { SearchResult, Formula } from "@/types";
+import type { SearchResult, Formula, Color } from "@/types";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
 import { useLang } from "@/components/LanguageContext";
-import FormulaComponentsTable from "./FormulaComponentsTable";
+import { cn } from "@/lib/utils";
+import KapciFormulaTable from "./KapciFormulaTable";
 import Toast from "./Toast";
 
 interface FormulaDrawerProps {
@@ -48,12 +49,129 @@ function formatFormulaAsText(
   return lines.join("\n");
 }
 
+const HEX_RE = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+function parseHexInput(raw: string, fallback: string): string {
+  const trimmed = raw.trim();
+  if (!HEX_RE.test(trimmed)) return fallback;
+  return trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
+}
+
+function ColorPreviewPanel({
+  hexInput,
+  onChange,
+  previewColor,
+  label,
+}: {
+  hexInput: string;
+  onChange: (val: string) => void;
+  previewColor: string;
+  label: string;
+}) {
+  const isValid = HEX_RE.test(hexInput.trim());
+
+  return (
+    <div className="p-4 sm:p-5">
+      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+        {label}
+      </h3>
+      <div
+        className="h-40 w-full rounded-lg border border-[#E2E8F0] shadow-inner sm:h-48"
+        style={{ backgroundColor: previewColor }}
+      />
+      <div className="mt-3">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-[#64748B]">#</span>
+          <input
+            type="text"
+            value={hexInput.replace(/^#/, "")}
+            onChange={(e) => onChange(e.target.value)}
+            className={cn(
+              "flex-1 rounded-md border bg-white px-3 py-2 text-sm uppercase text-[#0F172A] outline-none transition-colors",
+              isValid
+                ? "border-[#E2E8F0] focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+                : "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200"
+            )}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FormulaInfoTabs({
+  color,
+  make,
+}: {
+  color: Color;
+  make: string;
+}) {
+  const { t } = useLang();
+  const [activeTab, setActiveTab] = useState<"info" | "docs" | "plastic">("info");
+  const years = color.variants.map((v) => v.year_range).join(", ");
+
+  const tabs = [
+    { key: "info" as const, label: t.tabColorInfo },
+    { key: "docs" as const, label: t.tabColorDocs },
+    { key: "plastic" as const, label: t.tabPlasticParts },
+  ];
+
+  return (
+    <div className="flex flex-col border-t border-[#E2E8F0]">
+      <div className="flex border-b border-[#E2E8F0]">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setActiveTab(tab.key)}
+            className={cn(
+              "flex-1 px-2 py-2.5 text-center text-[11px] font-medium transition-colors sm:text-xs",
+              activeTab === tab.key
+                ? "border-b-2 border-[#0D9488] text-[#0D9488]"
+                : "text-[#64748B] hover:text-[#0F172A]"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="p-4 sm:p-5">
+        {activeTab === "info" && (
+          <div className="space-y-3 text-sm">
+            <InfoRow label={t.manufacturerLabel} value={make} />
+            <InfoRow label={t.codeLabel} value={color.color_code} />
+            <InfoRow label={t.colorName} value={color.color_name} />
+            <InfoRow label={t.yearsLabel} value={years || "-"} />
+          </div>
+        )}
+
+        {(activeTab === "docs" || activeTab === "plastic") && (
+          <div className="py-6 text-center text-[11px] text-[#94A3B8]">
+            {t.emptyState}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="w-24 shrink-0 text-[11px] text-[#64748B] sm:w-28">{label}</span>
+      <span className="min-w-0 flex-1 text-xs text-[#0F172A]">{value}</span>
+    </div>
+  );
+}
+
 export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
   const { t } = useLang();
   const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
   const [visible, setVisible] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
+  const [hexInput, setHexInput] = useState("");
 
   useEffect(() => {
     fetch("/api/brands")
@@ -70,9 +188,11 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
 
   useEffect(() => {
     if (result) {
-      // result 变化时重置选中配方索引，属于派生状态同步
+      // result 变化时重置选中配方索引与 hex 输入
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFormulaIdx(0);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setHexInput(result.color.hex_preview);
       requestAnimationFrame(() => setVisible(true));
       document.getElementById("page-content")?.classList.add("blur-bg");
     } else {
@@ -109,7 +229,8 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
   const make =
     brands.find((m) => m.id === color.make_id)?.name ?? color.make_id;
   const activeFormula = formulas[activeFormulaIdx];
-  const years = color.variants.map((v) => v.year_range).join(", ");
+
+  const previewColor = parseHexInput(hexInput, color.hex_preview);
 
   function handleCopy() {
     if (!activeFormula) return;
@@ -127,24 +248,24 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
   return (
     <>
       <div
-        className={[
+        className={cn(
           "fixed inset-0 bg-black/40 transition-opacity duration-200",
-          visible ? "opacity-100" : "pointer-events-none opacity-0",
-        ].join(" ")}
+          visible ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
         style={{ zIndex: 999 }}
         onClick={handleClose}
         aria-hidden="true"
       />
 
       <div
-        className={[
+        className={cn(
           "fixed left-1/2 top-1/2 flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl",
-          "w-[92vw] max-w-2xl max-h-[80vh]",
+          "w-[95vw] max-w-5xl max-h-[90vh]",
           "transition-all duration-200 ease-out",
           visible
             ? "opacity-100 scale-100"
-            : "opacity-0 scale-[0.96] pointer-events-none",
-        ].join(" ")}
+            : "opacity-0 scale-[0.96] pointer-events-none"
+        )}
         style={{
           zIndex: 1000,
           transform: visible
@@ -152,10 +273,10 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
             : "translate(-50%, -50%) scale(0.96)",
         }}
       >
-        <div className="flex items-center gap-3 border-b border-[#E2E8F0] px-4 py-4 sm:px-8 sm:py-5 shrink-0">
+        <div className="flex shrink-0 items-center gap-3 border-b border-[#E2E8F0] px-4 py-4 sm:px-8 sm:py-5">
           <div
             className="h-10 w-10 shrink-0 rounded-[6px] border border-[#E2E8F0]"
-            style={{ backgroundColor: color.hex_preview }}
+            style={{ backgroundColor: previewColor }}
           />
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-sm font-semibold text-[#0F172A]">
@@ -184,107 +305,88 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-8 sm:py-6">
-          <div className="mb-6">
-            <h3 className="mb-3 text-[11px] text-gray-500 font-semibold uppercase tracking-wider text-[#94A3B8]">
-              {t.colorInfo}
-            </h3>
-            <div className="space-y-2 text-sm">
-              <KV label={t.makeLabel} value={make} />
-              <KV label={t.typeLabel}>
-                <span
-                  className={[
-                    "rounded-[6px] px-2 py-0.5 text-[10px] font-medium font-medium",
-                    typeInfo.badge,
-                  ].join(" ")}
-                >
-                  {typeLabel}
-                </span>
-              </KV>
-              <KV label={t.yearsLabel} value={years} />
-              <KV label={t.codeLabel} value={color.color_code} />
-            </div>
-          </div>
-
-          <div className="mb-5">
-          <h3 className="mb-3 text-[11px] text-gray-500 font-semibold uppercase tracking-wider text-[#94A3B8]">
-            {t.formulaVariants}
-          </h3>
-            <div className="flex flex-col gap-1.5">
-              {formulas.map((f, idx) => {
-                const variantName =
-                  color.variants.find((v) => v.id === f.variant_id)?.name ??
-                  f.variant_id;
-                const isActive = idx === activeFormulaIdx;
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setActiveFormulaIdx(idx)}
-                    className={[
-                      "flex items-center justify-between rounded-md px-4 py-2.5 text-left transition-colors",
-                      isActive
-                        ? "bg-[#0F172A]/10 text-[#0F172A] ring-1 ring-[#0F172A]/20"
-                        : "bg-slate-50 text-[#64748B] hover:bg-slate-100",
-                    ].join(" ")}
-                  >
-                    <span className="font-semibold">{variantName}</span>
-                    <span
-                      className={[
-                        "rounded px-1.5 py-px text-[10px] font-medium font-semibold",
-                        f.paint_system === "2K"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-emerald-100 text-emerald-700",
-                      ].join(" ")}
+        <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
+          {/* 左侧：配方表 */}
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto border-b border-[#E2E8F0] px-4 py-4 sm:px-8 sm:py-6 lg:border-b-0 lg:border-r">
+            {formulas.length > 1 && (
+              <div className="mb-4 flex flex-wrap gap-1.5">
+                {formulas.map((f, idx) => {
+                  const variantName =
+                    color.variants.find((v) => v.id === f.variant_id)?.name ??
+                    f.variant_id;
+                  const isActive = idx === activeFormulaIdx;
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => setActiveFormulaIdx(idx)}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-all duration-200 ease-out",
+                        isActive
+                          ? "bg-[#0D9488] text-white"
+                          : "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]"
+                      )}
                     >
-                      {f.paint_system}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                      {variantName}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {activeFormula && (
+              <div className="animate-[fadeIn_150ms_ease-in-out]">
+                <div className="mb-3 flex items-center gap-2 text-[11px] text-[#6B7280]">
+                  <span>{t.version} {activeFormula.version}</span>
+                  <span className="text-[#CBD5E1]">|</span>
+                  <span
+                    className={cn(
+                      "rounded px-1.5 py-px text-[10px] font-semibold",
+                      activeFormula.paint_system === "2K"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-emerald-100 text-emerald-700"
+                    )}
+                  >
+                    {activeFormula.paint_system}
+                  </span>
+                </div>
+
+                <KapciFormulaTable
+                  key={activeFormula.id}
+                  formula={activeFormula}
+                />
+
+                {activeFormula.notes && (
+                  <div className="mt-4 rounded-md border border-amber-200 bg-amber-50/50 px-4 py-3">
+                    <p className="text-[11px] font-semibold text-amber-800">
+                      {t.notesLabel}
+                    </p>
+                    <p className="mt-1 text-[11px] text-amber-700">
+                      {activeFormula.notes}
+                    </p>
+                  </div>
+                )}
+
+                <p className="mt-3 text-[11px] text-[#9CA3AF]">
+                  {t.updatedLabel} {activeFormula.updated_at}
+                </p>
+              </div>
+            )}
           </div>
 
-          {activeFormula && (
-            <div className="animate-[fadeIn_150ms_ease-in-out]">
-              <h3 className="mb-3 text-[11px] text-gray-500 font-semibold uppercase tracking-wider text-[#94A3B8]">
-                {t.components}
-              </h3>
-
-              <div className="mb-3 flex items-center gap-2 text-[11px] text-gray-500 text-[#64748B]">
-                <span>{t.version} {activeFormula.version}</span>
-                <span className="text-[#CBD5E1]">|</span>
-                <span
-                  className={[
-                    "rounded px-1.5 py-px text-[10px] font-medium font-semibold",
-                    activeFormula.paint_system === "2K"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-emerald-100 text-emerald-700",
-                  ].join(" ")}
-                >
-                  {activeFormula.paint_system}
-                </span>
-              </div>
-
-              <FormulaComponentsTable formula={activeFormula} />
-
-              {activeFormula.notes && (
-                <div className="mt-4 rounded-md border border-amber-200 bg-amber-50/50 px-4 py-3">
-                  <p className="text-[11px] text-gray-500 font-semibold text-amber-800">{t.notesLabel}</p>
-                  <p className="mt-1 text-[11px] text-gray-500 text-amber-700">
-                    {activeFormula.notes}
-                  </p>
-                </div>
-              )}
-
-              <p className="mt-3 text-[11px] text-gray-500 text-zinc-400">
-                {t.updatedLabel} {activeFormula.updated_at}
-              </p>
-            </div>
-          )}
+          {/* 右侧：颜色预览与信息 */}
+          <div className="flex w-full shrink-0 flex-col overflow-y-auto lg:w-80">
+            <ColorPreviewPanel
+              hexInput={hexInput}
+              onChange={setHexInput}
+              previewColor={previewColor}
+              label={t.colorPreview}
+            />
+            <FormulaInfoTabs color={color} make={make} />
+          </div>
         </div>
 
-        <div className="flex gap-3 border-t border-[#e5e7eb] px-4 py-3 sm:px-5 sm:py-4">
+        <div className="flex shrink-0 gap-3 border-t border-[#e5e7eb] px-4 py-3 sm:px-5 sm:py-4">
           <button
             onClick={handlePrint}
             className="flex flex-1 items-center justify-center gap-2 rounded-md border border-[#e5e7eb] bg-white px-4 py-2.5 text-xs font-semibold text-[#1f2937] transition-colors hover:bg-zinc-50"
@@ -330,22 +432,5 @@ export default function FormulaDrawer({ result, onClose }: FormulaDrawerProps) {
         <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
       )}
     </>
-  );
-}
-
-function KV({
-  label,
-  value,
-  children,
-}: {
-  label: string;
-  value?: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="w-24 shrink-0 text-[11px] text-gray-500 text-[#6b7280] sm:w-36">{label}</span>
-      {children ?? <span className="text-xs text-[#1f2937]">{value}</span>}
-    </div>
   );
 }
