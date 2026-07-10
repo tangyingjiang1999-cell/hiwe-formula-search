@@ -105,7 +105,14 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[400px] text-xs">
+        <table className="w-full min-w-[480px] table-fixed text-xs">
+          <colgroup>
+            <col className="w-[22%]" />
+            <col className="w-[30%]" />
+            <col className="w-[20%]" />
+            <col className="w-[14%]" />
+            <col className="w-[14%]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-[#E2E8F0] text-left text-[#64748B]">
               <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.tonerCode}</th>
@@ -133,7 +140,7 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
                       step={0.1}
                       value={weights[idx] ?? ""}
                       onChange={(e) => handleWeightChange(idx, e.target.value)}
-                      className="h-8 w-24 rounded-md border border-[#E2E8F0] bg-white px-2 text-right text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+                      className="h-8 w-full rounded-md border border-[#E2E8F0] bg-white px-2 text-right text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
                     />
                   </td>
                   <td className="align-middle h-11 py-2 pr-3 text-right tabular-nums text-xs font-medium text-[#0F172A]">
@@ -141,7 +148,7 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
                   </td>
                   <td className="align-middle h-11 py-2">
                     <div
-                      className="h-7 w-14 rounded border border-[#E2E8F0]"
+                      className="h-7 w-full rounded border border-[#E2E8F0]"
                       style={{ backgroundColor: massToneColor(comp) }}
                     />
                   </td>
