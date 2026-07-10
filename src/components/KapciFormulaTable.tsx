@@ -126,7 +126,7 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
                 <tr key={comp.toner_code} className="border-b border-zinc-100 last:border-b-0">
                   <td className="align-middle h-11 py-2 pr-3 font-mono text-[11px] text-[#94A3B8]">{comp.toner_code}</td>
                   <td className="align-middle h-11 py-2 pr-3 text-xs text-[#0F172A]">{comp.toner_name}</td>
-                  <td className="align-middle h-11 py-2 pr-3">
+                  <td className="align-middle h-11 py-2 pr-3 text-right">
                     <input
                       type="number"
                       min={0}
