@@ -271,7 +271,7 @@ export default function FormulasPanel() {
             + 添加色母
           </button>
         </div>
-        <div className="overflow-x-auto rounded border border-gray-200">
+        <div className="min-h-[320px] overflow-x-auto rounded border border-gray-200">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50 text-left text-[10px] uppercase text-gray-500">
