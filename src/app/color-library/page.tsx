@@ -12,7 +12,7 @@ function TonerCard({ code, tradeName, hex }: { code: string; tradeName: string; 
   const swatchStyle: React.CSSProperties = {
     backgroundColor: hex,
     backgroundImage:
-      "linear-gradient(to bottom, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0.10) 10%, rgba(0,0,0,0.02) 22%, rgba(255,255,255,0.12) 30%, rgba(255,255,255,0.35) 40%, rgba(255,255,255,0.52) 50%, rgba(255,255,255,0.35) 60%, rgba(255,255,255,0.12) 70%, rgba(0,0,0,0.02) 78%, rgba(0,0,0,0.10) 90%, rgba(0,0,0,0.24) 100%)",
+      "linear-gradient(to bottom, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.16) 8%, rgba(0,0,0,0.04) 18%, rgba(255,255,255,0.08) 28%, rgba(255,255,255,0.28) 38%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0.28) 62%, rgba(255,255,255,0.08) 72%, rgba(0,0,0,0.04) 82%, rgba(0,0,0,0.16) 92%, rgba(0,0,0,0.30) 100%)",
   };
 
   return (
