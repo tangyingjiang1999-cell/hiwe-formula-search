@@ -8,20 +8,25 @@ import Footer from "@/components/Footer";
 import { TONERS, TONER_CATEGORIES } from "@/data/toners";
 import type { TonerCategory } from "@/types";
 
-function TonerCard({ code, tradeName, nameZh, hex }: { code: string; tradeName: string; nameZh: string; hex: string }) {
+function TonerCard({ code, tradeName, hex }: { code: string; tradeName: string; hex: string }) {
+  const swatchStyle: React.CSSProperties = {
+    backgroundColor: hex,
+    backgroundImage:
+      "linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.12) 15%, rgba(0,0,0,0.04) 30%, rgba(0,0,0,0) 40%, rgba(255,255,255,0.25) 46%, rgba(255,255,255,0.48) 50%, rgba(255,255,255,0.25) 54%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.04) 70%, rgba(0,0,0,0.12) 85%, rgba(0,0,0,0.28) 100%)",
+  };
+
   return (
     <div className="group cursor-pointer rounded-lg border border-gray-200 bg-white transition-all hover:border-teal-500 hover:shadow-md">
-      {/* 颜色色块 */}
+      {/* 颜色色块 — 金属拉丝渐变 */}
       <div
         className="h-20 rounded-t-lg"
-        style={{ backgroundColor: hex }}
+        style={swatchStyle}
       />
 
       {/* 信息区 */}
       <div className="space-y-0.5 p-3">
         <p className="font-mono text-[11px] font-semibold text-gray-800">{code}</p>
         <p className="text-xs font-medium text-gray-900 truncate">{tradeName}</p>
-        <p className="text-[11px] text-gray-500">{nameZh}</p>
       </div>
     </div>
   );
@@ -117,7 +122,6 @@ export default function TonerPage() {
                 key={toner.code}
                 code={toner.code}
                 tradeName={toner.tradeName}
-                nameZh={toner.nameZh}
                 hex={toner.hex}
               />
             ))}
