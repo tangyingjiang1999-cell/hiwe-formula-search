@@ -498,7 +498,7 @@ export default function FormulasPanel() {
 
         {/* 色母组件表 */}
         {form.formula_type === "Pearl Paint" ? (
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="flex flex-col gap-4">
             {PEARL_GROUPS.map((g) => renderComponentTable(g))}
           </div>
         ) : (
