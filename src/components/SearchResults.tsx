@@ -12,12 +12,12 @@ export interface SearchResultsProps {
   onOpenFormula: (row: FormulaTableRow) => void;
 }
 
-// 生成 Kapci 风格渐变色：主色为底，中间高光过渡，两侧同色相阴影
+// 生成 Kapci 风格渐变色：主色为底，水平方向中间高光，上下同色相阴影
 function colorSwatchStyle(hex: string): React.CSSProperties {
   return {
     backgroundColor: hex,
     backgroundImage:
-      "linear-gradient(to right, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0) 28%, rgba(255,255,255,0.38) 50%, rgba(0,0,0,0) 72%, rgba(0,0,0,0.28) 100%)",
+      "linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 35%, rgba(255,255,255,0.42) 50%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.22) 100%)",
   };
 }
 
