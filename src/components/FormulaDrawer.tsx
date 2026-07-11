@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import type { SearchResult, Formula, Color } from "@/types";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import type { SearchResult, Formula, FormulaComponent, Color, ComponentGroup } from "@/types";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
 import { useLang } from "@/components/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -14,15 +14,29 @@ interface FormulaDrawerProps {
   initialFormulaIdx?: number;
 }
 
+function formatComponents(components: FormulaComponent[]): string[] {
+  const lines: string[] = [];
+  lines.push("Toner Code  |  Toner Name       |    %  |  g/100g");
+  lines.push("-".repeat(50));
+  for (const c of components) {
+    lines.push(
+      `${c.toner_code.padEnd(12)}|  ${c.toner_name.padEnd(17)}|  ${String(
+        c.percentage
+      ).padStart(4)}% |  ${String(c.grams_per_100g).padStart(6)}g`
+    );
+  }
+  return lines;
+}
+
 function formatFormulaAsText(
   result: SearchResult,
   activeFormula: Formula,
-  makeName: string,
+  makeName: string
 ): string {
   const make = makeName;
   const variantName =
-    result.color.variants.find((v) => v.id === activeFormula.variant_id)
-      ?.name ?? activeFormula.variant_id;
+    result.color.variants.find((v) => v.id === activeFormula.variant_id)?.name ??
+    activeFormula.variant_id;
 
   const lines: string[] = [];
   lines.push("=".repeat(50));
@@ -32,15 +46,28 @@ function formatFormulaAsText(
   lines.push(`Type: ${result.color.color_type}`);
   lines.push(`Variant: ${variantName}`);
   lines.push(`Paint System: ${activeFormula.paint_system}`);
+  lines.push(`Formula Type: ${activeFormula.formula_type}`);
   lines.push(`Version: ${activeFormula.version}`);
   lines.push("-".repeat(50));
-  lines.push("Toner Code  |  Toner Name       |    %  |  g/100g");
-  lines.push("-".repeat(50));
-  for (const c of activeFormula.components) {
+
+  if (activeFormula.formula_type === "Pearl Paint") {
+    lines.push("[Pearl Paint]");
     lines.push(
-      `${c.toner_code.padEnd(12)}|  ${c.toner_name.padEnd(17)}|  ${String(c.percentage).padStart(4)}% |  ${String(c.grams_per_100g).padStart(6)}g`,
+      ...formatComponents(
+        activeFormula.components.filter((c) => c.component_group === "Pearl Paint")
+      )
     );
+    lines.push("");
+    lines.push("[Ground Paint]");
+    lines.push(
+      ...formatComponents(
+        activeFormula.components.filter((c) => c.component_group === "Ground Paint")
+      )
+    );
+  } else {
+    lines.push(...formatComponents(activeFormula.components));
   }
+
   lines.push("-".repeat(50));
   if (activeFormula.notes) {
     lines.push(`Notes: ${activeFormula.notes}`);
@@ -173,6 +200,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
   const [hexInput, setHexInput] = useState("");
+  const [activeGroup, setActiveGroup] = useState<ComponentGroup>("Pearl Paint");
 
   useEffect(() => {
     fetch("/api/brands")
@@ -182,9 +210,12 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
   }, []);
 
   const typeLabelMap: Record<string, string> = {
-    solid: t.colorTypeSolidLabel, metallic: t.colorTypeMetallicLabel,
-    pearl: t.colorTypePearlLabel, matte: t.colorTypeMatteLabel,
-    candy: t.colorTypeCandyLabel, special: t.colorTypeSpecialLabel,
+    solid: t.colorTypeSolidLabel,
+    metallic: t.colorTypeMetallicLabel,
+    pearl: t.colorTypePearlLabel,
+    matte: t.colorTypeMatteLabel,
+    candy: t.colorTypeCandyLabel,
+    special: t.colorTypeSpecialLabel,
   };
 
   useEffect(() => {
@@ -194,6 +225,8 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
       setActiveFormulaIdx(initialFormulaIdx ?? 0);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setHexInput(result.color.hex_preview);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveGroup("Pearl Paint");
       requestAnimationFrame(() => setVisible(true));
       document.getElementById("page-content")?.classList.add("blur-bg");
     } else {
@@ -227,18 +260,25 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
     badge: "bg-zinc-100 text-zinc-600",
   };
   const typeLabel = typeLabelMap[color.color_type] ?? color.color_type;
-  const make =
-    brands.find((m) => m.id === color.make_id)?.name ?? color.make_id;
+  const make = brands.find((m) => m.id === color.make_id)?.name ?? color.make_id;
   const activeFormula = formulas[activeFormulaIdx];
 
   const previewColor = parseHexInput(hexInput, color.hex_preview);
+
+  const displayedFormula: Formula = useMemo(() => {
+    if (activeFormula.formula_type !== "Pearl Paint") return activeFormula;
+    return {
+      ...activeFormula,
+      components: activeFormula.components.filter((c) => c.component_group === activeGroup),
+    };
+  }, [activeFormula, activeGroup]);
 
   function handleCopy() {
     if (!activeFormula) return;
     const text = formatFormulaAsText(result!, activeFormula, make);
     navigator.clipboard.writeText(text).then(
       () => setToastMsg(t.copySuccess),
-      () => setToastMsg(t.copyFail),
+      () => setToastMsg(t.copyFail)
     );
   }
 
@@ -285,6 +325,27 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
             </h2>
             <p className="text-xs text-gray-500">{color.color_code}</p>
           </div>
+
+          {activeFormula.formula_type === "Pearl Paint" && (
+            <div className="hidden items-center gap-1.5 sm:flex">
+              {(["Pearl Paint", "Ground Paint"] as ComponentGroup[]).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setActiveGroup(g)}
+                  className={cn(
+                    "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                    activeGroup === g
+                      ? "bg-[#0D9488] text-white"
+                      : "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]"
+                  )}
+                >
+                  {g === "Pearl Paint" ? t.pearlPaintLabel : t.groundPaintLabel}
+                </button>
+              ))}
+            </div>
+          )}
+
           <button
             onClick={handleClose}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#94A3B8] transition-colors hover:text-[#0F172A]"
@@ -305,6 +366,27 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
             </svg>
           </button>
         </div>
+
+        {/* 移动端 Pearl Paint 切换（小屏幕放到内容区上方） */}
+        {activeFormula.formula_type === "Pearl Paint" && (
+          <div className="flex items-center gap-1.5 border-b border-[#E2E8F0] px-5 py-2 sm:hidden">
+            {(["Pearl Paint", "Ground Paint"] as ComponentGroup[]).map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => setActiveGroup(g)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                  activeGroup === g
+                    ? "bg-[#0D9488] text-white"
+                    : "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]"
+                )}
+              >
+                {g === "Pearl Paint" ? t.pearlPaintLabel : t.groundPaintLabel}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
           {/* 左侧：配方表 */}
@@ -338,7 +420,9 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
             {activeFormula && (
               <div className="animate-[fadeIn_150ms_ease-in-out]">
                 <div className="mb-3 flex items-center gap-2 text-[11px] text-[#6B7280]">
-                  <span>{t.version} {activeFormula.version}</span>
+                  <span>
+                    {t.version} {activeFormula.version}
+                  </span>
                   <span className="text-[#CBD5E1]">|</span>
                   <span
                     className={cn(
@@ -350,11 +434,15 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
                   >
                     {activeFormula.paint_system}
                   </span>
+                  <span className="text-[#CBD5E1]">|</span>
+                  <span className="rounded bg-gray-100 px-1.5 py-px text-[10px] font-semibold text-gray-700">
+                    {activeFormula.formula_type}
+                  </span>
                 </div>
 
                 <KapciFormulaTable
-                  key={activeFormula.id}
-                  formula={activeFormula}
+                  key={`${activeFormula.id}-${activeGroup}`}
+                  formula={displayedFormula}
                 />
 
                 {activeFormula.notes && (
@@ -429,9 +517,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
         </div>
       </div>
 
-      {toastMsg && (
-        <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
-      )}
+      {toastMsg && <Toast message={toastMsg} onDone={() => setToastMsg(null)} />}
     </>
   );
 }

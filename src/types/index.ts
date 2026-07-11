@@ -23,6 +23,12 @@ export interface Color {
   variants: ColorVariant[]
 }
 
+// 配方类型
+export type FormulaType = "Single Stage" | "Two Stages" | "Pearl Paint";
+
+// Pearl Paint 分组
+export type ComponentGroup = "Pearl Paint" | "Ground Paint";
+
 // 调漆配方中的单个色母用量
 export interface FormulaComponent {
   toner_code: string      // 色母编号，例如 "HW-2001"
@@ -33,6 +39,7 @@ export interface FormulaComponent {
   rgb_r?: number          // RGB Red
   rgb_g?: number          // RGB Green
   rgb_b?: number          // RGB Blue
+  component_group?: ComponentGroup  // 仅 Pearl Paint 使用
 }
 
 // 完整调漆配方
@@ -42,7 +49,7 @@ export interface Formula {
   variant_id: string
   version: string          // 配方版本号，例如 "v1.2"
   paint_system: "1K" | "2K"  // 1K 还是 2K 体系
-  formula_type: "Basecoat" | "Clearcoat" | "Single Stage" | "Primer" | "Topcoat"
+  formula_type: FormulaType
   components: FormulaComponent[]
   notes: string            // 施工备注，例如 "建议喷涂2遍底色"
   updated_at: string

@@ -151,6 +151,8 @@ interface I18nDict {
   manufacturerLabel: string;
   emptyState: string;
   totalWeightLabel: string;
+  pearlPaintLabel: string;
+  groundPaintLabel: string;
 
   // SearchResults
   searchHint: string;
@@ -217,6 +219,7 @@ const dict = (d: Omit<I18nDict,
   | "weight" | "accum" | "massTone" | "colorPreview" | "hexInputLabel"
   | "tabColorInfo" | "tabColorDocs" | "tabPlasticParts"
   | "manufacturerLabel" | "emptyState" | "totalWeightLabel"
+  | "pearlPaintLabel" | "groundPaintLabel"
   | "versionLabel" | "pageSizeLabel" | "previousPage" | "nextPage" | "pageOf" | "foundFormulas"
 > & {
   formulasCount?: (n: number) => string;
@@ -255,6 +258,8 @@ const dict = (d: Omit<I18nDict,
   manufacturerLabel?: string;
   emptyState?: string;
   totalWeightLabel?: string;
+  pearlPaintLabel?: string;
+  groundPaintLabel?: string;
   versionLabel?: string;
   pageSizeLabel?: string;
   previousPage?: string;
@@ -300,6 +305,8 @@ const dict = (d: Omit<I18nDict,
   manufacturerLabel: d.manufacturerLabel ?? "Manufacturer",
   emptyState: d.emptyState ?? "No data available",
   totalWeightLabel: d.totalWeightLabel ?? "Total",
+  pearlPaintLabel: d.pearlPaintLabel ?? "Pearl Paint",
+  groundPaintLabel: d.groundPaintLabel ?? "Ground Paint",
   versionLabel: d.versionLabel ?? "Version",
   pageSizeLabel: d.pageSizeLabel ?? "Rows per page",
   previousPage: d.previousPage ?? "Previous",

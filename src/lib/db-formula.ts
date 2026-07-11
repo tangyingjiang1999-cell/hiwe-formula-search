@@ -11,7 +11,7 @@ import type {
 
 const DEFAULT_SETTINGS: AppSettings = {
   finishes: ["Solid", "Metallic", "Pearl", "Matte", "Candy"],
-  types: ["Basecoat", "Clearcoat", "Single Stage", "Primer", "Topcoat"],
+  types: ["Single Stage", "Two Stages", "Pearl Paint"],
   yearMin: 1990,
   yearMax: 2026,
 };
@@ -112,6 +112,9 @@ function mapFormulaRow(row: Record<string, unknown>): Formula {
       comp.rgb_r = c.rgb_r as number;
       comp.rgb_g = c.rgb_g as number;
       comp.rgb_b = c.rgb_b as number;
+    }
+    if (c.component_group != null) {
+      comp.component_group = c.component_group as FormulaComponent["component_group"];
     }
     return comp;
   });
@@ -243,6 +246,7 @@ export async function saveFormula(formula: Formula): Promise<Formula> {
       rgb_r: c.rgb_r ?? null,
       rgb_g: c.rgb_g ?? null,
       rgb_b: c.rgb_b ?? null,
+      component_group: c.component_group ?? null,
     }));
     const { error: insErr } = await supabaseAdmin.from("formula_components").insert(rows);
     if (insErr) throw insErr;

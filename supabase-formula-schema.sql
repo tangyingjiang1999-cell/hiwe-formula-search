@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS public.formulas (
   version TEXT NOT NULL DEFAULT 'v1',
   paint_system TEXT NOT NULL DEFAULT '2K'
     CHECK (paint_system IN ('1K', '2K')),
-  formula_type TEXT NOT NULL DEFAULT 'Basecoat'
-    CHECK (formula_type IN ('Basecoat', 'Clearcoat', 'Single Stage', 'Primer', 'Topcoat')),
+  formula_type TEXT NOT NULL DEFAULT 'Single Stage'
+    CHECK (formula_type IN ('Single Stage', 'Two Stages', 'Pearl Paint')),
   notes TEXT NOT NULL DEFAULT '',
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -119,7 +119,8 @@ CREATE TABLE IF NOT EXISTS public.formula_components (
   density NUMERIC(8,3),
   rgb_r INTEGER,
   rgb_g INTEGER,
-  rgb_b INTEGER
+  rgb_b INTEGER,
+  component_group TEXT CHECK (component_group IN ('Pearl Paint', 'Ground Paint'))
 );
 
 COMMENT ON TABLE public.formula_components IS '配方色母组件表';

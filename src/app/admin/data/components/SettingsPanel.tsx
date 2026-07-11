@@ -66,7 +66,7 @@ export default function SettingsPanel() {
             onChange={(e) => setTypesText(e.target.value)}
             rows={6}
             className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]"
-            placeholder={"Basecoat\nClearcoat\nSingle Stage\nPrimer\nTopcoat"}
+            placeholder={"Single Stage\nTwo Stages\nPearl Paint"}
           />
         </div>
         <div className="flex gap-4">
