@@ -123,7 +123,9 @@ export default function SiteHeader() {
                   sx={{
                     bgcolor: "#171717",
                     color: "#fff",
-                    "&:hover": { bgcolor: "#262626" },
+                    transition: "transform 0.1s, background-color 0.15s",
+                    "&:hover": { bgcolor: "#404040", color: "#fff" },
+                    "&:active": { transform: "scale(0.8)" },
                     textTransform: "none",
                     fontWeight: 600,
                   }}
