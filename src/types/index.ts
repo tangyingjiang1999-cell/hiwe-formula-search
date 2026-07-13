@@ -20,6 +20,7 @@ export interface Color {
   color_name: string      // 中英文颜色名，例如 "Super White / 超白"
   color_type: "solid" | "metallic" | "pearl" | "matte" | "candy" | "special"
   hex_preview: string     // 颜色预览 hex，例如 "#F5F5F0"
+  car_model?: string      // 车型，例如 "Camry" "Corolla"
   variants: ColorVariant[]
 }
 

@@ -130,20 +130,22 @@ export default function SearchResults({
 
       {/* 表格 */}
       <div className="overflow-x-auto rounded-lg border border-[#EBEBEB]">
-        <table className="w-full min-w-[760px] table-fixed text-left text-xs">
+        <table className="w-full min-w-[920px] table-fixed text-left text-xs">
           <colgroup>
-            <col className="w-[10%]" />
-            <col className="w-[20%]" />
-            <col className="w-[12%]" />
-            <col className="w-[23%]" />
+            <col className="w-[8%]" />
             <col className="w-[15%]" />
-            <col className="w-[13%]" />
+            <col className="w-[15%]" />
+            <col className="w-[11%]" />
+            <col className="w-[20%]" />
+            <col className="w-[15%]" />
+            <col className="w-[9%]" />
             <col className="w-[7%]" />
           </colgroup>
           <thead>
             <tr className="border-b border-[#EBEBEB] bg-[#F5F5F5] text-xs font-medium text-[#A1A1A1]">
               <th className="px-2 py-2.5"></th>
               <th className="px-2 py-2.5">{t.manufacturerLabel}</th>
+              <th className="px-2 py-2.5">{t.carModelLabel}</th>
               <th className="px-2 py-2.5">{t.codeLabel}</th>
               <th className="px-2 py-2.5">{t.colorName}</th>
               <th className="px-2 py-2.5">{t.yearsLabel}</th>
@@ -170,6 +172,12 @@ export default function SearchResults({
                 <td className="overflow-hidden px-2 py-2.5">
                   <span className="block truncate text-[#0F172A]">
                     {row.makeName}
+                  </span>
+                </td>
+                {/* Car model */}
+                <td className="overflow-hidden px-2 py-2.5">
+                  <span className="block truncate text-[#0F172A]">
+                    {row.color.car_model || "—"}
                   </span>
                 </td>
                 {/* Color Code */}

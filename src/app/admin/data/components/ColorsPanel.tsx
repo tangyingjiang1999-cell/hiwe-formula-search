@@ -20,6 +20,7 @@ export default function ColorsPanel() {
     color_name: "",
     color_type: "solid" as Color["color_type"],
     hex_preview: "#FFFFFF",
+    car_model: "",
   });
   const [variantIds, setVariantIds] = useState<string[]>([]);
   const [error, setError] = useState("");
@@ -46,7 +47,7 @@ export default function ColorsPanel() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ id: "", make_id: "", color_code: "", color_name: "", color_type: "solid", hex_preview: "#FFFFFF" });
+    setForm({ id: "", make_id: "", color_code: "", color_name: "", color_type: "solid", hex_preview: "#FFFFFF", car_model: "" });
     setVariantIds([]);
     setError("");
     idManuallyEdited.current = false;
@@ -62,6 +63,7 @@ export default function ColorsPanel() {
       color_name: color.color_name,
       color_type: color.color_type,
       hex_preview: color.hex_preview,
+      car_model: color.car_model ?? "",
     });
     setVariantIds(color.variants.map((v) => v.id));
     setError("");
@@ -121,6 +123,7 @@ export default function ColorsPanel() {
               <th className="px-4 py-3">预览</th>
               <th className="px-4 py-3">颜色代码</th>
               <th className="px-4 py-3">颜色名称</th>
+              <th className="px-4 py-3">车型</th>
               <th className="px-4 py-3">品牌</th>
               <th className="px-4 py-3">类型</th>
               <th className="px-4 py-3">变体数</th>
@@ -135,6 +138,7 @@ export default function ColorsPanel() {
                 </td>
                 <td className="px-4 py-3 text-xs font-semibold text-gray-900">{color.color_code}</td>
                 <td className="px-4 py-3 text-xs text-gray-700">{color.color_name}</td>
+                <td className="px-4 py-3 text-xs text-gray-600">{color.car_model || "—"}</td>
                 <td className="px-4 py-3 text-xs text-gray-600">{brands.find((b) => b.id === color.make_id)?.name || color.make_id}</td>
                 <td className="px-4 py-3 text-xs text-gray-600">{color.color_type}</td>
                 <td className="px-4 py-3 text-xs text-gray-500">{color.variants.length}</td>
@@ -185,6 +189,10 @@ export default function ColorsPanel() {
                   <label className="block text-xs font-medium text-gray-700">预览色</label>
                   <input type="color" value={form.hex_preview} onChange={(e) => setForm({ ...form, hex_preview: e.target.value })} className="mt-1 h-9 w-full rounded border border-gray-300 px-1 py-1 outline-none focus:border-[#0D9488]" />
                 </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700">车型</label>
+                <input type="text" value={form.car_model} onChange={(e) => setForm({ ...form, car_model: e.target.value })} placeholder="例如 Camry / Corolla" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700">关联变体</label>

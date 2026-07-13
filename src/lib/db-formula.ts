@@ -93,6 +93,7 @@ function mapColorRow(row: Record<string, unknown>): Color {
     color_name: row.color_name as string,
     color_type: row.color_type as Color["color_type"],
     hex_preview: row.hex_preview as string,
+    car_model: (row.car_model as string) || undefined,
     variants,
   };
 }
@@ -183,6 +184,7 @@ export async function saveColor(
       color_name: color.color_name,
       color_type: color.color_type,
       hex_preview: color.hex_preview,
+      car_model: color.car_model || null,
     })
     .select()
     .single();

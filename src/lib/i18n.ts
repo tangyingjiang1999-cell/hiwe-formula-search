@@ -171,6 +171,7 @@ interface I18nDict {
   nextPage: string;
   pageOf: (current: number, total: number) => string;
   foundFormulas: (n: number) => string;
+  carModelLabel: string;
 
   // Guide
   guideSearchPlaceholder: string;
@@ -221,6 +222,7 @@ const dict = (d: Omit<I18nDict,
   | "manufacturerLabel" | "emptyState" | "totalWeightLabel"
   | "pearlPaintLabel" | "groundPaintLabel"
   | "versionLabel" | "pageSizeLabel" | "previousPage" | "nextPage" | "pageOf" | "foundFormulas"
+  | "carModelLabel"
 > & {
   formulasCount?: (n: number) => string;
   foundCount?: (n: number) => string;
@@ -266,6 +268,7 @@ const dict = (d: Omit<I18nDict,
   nextPage?: string;
   pageOf?: (current: number, total: number) => string;
   foundFormulas?: (n: number) => string;
+  carModelLabel?: string;
 }): I18nDict => ({
   formulasCount: d.formulasCount ?? ((n) => plural(n, "formula", "formulas")),
   foundCount: d.foundCount ?? ((n) => `Found ${n} color${n > 1 ? "s" : ""}`),
@@ -313,6 +316,7 @@ const dict = (d: Omit<I18nDict,
   nextPage: d.nextPage ?? "Next",
   pageOf: d.pageOf ?? ((current, total) => `Page ${current} of ${total}`),
   foundFormulas: d.foundFormulas ?? ((n) => `Found ${n} formula${n > 1 ? "s" : ""}`),
+  carModelLabel: d.carModelLabel ?? "Car model",
   ...d,
 });
 
