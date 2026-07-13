@@ -89,16 +89,24 @@ export default function Home() {
       <SiteHeader />
       <Box component="section" sx={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden", pt: 10, pb: 4 }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: "center", mb: 3 }}>
-            <Typography variant="h3" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
-              {t.heroTitlePrefix} <Box component="span" sx={{ color: "primary.main" }}>{t.heroTitleHighlight}</Box>
+          <Box sx={{ textAlign: "center", mb: 4 }}>
+            <Typography
+              sx={{
+                fontWeight: 700,
+                fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem", lg: "3.25rem" },
+                lineHeight: 1.2,
+                color: "primary.main",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {t.heroTitlePrefix} {t.heroTitleHighlight}
             </Typography>
           </Box>
-          <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
+          <Paper variant="outlined" sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 2 }}>
             <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
           </Paper>
           {hasSearched && (
-            <Paper variant="outlined" sx={{ mt: 2, p: { xs: 2, sm: 3 }, textAlign: "left" }}>
+            <Paper variant="outlined" sx={{ mt: 2.5, p: { xs: 2.5, sm: 4 }, textAlign: "left", borderRadius: 2 }}>
               <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
             </Paper>
           )}
