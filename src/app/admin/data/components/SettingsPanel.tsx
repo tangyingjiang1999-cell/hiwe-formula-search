@@ -41,51 +41,51 @@ export default function SettingsPanel() {
     setMessage(res.ok ? "保存成功" : "保存失败");
   }
 
-  if (loading) return <div className="text-center text-xs text-gray-500">加载中...</div>;
+  if (loading) return <div className="text-center text-sm text-gray-500">加载中...</div>;
 
   return (
     <div className="max-w-2xl rounded border border-gray-200 bg-white p-6">
-      <p className="mb-5 text-[11px] text-gray-500">
+      <p className="mb-5 text-sm text-gray-500">
         漆面类型和配方类型每行一个值。漆面类型首字母大写（如 Solid），搜索面板会自动转小写匹配数据库。
       </p>
       <div className="space-y-5">
         <div>
-          <label className="block text-xs font-medium text-gray-700">漆面类型（每行一个）</label>
+          <label className="block text-sm font-medium text-gray-700">漆面类型（每行一个）</label>
           <textarea
             value={finishesText}
             onChange={(e) => setFinishesText(e.target.value)}
             rows={6}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]"
+            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]"
             placeholder={"Solid\nMetallic\nPearl\nMatte\nCandy\nSpecial"}
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-700">配方类型（每行一个）</label>
+          <label className="block text-sm font-medium text-gray-700">配方类型（每行一个）</label>
           <textarea
             value={typesText}
             onChange={(e) => setTypesText(e.target.value)}
             rows={6}
-            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]"
+            className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]"
             placeholder={"Single Stage\nTwo Stages\nPearl Paint"}
           />
         </div>
         <div className="flex gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700">最小年份</label>
+            <label className="block text-sm font-medium text-gray-700">最小年份</label>
             <input
               type="number"
               value={yearMin}
               onChange={(e) => setYearMin(Number(e.target.value))}
-              className="mt-1 w-32 rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]"
+              className="mt-1 w-32 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700">最大年份</label>
+            <label className="block text-sm font-medium text-gray-700">最大年份</label>
             <input
               type="number"
               value={yearMax}
               onChange={(e) => setYearMax(Number(e.target.value))}
-              className="mt-1 w-32 rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]"
+              className="mt-1 w-32 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]"
             />
           </div>
         </div>
@@ -93,12 +93,12 @@ export default function SettingsPanel() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E] disabled:opacity-60"
+            className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E] disabled:opacity-60"
           >
             {saving ? "保存中..." : "保存设置"}
           </button>
           {message && (
-            <span className={`text-xs ${message === "保存成功" ? "text-green-600" : "text-red-600"}`}>
+            <span className={`text-sm ${message === "保存成功" ? "text-green-600" : "text-red-600"}`}>
               {message}
             </span>
           )}

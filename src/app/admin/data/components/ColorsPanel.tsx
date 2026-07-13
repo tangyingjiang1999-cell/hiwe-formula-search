@@ -107,19 +107,19 @@ export default function ColorsPanel() {
     );
   }
 
-  if (loading) return <div className="text-center text-xs text-gray-500">加载中...</div>;
+  if (loading) return <div className="text-center text-sm text-gray-500">加载中...</div>;
 
   return (
     <div>
       <div className="mb-4 flex justify-end">
-        <button onClick={openCreate} className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]">
+        <button onClick={openCreate} className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]">
           + 新增颜色
         </button>
       </div>
       <div className="overflow-x-auto rounded border border-gray-200 bg-white">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50 text-left text-[11px] uppercase text-gray-500">
+            <tr className="border-b border-gray-200 bg-gray-50 text-left text-sm uppercase text-gray-500">
               <th className="px-4 py-3">预览</th>
               <th className="px-4 py-3">颜色代码</th>
               <th className="px-4 py-3">颜色名称</th>
@@ -136,15 +136,15 @@ export default function ColorsPanel() {
                 <td className="px-4 py-3">
                   <div className="h-6 w-6 rounded border border-gray-200" style={{ backgroundColor: color.hex_preview }} />
                 </td>
-                <td className="px-4 py-3 text-xs font-semibold text-gray-900">{color.color_code}</td>
-                <td className="px-4 py-3 text-xs text-gray-700">{color.color_name}</td>
-                <td className="px-4 py-3 text-xs text-gray-600">{color.car_model || "—"}</td>
-                <td className="px-4 py-3 text-xs text-gray-600">{brands.find((b) => b.id === color.make_id)?.name || color.make_id}</td>
-                <td className="px-4 py-3 text-xs text-gray-600">{color.color_type}</td>
-                <td className="px-4 py-3 text-xs text-gray-500">{color.variants.length}</td>
+                <td className="px-4 py-3 text-sm font-semibold text-gray-900">{color.color_code}</td>
+                <td className="px-4 py-3 text-sm text-gray-700">{color.color_name}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{color.car_model || "—"}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{brands.find((b) => b.id === color.make_id)?.name || color.make_id}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{color.color_type}</td>
+                <td className="px-4 py-3 text-sm text-gray-500">{color.variants.length}</td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => openEdit(color)} className="mr-3 text-xs text-blue-600 hover:text-blue-800">编辑</button>
-                  <button onClick={() => handleDelete(color)} className="text-xs text-red-600 hover:text-red-800">删除</button>
+                  <button onClick={() => openEdit(color)} className="mr-3 text-sm text-blue-600 hover:text-blue-800">编辑</button>
+                  <button onClick={() => handleDelete(color)} className="text-sm text-red-600 hover:text-red-800">删除</button>
                 </td>
               </tr>
             ))}
@@ -158,48 +158,48 @@ export default function ColorsPanel() {
             <h3 className="mb-4 text-sm font-semibold text-gray-900">{editing ? "编辑颜色" : "新增颜色"}</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-gray-700">ID（自动从品牌+颜色代码生成，可手动修改）</label>
-                <input type="text" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none disabled:bg-gray-100 focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">ID（自动从品牌+颜色代码生成，可手动修改）</label>
+                <input type="text" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none disabled:bg-gray-100 focus:border-[#0D9488]" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">品牌</label>
-                <select value={form.make_id} onChange={(e) => setForm({ ...form, make_id: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]">
+                <label className="block text-sm font-medium text-gray-700">品牌</label>
+                <select value={form.make_id} onChange={(e) => setForm({ ...form, make_id: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]">
                   <option value="">请选择品牌</option>
                   {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
                 </select>
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700">颜色代码</label>
-                  <input type="text" value={form.color_code} onChange={(e) => setForm({ ...form, color_code: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                  <label className="block text-sm font-medium text-gray-700">颜色代码</label>
+                  <input type="text" value={form.color_code} onChange={(e) => setForm({ ...form, color_code: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700">颜色名称</label>
-                  <input type="text" value={form.color_name} onChange={(e) => setForm({ ...form, color_name: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                  <label className="block text-sm font-medium text-gray-700">颜色名称</label>
+                  <input type="text" value={form.color_name} onChange={(e) => setForm({ ...form, color_name: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
                 </div>
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700">类型</label>
-                  <select value={form.color_type} onChange={(e) => setForm({ ...form, color_type: e.target.value as Color["color_type"] })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]">
+                  <label className="block text-sm font-medium text-gray-700">类型</label>
+                  <select value={form.color_type} onChange={(e) => setForm({ ...form, color_type: e.target.value as Color["color_type"] })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]">
                     {COLOR_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700">预览色</label>
+                  <label className="block text-sm font-medium text-gray-700">预览色</label>
                   <input type="color" value={form.hex_preview} onChange={(e) => setForm({ ...form, hex_preview: e.target.value })} className="mt-1 h-9 w-full rounded border border-gray-300 px-1 py-1 outline-none focus:border-[#0D9488]" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">车型</label>
-                <input type="text" value={form.car_model} onChange={(e) => setForm({ ...form, car_model: e.target.value })} placeholder="例如 Camry / Corolla" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">车型</label>
+                <input type="text" value={form.car_model} onChange={(e) => setForm({ ...form, car_model: e.target.value })} placeholder="例如 Camry / Corolla" className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">关联变体</label>
+                <label className="block text-sm font-medium text-gray-700">关联变体</label>
                 <div className="mt-1 max-h-32 overflow-y-auto rounded border border-gray-300 p-2">
-                  {allVariants.length === 0 && <span className="text-[11px] text-gray-400">暂无变体，请先在「变体」tab 创建</span>}
+                  {allVariants.length === 0 && <span className="text-sm text-gray-400">暂无变体，请先在「变体」tab 创建</span>}
                   {allVariants.map((v) => (
-                    <label key={v.id} className="flex items-center gap-2 py-1 text-xs text-gray-700">
+                    <label key={v.id} className="flex items-center gap-2 py-1 text-sm text-gray-700">
                       <input type="checkbox" checked={variantIds.includes(v.id)} onChange={() => toggleVariant(v.id)} className="h-3 w-3" />
                       {v.name} <span className="text-gray-400">({v.year_range})</span>
                     </label>
@@ -207,10 +207,10 @@ export default function ColorsPanel() {
                 </div>
               </div>
             </div>
-            {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setShowModal(false)} className="rounded border border-gray-300 px-4 py-2 text-xs text-gray-700 hover:bg-gray-50">取消</button>
-              <button onClick={handleSave} className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]">保存</button>
+              <button onClick={() => setShowModal(false)} className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">取消</button>
+              <button onClick={handleSave} className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]">保存</button>
             </div>
           </div>
         </div>

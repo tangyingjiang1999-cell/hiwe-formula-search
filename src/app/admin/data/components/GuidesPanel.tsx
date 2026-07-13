@@ -128,23 +128,23 @@ export default function GuidesPanel() {
 
   const filteredGuides = filterCat ? guides.filter((g) => g.categoryId === filterCat) : guides;
 
-  if (loading) return <div className="text-center text-xs text-gray-500">加载中...</div>;
+  if (loading) return <div className="text-center text-sm text-gray-500">加载中...</div>;
 
   return (
     <div>
       <div className="mb-4 flex items-center gap-3">
-        <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)} className="rounded border border-gray-300 px-3 py-2 text-xs">
+        <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)} className="rounded border border-gray-300 px-3 py-2 text-sm">
           <option value="">全部分类</option>
           {categories.map((c) => <option key={c.id} value={c.id}>{c.nameZh}</option>)}
         </select>
-        <button onClick={() => setShowCatModal(true)} className="rounded border border-gray-300 px-3 py-2 text-xs text-gray-600 hover:bg-gray-50">管理分类</button>
+        <button onClick={() => setShowCatModal(true)} className="rounded border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50">管理分类</button>
         <div className="flex-1" />
-        <button onClick={openCreate} className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]">+ 新增指南</button>
+        <button onClick={openCreate} className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]">+ 新增指南</button>
       </div>
       <div className="overflow-x-auto rounded border border-gray-200 bg-white">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50 text-left text-[11px] uppercase text-gray-500">
+            <tr className="border-b border-gray-200 bg-gray-50 text-left text-sm uppercase text-gray-500">
               <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">中文标题</th>
               <th className="px-4 py-3">英文标题</th>
@@ -155,13 +155,13 @@ export default function GuidesPanel() {
           <tbody>
             {filteredGuides.map((guide) => (
               <tr key={guide.id} className="border-b border-gray-100 last:border-0">
-                <td className="px-4 py-3 text-xs text-gray-600">{guide.id}</td>
-                <td className="px-4 py-3 text-xs font-semibold text-gray-900">{guide.titleZh}</td>
-                <td className="px-4 py-3 text-xs text-gray-500">{guide.title}</td>
-                <td className="px-4 py-3 text-xs text-gray-600">{categories.find((c) => c.id === guide.categoryId)?.nameZh || guide.categoryId}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{guide.id}</td>
+                <td className="px-4 py-3 text-sm font-semibold text-gray-900">{guide.titleZh}</td>
+                <td className="px-4 py-3 text-sm text-gray-500">{guide.title}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{categories.find((c) => c.id === guide.categoryId)?.nameZh || guide.categoryId}</td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => openEdit(guide)} className="mr-3 text-xs text-blue-600 hover:text-blue-800">编辑</button>
-                  <button onClick={() => handleDelete(guide)} className="text-xs text-red-600 hover:text-red-800">删除</button>
+                  <button onClick={() => openEdit(guide)} className="mr-3 text-sm text-blue-600 hover:text-blue-800">编辑</button>
+                  <button onClick={() => handleDelete(guide)} className="text-sm text-red-600 hover:text-red-800">删除</button>
                 </td>
               </tr>
             ))}
@@ -176,39 +176,39 @@ export default function GuidesPanel() {
             <h3 className="mb-4 text-sm font-semibold text-gray-900">{editing ? "编辑指南" : "新增指南"}</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-gray-700">ID（自动从英文标题生成，可手动修改）</label>
-                <input type="text" value={form.id} onChange={(e) => { guideIdEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none disabled:bg-gray-100 focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">ID（自动从英文标题生成，可手动修改）</label>
+                <input type="text" value={form.id} onChange={(e) => { guideIdEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none disabled:bg-gray-100 focus:border-[#0D9488]" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">分类</label>
-                <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]">
+                <label className="block text-sm font-medium text-gray-700">分类</label>
+                <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]">
                   <option value="">请选择</option>
                   {categories.map((c) => <option key={c.id} value={c.id}>{c.nameZh}</option>)}
                 </select>
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700">英文标题</label>
-                  <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                  <label className="block text-sm font-medium text-gray-700">英文标题</label>
+                  <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-700">中文标题</label>
-                  <input type="text" value={form.titleZh} onChange={(e) => setForm({ ...form, titleZh: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                  <label className="block text-sm font-medium text-gray-700">中文标题</label>
+                  <input type="text" value={form.titleZh} onChange={(e) => setForm({ ...form, titleZh: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">英文正文</label>
-                <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={5} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">英文正文</label>
+                <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={5} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">中文正文</label>
-                <textarea value={form.contentZh} onChange={(e) => setForm({ ...form, contentZh: e.target.value })} rows={5} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">中文正文</label>
+                <textarea value={form.contentZh} onChange={(e) => setForm({ ...form, contentZh: e.target.value })} rows={5} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
               </div>
             </div>
-            {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setShowModal(false)} className="rounded border border-gray-300 px-4 py-2 text-xs text-gray-700 hover:bg-gray-50">取消</button>
-              <button onClick={handleSave} className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]">保存</button>
+              <button onClick={() => setShowModal(false)} className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">取消</button>
+              <button onClick={handleSave} className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]">保存</button>
             </div>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function GuidesPanel() {
             <h3 className="mb-4 text-sm font-semibold text-gray-900">管理分类</h3>
             <div className="mb-4 max-h-48 overflow-y-auto rounded border border-gray-200">
               {categories.map((cat) => (
-                <div key={cat.id} className="flex items-center justify-between border-b border-gray-100 px-3 py-2 text-xs last:border-0">
+                <div key={cat.id} className="flex items-center justify-between border-b border-gray-100 px-3 py-2 text-sm last:border-0">
                   <span className="text-gray-700">{cat.nameZh} <span className="text-gray-400">({cat.name})</span></span>
                   <button onClick={() => handleDeleteCategory(cat)} className="text-red-600 hover:text-red-800">删除</button>
                 </div>
@@ -229,14 +229,14 @@ export default function GuidesPanel() {
             </div>
             <div className="space-y-2 rounded bg-gray-50 p-3">
               <div className="flex gap-2">
-                <input type="text" value={catForm.id} onChange={(e) => { catIdEdited.current = true; setCatForm({ ...catForm, id: e.target.value }); }} placeholder="自动生成" className="w-20 rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]" />
-                <input type="text" value={catForm.name} onChange={(e) => setCatForm({ ...catForm, name: e.target.value })} placeholder="英文名" className="flex-1 rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]" />
-                <input type="text" value={catForm.nameZh} onChange={(e) => setCatForm({ ...catForm, nameZh: e.target.value })} placeholder="中文名" className="flex-1 rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]" />
+                <input type="text" value={catForm.id} onChange={(e) => { catIdEdited.current = true; setCatForm({ ...catForm, id: e.target.value }); }} placeholder="自动生成" className="w-20 rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]" />
+                <input type="text" value={catForm.name} onChange={(e) => setCatForm({ ...catForm, name: e.target.value })} placeholder="英文名" className="flex-1 rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]" />
+                <input type="text" value={catForm.nameZh} onChange={(e) => setCatForm({ ...catForm, nameZh: e.target.value })} placeholder="中文名" className="flex-1 rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]" />
               </div>
-              <button onClick={handleSaveCategory} className="w-full rounded bg-[#0D9488] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0F766E]">添加分类</button>
+              <button onClick={handleSaveCategory} className="w-full rounded bg-[#0D9488] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#0F766E]">添加分类</button>
             </div>
             <div className="mt-4 text-right">
-              <button onClick={() => setShowCatModal(false)} className="rounded border border-gray-300 px-4 py-2 text-xs text-gray-700 hover:bg-gray-50">关闭</button>
+              <button onClick={() => setShowCatModal(false)} className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">关闭</button>
             </div>
           </div>
         </div>

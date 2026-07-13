@@ -298,18 +298,18 @@ export default function FormulasPanel() {
     return (
       <div className="mt-4" key={group ?? "regular"}>
         <div className="mb-2 flex items-center justify-between">
-          <h4 className="text-xs font-semibold text-gray-700">{title}</h4>
+          <h4 className="text-sm font-semibold text-gray-700">{title}</h4>
           <button
             onClick={() => addComponent(group)}
-            className="rounded border border-gray-300 px-2 py-1 text-[11px] text-gray-600 hover:bg-gray-50"
+            className="rounded border border-gray-300 px-2 py-1 text-sm text-gray-600 hover:bg-gray-50"
           >
             + 添加色母
           </button>
         </div>
         <div className="min-h-[320px] overflow-x-auto rounded border border-gray-200">
-          <table className="w-full text-xs">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50 text-left text-[10px] uppercase text-gray-500">
+              <tr className="border-b border-gray-200 bg-gray-50 text-left text-sm uppercase text-gray-500">
                 <th className="px-2 py-2">色母编号</th>
                 <th className="px-2 py-2">名称</th>
                 <th className="px-2 py-2">百分比</th>
@@ -322,7 +322,7 @@ export default function FormulasPanel() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-2 py-4 text-center text-[11px] text-gray-400"
+                    className="px-2 py-4 text-center text-sm text-gray-400"
                   >
                     暂无色母，点击「添加色母」
                   </td>
@@ -343,7 +343,7 @@ export default function FormulasPanel() {
                         }}
                         onFocus={() => openTonerDropdown(globalIndex, c.toner_code)}
                         onBlur={() => scheduleCloseTonerDropdown()}
-                        className="w-20 rounded border border-gray-300 px-1 py-1 text-[11px] outline-none focus:border-[#0D9488]"
+                        className="w-20 rounded border border-gray-300 px-1 py-1 text-sm outline-none focus:border-[#0D9488]"
                       />
                       {tonerDropdownFor === globalIndex &&
                         matchingToners(tonerQuery).length > 0 && (
@@ -356,7 +356,7 @@ export default function FormulasPanel() {
                                   selectToner(globalIndex, toner);
                                   setTonerDropdownFor(null);
                                 }}
-                                className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-[11px] hover:bg-teal-50"
+                                className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-sm hover:bg-teal-50"
                               >
                                 <div
                                   className="h-4 w-6 shrink-0 rounded border border-gray-200"
@@ -379,7 +379,7 @@ export default function FormulasPanel() {
                         onChange={(e) =>
                           updateComponent(globalIndex, "toner_name", e.target.value)
                         }
-                        className="w-24 rounded border border-gray-300 px-1 py-1 text-[11px] outline-none focus:border-[#0D9488]"
+                        className="w-24 rounded border border-gray-300 px-1 py-1 text-sm outline-none focus:border-[#0D9488]"
                       />
                     </td>
                     {/* 百分比 — 手动输入 */}
@@ -390,7 +390,7 @@ export default function FormulasPanel() {
                         onChange={(e) =>
                           updateComponent(globalIndex, "percentage", Number(e.target.value))
                         }
-                        className="w-16 rounded border border-gray-300 px-1 py-1 text-[11px] outline-none focus:border-[#0D9488]"
+                        className="w-16 rounded border border-gray-300 px-1 py-1 text-sm outline-none focus:border-[#0D9488]"
                       />
                     </td>
                     {/* RGB — 自动填入（也可手动修改） */}
@@ -406,7 +406,7 @@ export default function FormulasPanel() {
                               e.target.value === "" ? undefined : Number(e.target.value)
                             )
                           }
-                          className="w-12 rounded border border-gray-300 px-1 py-1 text-[11px] outline-none focus:border-[#0D9488]"
+                          className="w-12 rounded border border-gray-300 px-1 py-1 text-sm outline-none focus:border-[#0D9488]"
                           placeholder="R"
                         />
                         <input
@@ -419,7 +419,7 @@ export default function FormulasPanel() {
                               e.target.value === "" ? undefined : Number(e.target.value)
                             )
                           }
-                          className="w-12 rounded border border-gray-300 px-1 py-1 text-[11px] outline-none focus:border-[#0D9488]"
+                          className="w-12 rounded border border-gray-300 px-1 py-1 text-sm outline-none focus:border-[#0D9488]"
                           placeholder="G"
                         />
                         <input
@@ -432,7 +432,7 @@ export default function FormulasPanel() {
                               e.target.value === "" ? undefined : Number(e.target.value)
                             )
                           }
-                          className="w-12 rounded border border-gray-300 px-1 py-1 text-[11px] outline-none focus:border-[#0D9488]"
+                          className="w-12 rounded border border-gray-300 px-1 py-1 text-sm outline-none focus:border-[#0D9488]"
                           placeholder="B"
                         />
                       </div>
@@ -440,7 +440,7 @@ export default function FormulasPanel() {
                     <td className="px-2 py-1">
                       <button
                         onClick={() => removeComponent(globalIndex)}
-                        className="text-[11px] text-red-600 hover:text-red-800"
+                        className="text-sm text-red-600 hover:text-red-800"
                       >
                         删除
                       </button>
@@ -455,7 +455,7 @@ export default function FormulasPanel() {
     );
   }
 
-  if (loading) return <div className="text-center text-xs text-gray-500">加载中...</div>;
+  if (loading) return <div className="text-center text-sm text-gray-500">加载中...</div>;
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
@@ -463,7 +463,7 @@ export default function FormulasPanel() {
       <div className="w-full shrink-0 lg:w-64">
         <button
           onClick={newFormula}
-          className="mb-3 w-full rounded bg-[#0D9488] px-3 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]"
+          className="mb-3 w-full rounded bg-[#0D9488] px-3 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]"
         >
           + 新增配方
         </button>
@@ -472,14 +472,14 @@ export default function FormulasPanel() {
             <button
               key={f.id}
               onClick={() => selectFormula(f)}
-              className={`block w-full border-b border-gray-100 px-3 py-2 text-left text-xs last:border-0 ${
+              className={`block w-full border-b border-gray-100 px-3 py-2 text-left text-sm last:border-0 ${
                 selectedId === f.id
                   ? "bg-teal-50 font-semibold text-teal-700"
                   : "text-gray-700 hover:bg-gray-50"
               }`}
             >
               <span className="block">{f.id}</span>
-              <span className="block text-[10px] text-gray-400">
+              <span className="block text-sm text-gray-400">
                 {colors.find((c) => c.id === f.color_id)?.color_code || f.color_id}
               </span>
             </button>
@@ -491,7 +491,7 @@ export default function FormulasPanel() {
       <div className="flex-1 rounded border border-gray-200 bg-white p-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[11px] font-medium text-gray-600">
+            <label className="block text-sm font-medium text-gray-600">
               配方 ID（自动生成，可手动修改）
             </label>
             <input
@@ -502,12 +502,12 @@ export default function FormulasPanel() {
                 setForm({ ...form, id: e.target.value });
               }}
               disabled={!!selectedId}
-              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none disabled:bg-gray-100 focus:border-[#0D9488]"
+              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none disabled:bg-gray-100 focus:border-[#0D9488]"
             />
           </div>
           {/* 关联颜色 — 模糊搜索 */}
           <div className="relative">
-            <label className="block text-[11px] font-medium text-gray-600">关联颜色</label>
+            <label className="block text-sm font-medium text-gray-600">关联颜色</label>
             <input
               type="text"
               value={colorQuery}
@@ -524,7 +524,7 @@ export default function FormulasPanel() {
                 colorBlurRef.current = setTimeout(() => setColorDropdownOpen(false), 150);
               }}
               placeholder={colorDisplay || "搜索颜色代码、名称、品牌、类型..."}
-              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]"
+              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]"
             />
             {colorDropdownOpen && matchingColors(colorQuery, colors, brands).length > 0 && (
               <div className="absolute left-0 right-0 top-full z-50 mt-0.5 max-h-48 overflow-y-auto rounded border border-gray-200 bg-white shadow-lg">
@@ -539,7 +539,7 @@ export default function FormulasPanel() {
                         setColorQuery("");
                         setColorDropdownOpen(false);
                       }}
-                      className={`flex w-full items-center gap-2 px-2 py-1.5 text-left text-[11px] hover:bg-teal-50 ${
+                      className={`flex w-full items-center gap-2 px-2 py-1.5 text-left text-sm hover:bg-teal-50 ${
                         c.id === form.color_id ? "bg-teal-100" : ""
                       }`}
                     >
@@ -549,7 +549,7 @@ export default function FormulasPanel() {
                       />
                       <span className="font-mono text-gray-700">{c.color_code}</span>
                       <span className="text-gray-600 truncate">{c.color_name}</span>
-                      <span className="ml-auto text-[10px] text-gray-400">{brandName}</span>
+                      <span className="ml-auto text-sm text-gray-400">{brandName}</span>
                     </button>
                   );
                 })}
@@ -557,17 +557,17 @@ export default function FormulasPanel() {
             )}
             {/* 已选中颜色预览 */}
             {selectedColor && (
-              <p className="mt-0.5 truncate text-[10px] text-teal-600">
+              <p className="mt-0.5 truncate text-sm text-teal-600">
                 {colorDisplay}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-[11px] font-medium text-gray-600">关联变体（可选）</label>
+            <label className="block text-sm font-medium text-gray-600">关联变体（可选）</label>
             <select
               value={form.variant_id}
               onChange={(e) => setForm({ ...form, variant_id: e.target.value })}
-              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]"
+              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]"
             >
               <option value="">无</option>
               {variants.map((v) => (
@@ -578,22 +578,22 @@ export default function FormulasPanel() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] font-medium text-gray-600">版本</label>
+            <label className="block text-sm font-medium text-gray-600">版本</label>
             <input
               type="text"
               value={form.version}
               onChange={(e) => setForm({ ...form, version: e.target.value })}
-              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]"
+              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]"
             />
           </div>
           <div>
-            <label className="block text-[11px] font-medium text-gray-600">体系</label>
+            <label className="block text-sm font-medium text-gray-600">体系</label>
             <select
               value={form.paint_system}
               onChange={(e) =>
                 handlePaintSystemChange(e.target.value as Formula["paint_system"])
               }
-              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]"
+              className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]"
             >
               {PAINT_SYSTEMS.map((s) => (
                 <option key={s} value={s}>
@@ -603,19 +603,19 @@ export default function FormulasPanel() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] font-medium text-gray-600">配方类型</label>
+            <label className="block text-sm font-medium text-gray-600">配方类型</label>
             {form.paint_system === "2K" ? (
               <input
                 type="text"
                 value={AUTO_2K_TYPE}
                 disabled
-                className="mt-1 w-full rounded border border-gray-300 bg-gray-100 px-2 py-1.5 text-xs text-gray-600 outline-none"
+                className="mt-1 w-full rounded border border-gray-300 bg-gray-100 px-2 py-1.5 text-sm text-gray-600 outline-none"
               />
             ) : (
               <select
                 value={form.formula_type}
                 onChange={(e) => handleFormulaTypeChange(e.target.value as FormulaType)}
-                className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]"
+                className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]"
               >
                 {MANUAL_1K_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -627,12 +627,12 @@ export default function FormulasPanel() {
           </div>
         </div>
         <div className="mt-3">
-          <label className="block text-[11px] font-medium text-gray-600">施工备注</label>
+          <label className="block text-sm font-medium text-gray-600">施工备注</label>
           <textarea
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
             rows={2}
-            className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-[#0D9488]"
+            className="mt-1 w-full rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#0D9488]"
           />
         </div>
 
@@ -645,21 +645,21 @@ export default function FormulasPanel() {
           renderComponentTable()
         )}
 
-        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
-        {message && <p className="mt-3 text-xs text-green-600">{message}</p>}
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {message && <p className="mt-3 text-sm text-green-600">{message}</p>}
 
         <div className="mt-4 flex justify-end gap-3">
           {selectedId && (
             <button
               onClick={handleDelete}
-              className="rounded border border-red-300 px-4 py-2 text-xs text-red-600 hover:bg-red-50"
+              className="rounded border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
             >
               删除配方
             </button>
           )}
           <button
             onClick={handleSave}
-            className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]"
+            className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]"
           >
             保存配方
           </button>

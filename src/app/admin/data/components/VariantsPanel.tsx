@@ -76,19 +76,19 @@ export default function VariantsPanel() {
     if (res.ok) fetchVariants();
   }
 
-  if (loading) return <div className="text-center text-xs text-gray-500">加载中...</div>;
+  if (loading) return <div className="text-center text-sm text-gray-500">加载中...</div>;
 
   return (
     <div>
       <div className="mb-4 flex justify-end">
-        <button onClick={openCreate} className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]">
+        <button onClick={openCreate} className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]">
           + 新增变体
         </button>
       </div>
       <div className="overflow-x-auto rounded border border-gray-200 bg-white">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50 text-left text-[11px] uppercase text-gray-500">
+            <tr className="border-b border-gray-200 bg-gray-50 text-left text-sm uppercase text-gray-500">
               <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">名称</th>
               <th className="px-4 py-3">年份范围</th>
@@ -98,12 +98,12 @@ export default function VariantsPanel() {
           <tbody>
             {variants.map((variant) => (
               <tr key={variant.id} className="border-b border-gray-100 last:border-0">
-                <td className="px-4 py-3 text-xs text-gray-600">{variant.id}</td>
-                <td className="px-4 py-3 text-xs font-semibold text-gray-900">{variant.name}</td>
-                <td className="px-4 py-3 text-xs text-gray-600">{variant.year_range}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{variant.id}</td>
+                <td className="px-4 py-3 text-sm font-semibold text-gray-900">{variant.name}</td>
+                <td className="px-4 py-3 text-sm text-gray-600">{variant.year_range}</td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => openEdit(variant)} className="mr-3 text-xs text-blue-600 hover:text-blue-800">编辑</button>
-                  <button onClick={() => handleDelete(variant)} className="text-xs text-red-600 hover:text-red-800">删除</button>
+                  <button onClick={() => openEdit(variant)} className="mr-3 text-sm text-blue-600 hover:text-blue-800">编辑</button>
+                  <button onClick={() => handleDelete(variant)} className="text-sm text-red-600 hover:text-red-800">删除</button>
                 </td>
               </tr>
             ))}
@@ -117,22 +117,22 @@ export default function VariantsPanel() {
             <h3 className="mb-4 text-sm font-semibold text-gray-900">{editing ? "编辑变体" : "新增变体"}</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-gray-700">ID（自动从名称生成，可手动修改）</label>
-                <input type="text" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none disabled:bg-gray-100 focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">ID（自动从名称生成，可手动修改）</label>
+                <input type="text" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none disabled:bg-gray-100 focus:border-[#0D9488]" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">名称</label>
-                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">名称</label>
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">年份范围（如 2018-2022）</label>
-                <input type="text" value={form.year_range} onChange={(e) => setForm({ ...form, year_range: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#0D9488]" />
+                <label className="block text-sm font-medium text-gray-700">年份范围（如 2018-2022）</label>
+                <input type="text" value={form.year_range} onChange={(e) => setForm({ ...form, year_range: e.target.value })} className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#0D9488]" />
               </div>
             </div>
-            {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setShowModal(false)} className="rounded border border-gray-300 px-4 py-2 text-xs text-gray-700 hover:bg-gray-50">取消</button>
-              <button onClick={handleSave} className="rounded bg-[#0D9488] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0F766E]">保存</button>
+              <button onClick={() => setShowModal(false)} className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">取消</button>
+              <button onClick={handleSave} className="rounded bg-[#0D9488] px-4 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]">保存</button>
             </div>
           </div>
         </div>

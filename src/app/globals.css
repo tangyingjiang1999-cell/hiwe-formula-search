@@ -76,7 +76,7 @@ body {
   background: var(--color-canvas);
   font-family: var(--font-inter), var(--font-noto), "Helvetica Neue", Arial, sans-serif;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
