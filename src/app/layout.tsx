@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LanguageProvider } from "@/components/LanguageContext";
 import { AuthProvider } from "@/components/AuthContext";
+import Providers from "@/components/Providers";
 import { Inter, Noto_Sans_SC, Noto_Sans_Arabic, Noto_Sans_Hebrew } from "next/font/google";
 import "./globals.css";
 
@@ -28,11 +29,13 @@ export default function RootLayout({
       className={`${inter.variable} ${notoSansSC.variable} ${notoSansArabic.variable} ${notoSansHebrew.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <LanguageProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </LanguageProvider>
+        <Providers>
+          <LanguageProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </LanguageProvider>
+        </Providers>
       </body>
     </html>
   );
