@@ -321,8 +321,8 @@ export const i18n: Record<Lang, I18nDict> = {
   en: dict({
     brandName: "HIWE Formula Search",
     brandNameShort: "HIWE",
-    heroTitlePrefix: "Find Your",
-    heroTitleHighlight: "Perfect Match",
+    heroTitlePrefix: "FIND YOUR",
+    heroTitleHighlight: "PERFECT MATCH",
     login: "Login",
     close: "Close",
     brandSlogan: "CAR REFINISH FORMULA SYSTEM",
