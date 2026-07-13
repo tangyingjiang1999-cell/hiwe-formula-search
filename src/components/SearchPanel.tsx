@@ -4,101 +4,22 @@ import { useState, useEffect, useCallback, type FormEvent } from "react";
 import { COLOR_TYPE_OPTIONS } from "@/lib/constants";
 import { useLang } from "@/components/LanguageContext";
 import type { CarMake, SearchParams, AppSettings } from "@/types";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 export interface SearchPanelProps {
   onSearch: (params: SearchParams) => void;
   isLoading: boolean;
   onSubmitRef?: React.MutableRefObject<(() => void) | null>;
 }
-
-function PillSelect({
-  label,
-  value,
-  onChange,
-  options,
-  placeholder,
-  widthClass,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string }[];
-  placeholder?: string;
-  widthClass: string;
-}) {
-  return (
-    <div className={`relative ${widthClass}`}>
-      <div className="flex h-10 items-center border border-[#EBEBEB] bg-white px-4 transition-colors hover:border-[#0D9488] rounded-[6px]">
-        <span className="shrink-0 text-xs text-gray-600">
-          {label}
-        </span>
-        <span className="mx-3 h-4 w-px bg-gray-200 shrink-0" />
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="h-full flex-1 appearance-none bg-transparent text-xs text-gray-900 outline-none cursor-pointer"
-        >
-          <option value="">{placeholder || "All"}</option>
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
-}
-
-function PillInput({
-  label,
-  value,
-  onChange,
-  placeholder,
-  widthClass,
-  maxLength,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  widthClass: string;
-  maxLength?: number;
-}) {
-  return (
-    <div className={`relative ${widthClass}`}>
-      <div className="flex h-10 items-center border border-[#EBEBEB] bg-white px-4 transition-colors hover:border-[#0D9488] rounded-[6px]">
-        <span className="shrink-0 text-xs text-gray-600">
-          {label}
-        </span>
-        <span className="mx-3 h-4 w-px bg-gray-200 shrink-0" />
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          maxLength={maxLength}
-          className="h-full flex-1 bg-transparent text-xs text-gray-900 outline-none placeholder:text-gray-400"
-        />
-      </div>
-    </div>
-  );
-}
-
-const SearchIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <path d="M21 21l-4.35-4.35" />
-  </svg>
-);
-
-const RefreshIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M23 4v6h-6" />
-    <path d="M1 20v-6h6" />
-    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
-  </svg>
-);
 
 export default function SearchPanel({
   onSearch,
@@ -112,9 +33,7 @@ export default function SearchPanel({
   const [colorName, setColorName] = useState("");
   const [colorType, setColorType] = useState("");
   const [year, setYear] = useState("");
-  // 品牌列表从公开 API 加载，使 Data Management 的增删改能同步到下拉框
   const [carMakes, setCarMakes] = useState<CarMake[]>([]);
-  // 漆面类型选项：默认用常量，异步从 settings 加载自定义参数
   const [colorTypeOptions, setColorTypeOptions] =
     useState<{ value: string; label: string }[]>(COLOR_TYPE_OPTIONS.map((o) => ({ value: o.value, label: o.label })));
 
@@ -125,7 +44,6 @@ export default function SearchPanel({
       .catch(() => setCarMakes([]));
   }, []);
 
-  // 从 settings 加载自定义漆面类型，失败则保持常量默认值
   useEffect(() => {
     fetch("/api/settings")
       .then((r) => (r.ok ? r.json() : null))
@@ -185,94 +103,170 @@ export default function SearchPanel({
   };
 
   return (
-    <form onSubmit={(e) => handleSubmit(e)}>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <PillSelect
-          label={t.make}
-          value={makeId}
-          onChange={setMakeId}
-          options={carMakes.map((m) => ({ value: m.id, label: m.name }))}
-          placeholder=""
-          widthClass="w-full"
-        />
-        <PillInput
-label={t.colorCode}
-          value={colorCode}
-          onChange={handleColorCodeChange}
-          placeholder={t.colorCodePlaceholder}
-          widthClass="w-full"
-          maxLength={20}
-        />
-        <PillInput
-          label={t.colorName}
-          value={colorName}
-          onChange={(v) => setColorName(v)}
-          placeholder={t.colorNamePlaceholder}
-          widthClass="w-full"
-        />
-        <PillInput
-          label={t.year}
-          value={year}
-          onChange={(v) => setYear(v)}
-          placeholder={t.yearPlaceholder}
-          widthClass="w-full"
-          maxLength={9}
-        />
-      </div>
+    <Box component="form" onSubmit={(e) => handleSubmit(e)}>
+      <Grid container spacing={1.5}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <TextField
+            select
+            value={makeId}
+            onChange={(e) => setMakeId(e.target.value)}
+            fullWidth
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ minWidth: 0 }}>
+                    <Box component="span" sx={{ fontSize: "0.75rem", color: "text.secondary", mr: 1 }}>
+                      {t.make}
+                    </Box>
+                    <Box sx={{ width: 1, height: 16, bgcolor: "grey.200", mr: 1 }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{ "& .MuiSelect-select": { pt: 1, pb: 1 } }}
+          >
+            <MenuItem value="">All</MenuItem>
+            {carMakes.map((m) => (
+              <MenuItem key={m.id} value={m.id}>{m.name}</MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <TextField
+            value={colorCode}
+            onChange={(e) => handleColorCodeChange(e.target.value)}
+            placeholder={t.colorCodePlaceholder}
+            fullWidth
+            size="small"
+            slotProps={{
+              htmlInput: { maxLength: 20 },
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ minWidth: 0 }}>
+                    <Box component="span" sx={{ fontSize: "0.75rem", color: "text.secondary", mr: 1 }}>
+                      {t.colorCode}
+                    </Box>
+                    <Box sx={{ width: 1, height: 16, bgcolor: "grey.200", mr: 1 }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <TextField
+            value={colorName}
+            onChange={(e) => setColorName(e.target.value)}
+            placeholder={t.colorNamePlaceholder}
+            fullWidth
+            size="small"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ minWidth: 0 }}>
+                    <Box component="span" sx={{ fontSize: "0.75rem", color: "text.secondary", mr: 1 }}>
+                      {t.colorName}
+                    </Box>
+                    <Box sx={{ width: 1, height: 16, bgcolor: "grey.200", mr: 1 }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <TextField
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            placeholder={t.yearPlaceholder}
+            fullWidth
+            size="small"
+            slotProps={{
+              htmlInput: { maxLength: 9 },
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ minWidth: 0 }}>
+                    <Box component="span" sx={{ fontSize: "0.75rem", color: "text.secondary", mr: 1 }}>
+                      {t.year}
+                    </Box>
+                    <Box sx={{ width: 1, height: 16, bgcolor: "grey.200", mr: 1 }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Grid>
+      </Grid>
 
       {isCodeTooLong && (
-        <p className="mt-2 text-[10px] font-medium text-orange-500">{t.codeTooLong}</p>
+        <Box sx={{ mt: 1, fontSize: "0.6875rem", fontWeight: 500, color: "warning.main" }}>
+          {t.codeTooLong}
+        </Box>
       )}
 
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-2">
+      <Box sx={{ mt: 2.5, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1.5 }}>
+        <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
           {colorTypeOptions.map((opt) => {
             const isSelected = colorType === opt.value;
             return (
-              <button
+              <Chip
                 key={opt.value}
-                type="button"
+                label={labelMap[opt.value] ?? opt.label}
                 onClick={() => setColorType(opt.value)}
-                className={[
-                  "rounded-[6px] border px-3 py-1.5 text-sm transition-colors sm:px-4",
-                  isSelected
-                    ? "border-[#0D9488] bg-[#0D9488] text-white"
-                    : "border-[#EBEBEB] bg-white text-[#4D4D4D] hover:border-[#0D9488]",
-                ].join(" ")}
-              >
-                {labelMap[opt.value] ?? opt.label}
-              </button>
+                variant={isSelected ? "filled" : "outlined"}
+                color={isSelected ? "primary" : "default"}
+                size="small"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: "0.8125rem",
+                  borderRadius: 1.5,
+                  ...(isSelected
+                    ? {}
+                    : { borderColor: "grey.300", color: "text.secondary", "&:hover": { borderColor: "primary.main" } }),
+                }}
+              />
             );
           })}
-        </div>
+        </Stack>
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className={[
-            "flex items-center gap-2 whitespace-nowrap rounded-[100px] px-5 py-2.5 text-sm font-medium text-white transition-colors sm:px-6",
-            "bg-[#0D9488] hover:bg-[#0F766E]",
-            "disabled:cursor-not-allowed disabled:opacity-60",
-          ].join(" ")}
+          variant="contained"
+          startIcon={<SearchIcon />}
+          sx={{
+            borderRadius: 999,
+            px: 3,
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.8125rem",
+            minWidth: 100,
+          }}
         >
-          <SearchIcon />
           {isLoading ? t.searching : t.search}
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={handleReset}
           disabled={isLoading}
-          className={[
-            "flex items-center gap-2 whitespace-nowrap rounded-[100px] border border-[#EBEBEB] bg-white px-5 py-2.5 text-sm font-medium text-[#4D4D4D] transition-colors sm:px-6",
-            "hover:border-[#0D9488] hover:text-[#0D9488]",
-            "disabled:cursor-not-allowed disabled:opacity-60",
-          ].join(" ")}
+          variant="outlined"
+          startIcon={<RefreshIcon />}
+          sx={{
+            borderRadius: 999,
+            px: 3,
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.8125rem",
+            color: "text.secondary",
+            borderColor: "grey.300",
+            "&:hover": { borderColor: "primary.main", color: "primary.main" },
+          }}
         >
-          <RefreshIcon />
           {t.reset}
-        </button>
-      </div>
-    </form>
+        </Button>
+      </Box>
+    </Box>
   );
 }

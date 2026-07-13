@@ -6,6 +6,17 @@ import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import { TONERS, TONER_CATEGORIES } from "@/data/toners";
 import type { TonerCategory } from "@/types";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Chip from "@mui/material/Chip";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 function TonerCard({ code, tradeName, hex }: { code: string; tradeName: string; hex: string }) {
   const swatchStyle: React.CSSProperties = {
@@ -15,19 +26,17 @@ function TonerCard({ code, tradeName, hex }: { code: string; tradeName: string; 
   };
 
   return (
-    <div className="group cursor-pointer rounded-lg border border-gray-200 bg-white transition-all hover:border-teal-500 hover:shadow-md">
-      {/* 颜色色块 — 金属拉丝渐变 */}
-      <div
-        className="h-20 rounded-t-lg"
-        style={swatchStyle}
-      />
-
-      {/* 信息区 */}
-      <div className="space-y-0.5 p-3">
-        <p className="font-mono text-[11px] font-semibold text-gray-800">{code}</p>
-        <p className="text-xs font-medium text-gray-900 truncate">{tradeName}</p>
-      </div>
-    </div>
+    <Card sx={{ cursor: "pointer", transition: "all 0.15s", "&:hover": { borderColor: "primary.main", boxShadow: 1 } }}>
+      <Box sx={{ height: 80, borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }} style={swatchStyle} />
+      <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+        <Typography variant="caption" sx={{ fontFamily: "monospace", fontWeight: 600, color: "text.primary" }}>
+          {code}
+        </Typography>
+        <Typography variant="body2" noWrap sx={{ fontWeight: 500, mt: 0.25 }}>
+          {tradeName}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -41,93 +50,67 @@ export default function TonerPage() {
     return TONERS.filter((toner) => {
       if (toner.category !== activeCategory) return false;
       if (!q) return true;
-      return (
-        toner.code.toLowerCase().includes(q) ||
-        toner.tradeName.toLowerCase().includes(q) ||
-        toner.nameZh.includes(q)
-      );
+      return toner.code.toLowerCase().includes(q) || toner.tradeName.toLowerCase().includes(q) || toner.nameZh.includes(q);
     });
   }, [activeCategory, searchQuery]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
       <SiteHeader />
 
-      {/* 标题栏 */}
-      <div className="bg-white border-b border-gray-200 px-4 pt-20 pb-0 lg:px-6">
-        <h1 className="text-lg font-bold text-gray-900">Toner</h1>
-      </div>
+      <Box sx={{ bgcolor: "#fff", borderBottom: 1, borderColor: "divider", pt: 10, pb: 0, px: { xs: 2, lg: 3 } }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>Toner</Typography>
+      </Box>
 
-      {/* 分类按钮 + 搜索 */}
-      <div className="sticky top-[72px] z-30 bg-white border-b border-gray-200 px-4 py-3 lg:px-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {/* 分类按钮 */}
-          <div className="flex flex-wrap gap-2">
+      <Box
+        sx={{
+          position: "sticky", top: 64, zIndex: 30, bgcolor: "#fff", borderBottom: 1, borderColor: "divider",
+          px: { xs: 2, lg: 3 }, py: 2,
+        }}
+      >
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
             {TONER_CATEGORIES.map((cat) => (
-              <button
+              <Chip
                 key={cat.key}
+                label={`${cat.label} ${cat.count}`}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`rounded-lg border px-4 py-2 text-xs font-medium transition-all ${
-                  activeCategory === cat.key
-                    ? "border-teal-600 bg-teal-600 text-white shadow-sm"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-teal-400 hover:text-teal-700"
-                }`}
-              >
-                {cat.label}
-                <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] ${
-                  activeCategory === cat.key
-                    ? "bg-teal-500/30 text-white"
-                    : "bg-gray-100 text-gray-500"
-                }`}>
-                  {cat.count}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* 搜索框 */}
-          <div className="relative w-full sm:w-64">
-            <svg
-              className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                variant={activeCategory === cat.key ? "filled" : "outlined"}
+                color={activeCategory === cat.key ? "primary" : "default"}
+                size="small"
               />
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search code or name..."
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-teal-500 focus:bg-white"
-            />
-          </div>
-        </div>
-      </div>
+            ))}
+          </Stack>
 
-      {/* 色母卡片网格 */}
-      <div className="flex-1 px-4 py-5 lg:px-6">
+          <TextField
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search code or name..."
+            size="small"
+            sx={{ width: { xs: "100%", sm: 256 } }}
+            slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 16, color: "text.disabled" }} /></InputAdornment> } }}
+          />
+        </Stack>
+      </Box>
+
+      <Box sx={{ flex: 1, px: { xs: 2, lg: 3 }, py: 3 }}>
         {filteredToners.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-            <p className="text-sm">No toners found</p>
-            <p className="mt-1 text-xs">Try a different search or category</p>
-          </div>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 10, color: "text.disabled" }}>
+            <Typography variant="body2">No toners found</Typography>
+            <Typography variant="caption" sx={{ mt: 0.5 }}>Try a different search or category</Typography>
+          </Box>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <Grid container spacing={1.5}>
             {filteredToners.map((toner) => (
-              <TonerCard
-                key={toner.code}
-                code={toner.code}
-                tradeName={toner.tradeName}
-                hex={toner.hex}
-              />
+              <Grid key={toner.code} size={{ xs: 6, sm: 4, md: 3, lg: 2 }}>
+                <TonerCard code={toner.code} tradeName={toner.tradeName} hex={toner.hex} />
+              </Grid>
             ))}
-          </div>
+          </Grid>
         )}
-      </div>
+      </Box>
 
       <Footer />
-    </div>
+    </Box>
   );
 }

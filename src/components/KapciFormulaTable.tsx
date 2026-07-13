@@ -3,22 +3,24 @@
 import { useState, useEffect } from "react";
 import type { Formula, FormulaComponent } from "@/types";
 import { useLang } from "@/components/LanguageContext";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableFooter from "@mui/material/TableFooter";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
-const UNIT_OPTIONS = [
-  { value: "g", label: "g" },
-  { value: "kg", label: "kg" },
-  { value: "ml", label: "ml" },
-  { value: "liter", label: "liter" },
-] as const;
+const UNIT_OPTIONS = ["g", "kg", "ml", "liter"] as const;
+type Unit = (typeof UNIT_OPTIONS)[number];
 
-type Unit = (typeof UNIT_OPTIONS)[number]["value"];
-
-const UNIT_MULTIPLIER: Record<Unit, number> = {
-  g: 1,
-  kg: 1000,
-  ml: 1,
-  liter: 1000,
-};
+const UNIT_MULTIPLIER: Record<Unit, number> = { g: 1, kg: 1000, ml: 1, liter: 1000 };
 
 interface KapciFormulaTableProps {
   formula: Formula;
@@ -51,7 +53,6 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
 
   const totalGrams = volume * UNIT_MULTIPLIER[unit];
 
-  // 体积/单位变化或配方切换时按新总量重置所有行权重
   useEffect(() => {
     const next = formula.components.map((c) => calcWeight(c.grams_per_100g, totalGrams));
     setWeights(next);
@@ -76,96 +77,97 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
   const totalWeight = weights.reduce((a, b) => a + b, 0);
 
   return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg bg-[#F8FAFC] px-3 py-2.5">
-        <label className="text-[11px] font-medium text-[#64748B]">{t.volume}</label>
-        <input
+    <Box>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{ mb: 1.5, p: 1.5, borderRadius: 1, bgcolor: "grey.50", flexWrap: "wrap", alignItems: "center" }}
+      >
+        <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500 }}>
+          {t.volume}
+        </Typography>
+        <TextField
           type="number"
-          min={0.1}
-          step={0.1}
           value={volume}
           onChange={(e) => handleVolumeChange(e.target.value)}
-          className="h-8 w-[90px] rounded-md border border-[#E2E8F0] bg-white px-2 text-center text-sm text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+          size="small"
+          slotProps={{ htmlInput: { min: 0.1, step: 0.1 } }}
+          sx={{ width: 90, "& input": { textAlign: "center", fontSize: "0.8125rem" } }}
         />
-        <span className="text-[11px] text-[#94A3B8]">&times;</span>
-        <select
+        <Typography variant="caption" sx={{ color: "text.disabled" }}>×</Typography>
+        <TextField
+          select
           value={unit}
           onChange={(e) => setUnit(e.target.value as Unit)}
-          className="h-8 w-[80px] rounded-md border border-[#E2E8F0] bg-white px-2 text-sm text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+          size="small"
+          sx={{ width: 80, "& .MuiSelect-select": { fontSize: "0.8125rem" } }}
         >
           {UNIT_OPTIONS.map((u) => (
-            <option key={u.value} value={u.value}>
-              {u.label}
-            </option>
+            <MenuItem key={u} value={u}>{u}</MenuItem>
           ))}
-        </select>
-        <span className="ml-1 text-[11px] text-[#64748B]">
+        </TextField>
+        <Typography variant="caption" sx={{ color: "text.secondary", ml: 1 }}>
           = {totalGrams.toLocaleString()} g total
-        </span>
-      </div>
+        </Typography>
+      </Stack>
 
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[480px] table-fixed text-xs">
-          <colgroup>
-            <col className="w-[22%]" />
-            <col className="w-[30%]" />
-            <col className="w-[20%]" />
-            <col className="w-[14%]" />
-            <col className="w-[14%]" />
-          </colgroup>
-          <thead>
-            <tr className="border-b border-[#E2E8F0] text-left text-[#64748B]">
-              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.tonerCode}</th>
-              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.tonerName}</th>
-              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.weight}</th>
-              <th className="align-middle whitespace-nowrap pb-3 pr-3 text-[11px] font-medium">{t.accum}</th>
-              <th className="align-middle whitespace-nowrap pb-3 text-[11px] font-medium">{t.massTone}</th>
-            </tr>
-          </thead>
-          <tbody>
+      <TableContainer component={Paper} variant="outlined">
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 500, color: "text.secondary", fontSize: "0.6875rem" }}>{t.tonerCode}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.secondary", fontSize: "0.6875rem" }}>{t.tonerName}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.secondary", fontSize: "0.6875rem" }}>{t.weight}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.secondary", fontSize: "0.6875rem" }}>{t.accum}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.secondary", fontSize: "0.6875rem" }}>{t.massTone}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {formula.components.map((comp, idx) => {
               let running = 0;
-              for (let i = 0; i <= idx; i++) {
-                running += weights[i] ?? 0;
-              }
+              for (let i = 0; i <= idx; i++) running += weights[i] ?? 0;
 
               return (
-                <tr key={comp.toner_code} className="border-b border-zinc-100 last:border-b-0">
-                  <td className="align-middle h-11 py-2 pr-3 font-mono text-[11px] text-[#94A3B8]">{comp.toner_code}</td>
-                  <td className="align-middle h-11 py-2 pr-3 text-xs text-[#0F172A]">{comp.toner_name}</td>
-                  <td className="align-middle h-11 py-2 pr-3 text-left">
-                    <input
+                <TableRow key={comp.toner_code}>
+                  <TableCell sx={{ py: 1, fontSize: "0.6875rem", fontFamily: "monospace", color: "text.disabled" }}>
+                    {comp.toner_code}
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontSize: "0.8125rem" }}>{comp.toner_name}</TableCell>
+                  <TableCell sx={{ py: 1 }}>
+                    <TextField
                       type="number"
-                      min={0}
-                      step={0.1}
                       value={weights[idx] ?? ""}
                       onChange={(e) => handleWeightChange(idx, e.target.value)}
-                      className="h-8 w-full rounded-md border border-[#E2E8F0] bg-white px-2 text-left text-xs text-[#0F172A] outline-none transition-colors focus:border-[#0D9488] focus:ring-1 focus:ring-[#0D9488]/20"
+                      size="small"
+                      slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                      sx={{ width: "100%", "& input": { fontSize: "0.8125rem", py: 0.5 } }}
                     />
-                  </td>
-                  <td className="align-middle h-11 py-2 pr-3 text-left tabular-nums text-xs font-medium text-[#0F172A]">
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontVariantNumeric: "tabular-nums", fontWeight: 500, fontSize: "0.8125rem" }}>
                     {running.toFixed(1)}
-                  </td>
-                  <td className="align-middle h-11 py-2">
-                    <div
-                      className="h-7 w-full rounded border border-[#E2E8F0]"
+                  </TableCell>
+                  <TableCell sx={{ py: 1 }}>
+                    <Box
+                      sx={{ height: 28, width: "100%", borderRadius: 0.5, border: 1, borderColor: "grey.200" }}
                       style={{ backgroundColor: massToneColor(comp) }}
                     />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-          <tfoot>
-            <tr className="border-t-2 border-[#E2E8F0] bg-[#F8FAFC]">
-              <td colSpan={5} className="py-3 pr-3 text-left text-xs font-bold text-[#0F172A]">
-                <span>{t.totalWeightLabel}</span>
-                <span className="tabular-nums">&nbsp;&nbsp;&nbsp;{totalWeight.toFixed(1)} g</span>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+          <TableFooter>
+            <TableRow sx={{ "& td": { fontWeight: 700, fontSize: "0.8125rem", bgcolor: "grey.50" } }}>
+              <TableCell colSpan={5}>
+                <Box component="span">{t.totalWeightLabel}</Box>
+                <Box component="span" sx={{ fontVariantNumeric: "tabular-nums" }}>
+                  &nbsp;&nbsp;&nbsp;{totalWeight.toFixed(1)} g
+                </Box>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 }

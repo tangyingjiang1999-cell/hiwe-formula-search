@@ -8,6 +8,10 @@ import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import { useLang } from "@/components/LanguageContext";
 import type { CarMake, Color, Formula, SearchParams, SearchResult, FormulaTableRow } from "@/types";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 export default function Home() {
   const { t } = useLang();
@@ -18,7 +22,6 @@ export default function Home() {
   const [drawerResult, setDrawerResult] = useState<SearchResult | null>(null);
   const [drawerInitialIdx, setDrawerInitialIdx] = useState(0);
 
-  // colors + formulas + brands 只加载一次，后续搜索复用缓存
   const dataPromiseRef = useRef<Promise<{ colors: Color[]; formulas: Formula[]; brands: CarMake[] }> | null>(null);
 
   function loadData() {
@@ -27,118 +30,82 @@ export default function Home() {
         fetch("/api/colors").then((r) => (r.ok ? r.json() : [])),
         fetch("/api/formulas").then((r) => (r.ok ? r.json() : [])),
         fetch("/api/brands").then((r) => (r.ok ? r.json() : [])),
-      ]).then(([c, f, b]) => ({
-        colors: c as Color[],
-        formulas: f as Formula[],
-        brands: b as CarMake[],
-      }));
+      ]).then(([c, f, b]) => ({ colors: c as Color[], formulas: f as Formula[], brands: b as CarMake[] }));
     }
     return dataPromiseRef.current;
   }
 
-  // 页面打开即预加载，用户点搜索时数据通常已就绪
-  useEffect(() => {
-    loadData().catch(() => {});
-  }, []);
+  useEffect(() => { loadData().catch(() => {}); }, []);
 
-  // 按已加载的数据做客户端过滤，不再每次请求 API
   function handleSearch(params: SearchParams) {
     setIsLoading(true);
     setHasSearched(true);
-    loadData()
-      .then(({ colors, formulas, brands }) => {
-        let filtered = colors;
-        if (params.make_id) filtered = filtered.filter((c) => c.make_id === params.make_id);
-        if (params.color_code) {
-          const code = params.color_code!.toUpperCase();
-          filtered = filtered.filter((c) => c.color_code.toUpperCase().includes(code));
+    loadData().then(({ colors, formulas, brands }) => {
+      let filtered = colors;
+      if (params.make_id) filtered = filtered.filter((c) => c.make_id === params.make_id);
+      if (params.color_code) {
+        const code = params.color_code!.toUpperCase();
+        filtered = filtered.filter((c) => c.color_code.toUpperCase().includes(code));
+      }
+      if (params.color_name) {
+        const name = params.color_name!.toLowerCase();
+        filtered = filtered.filter((c) => c.color_name.toLowerCase().includes(name));
+      }
+      if (params.color_type) filtered = filtered.filter((c) => c.color_type === params.color_type);
+      if (params.year) {
+        filtered = filtered.filter((c) => c.variants.some((v) => v.year_range.includes(params.year!)));
+      }
+      const results: SearchResult[] = filtered.map((color) => ({
+        color,
+        formulas: formulas.filter((f) => f.color_id === color.id),
+      }));
+      const brandsMap = new Map(brands.map((b) => [b.id, b.name]));
+      const rows: FormulaTableRow[] = [];
+      for (const r of results) {
+        for (const f of r.formulas) {
+          rows.push({
+            color: r.color,
+            formula: f,
+            variant: r.color.variants.find((v) => v.id === f.variant_id),
+            makeName: brandsMap.get(r.color.make_id) ?? r.color.make_id,
+          });
         }
-        if (params.color_name) {
-          const name = params.color_name!.toLowerCase();
-          filtered = filtered.filter((c) => c.color_name.toLowerCase().includes(name));
-        }
-        if (params.color_type) filtered = filtered.filter((c) => c.color_type === params.color_type);
-        if (params.year) {
-          filtered = filtered.filter((c) => c.variants.some((v) => v.year_range.includes(params.year!)));
-        }
-
-        const results: SearchResult[] = filtered.map((color) => ({
-          color,
-          formulas: formulas.filter((f) => f.color_id === color.id),
-        }));
-
-        // 展平为每配方一行，解析厂商名与年份
-        const brandsMap = new Map(brands.map((b) => [b.id, b.name]));
-        const rows: FormulaTableRow[] = [];
-        for (const result of results) {
-          for (const formula of result.formulas) {
-            rows.push({
-              color: result.color,
-              formula,
-              variant: result.color.variants.find((v) => v.id === formula.variant_id),
-              makeName: brandsMap.get(result.color.make_id) ?? result.color.make_id,
-            });
-          }
-        }
-
-        setSearchResults(results);
-        setTableRows(rows);
-      })
-      .catch((err) => {
-        console.error(err);
-        setSearchResults([]);
-      })
-      .finally(() => setIsLoading(false));
+      }
+      setSearchResults(results);
+      setTableRows(rows);
+    }).catch((err) => { console.error(err); setSearchResults([]); }).finally(() => setIsLoading(false));
   }
 
   function handleOpenFormula(row: FormulaTableRow) {
-    const result = searchResults.find((r) => r.color.id === row.color.id);
-    if (!result) return;
-    const idx = result.formulas.findIndex((f) => f.id === row.formula.id);
-    setDrawerResult(result);
+    const r = searchResults.find((x) => x.color.id === row.color.id);
+    if (!r) return;
+    const idx = r.formulas.findIndex((f) => f.id === row.formula.id);
+    setDrawerResult(r);
     setDrawerInitialIdx(idx >= 0 ? idx : 0);
   }
 
-  function handleCloseDrawer() {
-    setDrawerResult(null);
-  }
-
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
       <SiteHeader />
-
-      {/* Hero + Search */}
-      <section className="relative flex min-h-[50vh] flex-1 items-center overflow-hidden pt-20 pb-8 md:pt-24">
-
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-10">
-          <div className="mx-auto w-full space-y-6 text-center">
-            <h1 className="text-balance text-2xl font-semibold leading-snug text-[#171717] sm:text-3xl sm:font-bold md:text-4xl lg:text-5xl">
-              {t.heroTitlePrefix} <span className="text-[#0D9488]">{t.heroTitleHighlight}</span>
-            </h1>
-
-            <div className="rounded-lg border border-[#EBEBEB] bg-white p-4 sm:p-6" style={{boxShadow:"0 1px 1px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.04)"}}>
-              <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
-            </div>
-
-            {/* Search results inline below search box */}
-            {hasSearched && (
-              <div className="mt-4 rounded-lg border border-[#EBEBEB] bg-white p-4 text-left sm:p-6" style={{boxShadow:"0 1px 1px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.04)"}}>
-                <SearchResults
-                  rows={tableRows}
-                  isLoading={isLoading}
-                  hasSearched={hasSearched}
-                  onOpenFormula={handleOpenFormula}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
+      <Box component="section" sx={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden", pt: 10, pb: 4 }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: "center", mb: 3 }}>
+            <Typography variant="h3" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+              {t.heroTitlePrefix} <Box component="span" sx={{ color: "primary.main" }}>{t.heroTitleHighlight}</Box>
+            </Typography>
+          </Box>
+          <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
+            <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
+          </Paper>
+          {hasSearched && (
+            <Paper variant="outlined" sx={{ mt: 2, p: { xs: 2, sm: 3 }, textAlign: "left" }}>
+              <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
+            </Paper>
+          )}
+        </Container>
+      </Box>
       <Footer />
-
-      <FormulaDrawer result={drawerResult} initialFormulaIdx={drawerInitialIdx} onClose={handleCloseDrawer} />
-    </div>
+      <FormulaDrawer result={drawerResult} initialFormulaIdx={drawerInitialIdx} onClose={() => setDrawerResult(null)} />
+    </Box>
   );
 }

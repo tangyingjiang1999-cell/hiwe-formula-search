@@ -3,52 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Typography from "@mui/material/Typography";
+import PersonIcon from "@mui/icons-material/Person";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Link from "@mui/material/Link";
 import { useLang } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
-
-function UserIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
-    </svg>
-  );
-}
-
-function LockIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0110 0v4" />
-    </svg>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <svg className="h-5 w-5 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function EyeOffIcon() {
-  return (
-    <svg className="h-5 w-5 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  );
-}
-
-function ArrowLeftIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12" />
-      <polyline points="12 19 5 12 12 5" />
-    </svg>
-  );
-}
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -93,10 +63,12 @@ export default function LoginPage() {
       if (isRegister) {
         if (password.length < 8) {
           setError(t.registerErrorPassword);
+          setLoading(false);
           return;
         }
         if (password !== confirmPassword) {
           setError(t.registerErrorMismatch);
+          setLoading(false);
           return;
         }
         const res = await fetch("/api/auth/register", {
@@ -121,276 +93,327 @@ export default function LoginPage() {
   }
 
   const primaryColor = isRegister ? "#7C3AED" : "#0D9488";
-  const hoverColor = isRegister ? "#6D28D9" : "#0F766E";
-  const focusClasses = isRegister
-    ? "focus:border-[#7C3AED] focus:ring-[#7C3AED]/10"
-    : "focus:border-[#0D9488] focus:ring-[#0D9488]/10";
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <Box sx={{ display: "flex", minHeight: "100vh", flexDirection: { xs: "column", lg: "row" } }}>
       {/* ===== 左侧渐变区 (40%) ===== */}
-      <div className="fluid-gradient relative flex flex-col justify-between px-6 py-8 lg:px-10 lg:py-12 lg:w-[40%]">
-        <div className="fluid-blob" />
+      <Box
+        className="fluid-gradient"
+        sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          px: { xs: 3, lg: 5 },
+          py: { xs: 4, lg: 6 },
+          width: { lg: "40%" },
+        }}
+      >
+        <Box className="fluid-blob" />
 
         {/* Logo - 移动端 */}
-        <div className="relative z-10 flex items-center gap-3 lg:hidden">
+        <Box sx={{ position: "relative", zIndex: 10, display: { xs: "flex", lg: "none" }, alignItems: "center", gap: 1.5 }}>
           <Image
             src="/hiwe.png"
             alt="HIWE"
             width={1206}
             height={334}
-            className="h-8 w-auto object-contain brightness-0 invert"
+            style={{ height: 32, width: "auto", objectFit: "contain", filter: "brightness(0) invert(1)" }}
           />
-        </div>
+        </Box>
 
-        {/* 主标题 - 桌面端展示 */}
-        <div className="relative z-10 hidden lg:block text-left">
-          <h1
-            className="text-white"
-            style={{
+        {/* 主标题 - 桌面端 */}
+        <Box sx={{ position: "relative", zIndex: 10, display: { xs: "none", lg: "block" }, textAlign: "left" }}>
+          <Typography
+            variant="h2"
+            sx={{
+              color: "#fff",
               fontFamily: "Arial, sans-serif",
-              fontSize: "52px",
+              fontSize: 52,
               fontWeight: 700,
-              letterSpacing: "2px",
+              letterSpacing: 2,
               lineHeight: 1.1,
             }}
           >
             HAIWEN MIX
-          </h1>
-          <p
-            className="text-white"
-            style={{
+          </Typography>
+          <Typography
+            sx={{
+              color: "#fff",
               fontFamily: "Arial, sans-serif",
-              fontSize: "13px",
+              fontSize: 13,
               fontWeight: 600,
-              letterSpacing: "3px",
-              marginTop: "4px",
+              letterSpacing: 3,
+              mt: 0.5,
             }}
           >
             {t.brandSlogan}
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {/* 底部官网链接 */}
-        <div className="relative z-10 hidden lg:block">
-          <a
+        <Box sx={{ position: "relative", zIndex: 10, display: { xs: "none", lg: "block" } }}>
+          <Link
             href="https://www.hiwe.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block text-xs font-semibold text-white transition-colors hover:text-white/80"
-            style={{
-              color: "white",
-              textDecoration: "underline",
-              textUnderlineOffset: "3px",
+            underline="always"
+            sx={{
+              color: "#fff",
               fontFamily: "Arial, sans-serif",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              textUnderlineOffset: 3,
+              "&:hover": { opacity: 0.8 },
             }}
           >
             {t.officialWebsite} www.hiwe.com
-          </a>
-        </div>
-      </div>
+          </Link>
+        </Box>
+      </Box>
 
       {/* ===== 右侧表单区 (60%) ===== */}
-      <div className="relative flex flex-1 items-center justify-center bg-white px-6 py-10 lg:px-16">
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "#fff",
+          px: { xs: 3, lg: 5 },
+          py: { xs: 5, lg: 0 },
+        }}
+      >
         {/* 注册模式返回箭头 */}
         {isRegister && (
-          <button
-            type="button"
+          <Button
             onClick={() => {
               setIsRegister(false);
               setError("");
               setConfirmPassword("");
             }}
-            className="absolute left-6 top-6 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 lg:left-10 lg:top-10"
+            startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              position: "absolute",
+              left: { xs: 16, lg: 40 },
+              top: { xs: 16, lg: 40 },
+              color: "text.secondary",
+              fontSize: "0.8125rem",
+              textTransform: "none",
+            }}
           >
-            <ArrowLeftIcon className="h-4 w-4" />
-            <span className="hidden sm:inline">{t.backToLogin}</span>
-          </button>
+            {t.backToLogin}
+          </Button>
         )}
 
-        <div className="w-full max-w-sm">
+        <Box sx={{ width: "100%", maxWidth: 360 }}>
           {/* 主标题与副标题 */}
-          <div className="mb-10 hidden lg:block text-center">
+          <Box sx={{ mb: 5, display: { xs: "none", lg: "block" }, textAlign: "center" }}>
             <Image
               src="/hiwe.png"
               alt="HIWE"
               width={1206}
               height={334}
-              className="mx-auto h-16 w-auto object-contain mb-6"
+              style={{ height: 64, width: "auto", objectFit: "contain", margin: "0 auto 24px" }}
             />
-            <h2 className="mt-2 text-base font-semibold text-gray-900">
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {isRegister ? t.registerWelcome : t.loginWelcome}
-            </h2>
-            <p className="mt-1 text-xs text-gray-500">
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
               {isRegister ? t.registerSubtitle : t.loginSubtitle}
-            </p>
-          </div>
+            </Typography>
+          </Box>
 
-          {/* Logo */}
-          <div className="mb-8 lg:hidden">
+          {/* Logo 移动端 */}
+          <Box sx={{ mb: 4, display: { xs: "block", lg: "none" } }}>
             <Image
               src="/hiwe.png"
               alt="HIWE"
               width={1206}
               height={334}
-              className="mb-4 h-10 w-auto object-contain"
+              style={{ height: 40, width: "auto", objectFit: "contain", marginBottom: 16 }}
             />
-            <h1 className="text-base font-semibold text-gray-900">
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               {isRegister ? t.registerWelcome : t.loginMobileTitle}
-            </h1>
-            <p className="mt-1 text-xs text-gray-500">
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
               {isRegister ? t.registerSubtitle : t.panelTitle}
-            </p>
-          </div>
+            </Typography>
+          </Box>
 
           {/* 表单 */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* 用户名 */}
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-gray-700">
-                {t.loginEmail}
-              </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <UserIcon />
-                </div>
-                <input
-                  type="text"
-                  name="username"
-                  autoComplete="off"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder={t.loginPlaceholderEmail}
-                  autoFocus
-                  className={`block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 ${focusClasses}`}
-                />
-              </div>
-            </div>
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <TextField
+              type="text"
+              label={t.loginEmail}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={t.loginPlaceholderEmail}
+              autoFocus
+              fullWidth
+              autoComplete="off"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": { borderColor: primaryColor },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
+              }}
+            />
 
-            {/* 密码 */}
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-gray-700">
-                {t.loginPassword}
-              </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <LockIcon />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  autoComplete={isRegister ? "new-password" : "current-password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t.loginPlaceholderPassword}
-                  className={`block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 ${focusClasses}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                </button>
-              </div>
-            </div>
+            <TextField
+              type={showPassword ? "text" : "password"}
+              label={t.loginPassword}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t.loginPlaceholderPassword}
+              fullWidth
+              autoComplete={isRegister ? "new-password" : "current-password"}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlinedIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        size="small"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": { borderColor: primaryColor },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
+              }}
+            />
 
-            {/* 确认密码（仅注册） */}
             {isRegister && (
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-gray-700">
-                  {t.registerConfirmLabel}
-                </label>
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <LockIcon />
-                  </div>
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    autoComplete="new-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder={t.registerConfirmPlaceholder}
-                    className={`block h-12 w-full rounded-lg border border-gray-300 bg-white pl-10 pr-12 text-xs text-gray-900 outline-none transition-colors placeholder:text-gray-400 ${focusClasses}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                    tabIndex={-1}
-                  >
-                    {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
-                </div>
-              </div>
+              <TextField
+                type={showConfirmPassword ? "text" : "password"}
+                label={t.registerConfirmLabel}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder={t.registerConfirmPlaceholder}
+                fullWidth
+                autoComplete="new-password"
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockOutlinedIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          edge="end"
+                          size="small"
+                          tabIndex={-1}
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": { borderColor: primaryColor },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
+                }}
+              />
             )}
 
-            {/* 错误提示 */}
             {error && (
-              <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-xs text-red-600">
+              <Alert severity="error" variant="outlined" sx={{ fontSize: "0.8125rem" }}>
                 {error}
-              </div>
+              </Alert>
             )}
 
-            {/* 提交按钮 */}
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center rounded-lg text-xs font-semibold text-white transition-all duration-200 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: primaryColor }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = primaryColor)}
+              variant="contained"
+              fullWidth
+              sx={{
+                py: 1.5,
+                bgcolor: primaryColor,
+                "&:hover": { bgcolor: isRegister ? "#6D28D9" : "#0F766E" },
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                textTransform: "none",
+              }}
             >
               {loading ? (
-                <span className="flex items-center gap-2">
-                  <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                </span>
+                <CircularProgress size={20} sx={{ color: "#fff" }} />
+              ) : isRegister ? (
+                t.registerButton
               ) : (
-                isRegister ? t.registerButton : t.loginButton
+                t.loginButton
               )}
-            </button>
+            </Button>
 
-            {/* 底部切换链接 */}
-            <p className="text-center text-xs text-gray-500">
+            <Typography variant="body2" sx={{ textAlign: "center", color: "text.secondary" }}>
               {isRegister ? (
-                <button
-                  type="button"
+                <Button
                   onClick={() => {
                     setIsRegister(false);
                     setError("");
                     setConfirmPassword("");
                   }}
-                  className="font-medium transition-colors"
-                  style={{ color: primaryColor }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = hoverColor)}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = primaryColor)}
+                  sx={{
+                    color: primaryColor,
+                    fontWeight: 500,
+                    textTransform: "none",
+                    fontSize: "0.8125rem",
+                    "&:hover": { color: isRegister ? "#6D28D9" : "#0F766E" },
+                  }}
                 >
                   {t.registerLoginLink}
-                </button>
+                </Button>
               ) : (
-                <button
-                  type="button"
+                <Button
                   onClick={() => {
                     setIsRegister(true);
                     setError("");
                   }}
-                  className="font-medium transition-colors"
-                  style={{ color: primaryColor }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = hoverColor)}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = primaryColor)}
+                  sx={{
+                    color: primaryColor,
+                    fontWeight: 500,
+                    textTransform: "none",
+                    fontSize: "0.8125rem",
+                    "&:hover": { color: isRegister ? "#6D28D9" : "#0F766E" },
+                  }}
                 >
                   {t.loginRegisterLink}
-                </button>
+                </Button>
               )}
-            </p>
-          </form>
-        </div>
-      </div>
-    </div>
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
