@@ -68,6 +68,14 @@ export default function SiteHeader({}: SiteHeaderProps) {
             <div className="flex items-center gap-2">
               {authUser.role === "admin" && (
                 <Link
+                  href="/admin/data"
+                  className="whitespace-nowrap rounded-lg bg-[#171717] px-2 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 md:px-4 md:text-sm"
+                >
+                  {t.navAdmin}
+                </Link>
+              )}
+              {authUser.role === "admin" && (
+                <Link
                   href="/admin/users"
                   className="max-w-20 truncate rounded-lg bg-[#0D9488] px-2 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 md:max-w-none md:px-4 md:text-sm"
                 >

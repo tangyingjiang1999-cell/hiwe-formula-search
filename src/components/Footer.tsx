@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/components/AuthContext";
-import { useLang } from "@/components/LanguageContext";
 
-// 全站共享 Footer：品牌 logo + 社交链接 + Quick Links
-// 管理员登录时额外显示「Data Management」白底黑字按钮
+// 全站共享 Footer：品牌 logo + 社交链接
 export default function Footer() {
-  const { user } = useAuth();
-  const { t } = useLang();
 
   return (
     <footer className="bg-[#171717] text-[#A1A1A1]">
@@ -77,16 +72,6 @@ export default function Footer() {
             </a>
           </div>
         </div>
-
-        {/* 管理员入口 */}
-        {user?.role === "admin" && (
-          <Link
-            href="/admin/data"
-            className="whitespace-nowrap rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black transition-colors hover:bg-gray-100"
-          >
-            {t.navAdmin}
-          </Link>
-        )}
       </div>
     </footer>
   );
