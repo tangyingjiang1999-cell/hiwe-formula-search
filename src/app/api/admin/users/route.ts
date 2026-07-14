@@ -48,11 +48,11 @@ export async function PUT(req: NextRequest) {
   if (forbidden) return forbidden;
 
   const body = await req.json();
-  const { id, userId, password, newPassword } = body;
+  const { id, userId, password, newPassword, role } = body;
   const targetUserId = userId || id;
   const targetNewPassword = newPassword || password;
 
-  if (!targetUserId || !targetNewPassword) {
+  if (!targetUserId) {
     return NextResponse.json({ error: "缺少必要参数" }, { status: 400 });
   }
 
@@ -62,11 +62,22 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "用户不存在" }, { status: 404 });
   }
 
-  // 更新密码（bcrypt 加密存储）
-  const password_hash = hashPassword(targetNewPassword);
-  await updateUser(targetUserId, { password_hash });
+  // 构建更新字段：密码和角色都可以单独或同时更新
+  const fields: { password_hash?: string; role?: string } = {};
+  if (targetNewPassword) {
+    fields.password_hash = hashPassword(targetNewPassword);
+  }
+  if (role && ["admin", "user"].includes(role)) {
+    fields.role = role;
+  }
 
-  return NextResponse.json({ success: true, message: "密码修改成功" });
+  if (!fields.password_hash && !fields.role) {
+    return NextResponse.json({ error: "缺少需要更新的字段" }, { status: 400 });
+  }
+
+  await updateUser(targetUserId, fields);
+
+  return NextResponse.json({ success: true, message: "用户信息更新成功" });
 }
 
 export async function DELETE(req: NextRequest) {

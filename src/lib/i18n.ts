@@ -207,8 +207,8 @@ interface I18nDict {
   adminConfirmDelete: (username: string) => string;
 }
 
-// 通用复数（粗略按 n>1 处理）
-const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
+// 通用复数（n !== 1 时用复数形式，正确处理 0）
+const plural = (n: number, one: string, many: string) => `${n} ${n !== 1 ? many : one}`;
 
 const dict = (d: Omit<I18nDict,
   "formulasCount" | "foundCount" | "truncatedHint" | "totalFormula" | "colorsBadge" | "formulasBadge"
