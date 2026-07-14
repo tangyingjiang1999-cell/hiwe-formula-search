@@ -114,7 +114,7 @@ export default function SearchResults({
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mb: 1 }}>
+      <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: FONT, fontSize: "1.0625rem", fontWeight: 600, mb: 1 }}>
         {t.foundFormulas(rows.length)}
       </Typography>
 
@@ -157,7 +157,7 @@ export default function SearchResults({
                   </Typography>
                 </TableCell>
                 <TableCell sx={{ py: 2 }}>
-                  <Typography sx={{ fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, color: "grey.400" }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, color: "text.primary" }}>
                     {row.color.color_code}
                   </Typography>
                 </TableCell>
