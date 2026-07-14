@@ -25,6 +25,11 @@ export interface SearchResultsProps {
   onOpenFormula: (row: FormulaTableRow) => void;
 }
 
+const FONT = 'var(--font-inter), var(--font-noto), "Helvetica Neue", Arial, sans-serif';
+const HEADER_FONT_SIZE = "0.875rem";
+const CELL_FONT_SIZE = "1rem";
+const CAPTION_FONT_SIZE = "0.9375rem";
+
 function colorSwatchStyle(hex: string): React.CSSProperties {
   return {
     backgroundColor: hex,
@@ -68,8 +73,8 @@ export default function SearchResults({
 
   if (isLoading) {
     return (
-      <Box>
-        <Typography variant="caption" sx={{ color: "text.secondary", ml: 1 }}>
+      <Box sx={{ p: 3 }}>
+        <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mb: 1 }}>
           <Skeleton variant="text" width={180} />
         </Typography>
         <TableContainer component={Paper} variant="outlined" sx={{ mt: 1 }}>
@@ -93,12 +98,12 @@ export default function SearchResults({
 
   if (rows.length === 0) {
     return (
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 300 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 300, p: 3 }}>
         <SearchOffIcon sx={{ fontSize: 56, color: "grey.300", mb: 2 }} />
-        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500, fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>
           {t.noResults}
         </Typography>
-        <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.5 }}>
+        <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mt: 0.5 }}>
           {t.noResultsHint}
         </Typography>
       </Box>
@@ -108,29 +113,29 @@ export default function SearchResults({
   const pageRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box>
-      <Typography variant="caption" sx={{ color: "text.secondary", ml: 1 }}>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mb: 1 }}>
         {t.foundFormulas(rows.length)}
       </Typography>
 
-      <TableContainer component={Paper} variant="outlined" sx={{ mt: 1 }}>
-        <Table size="small">
+      <TableContainer component={Paper} variant="outlined">
+        <Table>
           <TableHead>
             <TableRow sx={{ bgcolor: "grey.100" }}>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}></TableCell>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}>{t.manufacturerLabel}</TableCell>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}>{t.carModelLabel}</TableCell>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}>{t.codeLabel}</TableCell>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}>{t.colorName}</TableCell>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}>{t.yearsLabel}</TableCell>
-              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}>{t.versionLabel}</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 500, color: "text.disabled", fontSize: "0.6875rem" }}></TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}></TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.manufacturerLabel}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.carModelLabel}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.codeLabel}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.colorName}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.yearsLabel}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.versionLabel}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 500, color: "text.disabled", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {pageRows.map((row) => (
               <TableRow key={row.formula.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                <TableCell sx={{ py: 1.5 }}>
+                <TableCell sx={{ py: 2 }}>
                   <Box
                     sx={{
                       position: "relative",
@@ -143,31 +148,31 @@ export default function SearchResults({
                     style={colorSwatchStyle(row.color.hex_preview)}
                   />
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
-                  <Typography variant="body2" noWrap>{row.makeName}</Typography>
+                <TableCell sx={{ py: 2 }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>{row.makeName}</Typography>
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
-                  <Typography variant="body2" noWrap sx={{ color: "text.primary" }}>
+                <TableCell sx={{ py: 2 }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "text.primary" }}>
                     {row.color.car_model || "—"}
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
-                  <Typography variant="caption" sx={{ fontFamily: "monospace", color: "grey.400" }}>
+                <TableCell sx={{ py: 2 }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, color: "grey.400" }}>
                     {row.color.color_code}
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
-                  <Typography variant="body2" noWrap>{row.color.color_name}</Typography>
+                <TableCell sx={{ py: 2 }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>{row.color.color_name}</Typography>
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                <TableCell sx={{ py: 2 }}>
+                  <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "text.secondary" }}>
                     {row.variant?.year_range ?? "-"}
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ py: 1.5 }}>
-                  <Typography variant="body2">{row.formula.version}</Typography>
+                <TableCell sx={{ py: 2 }}>
+                  <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>{row.formula.version}</Typography>
                 </TableCell>
-                <TableCell align="center" sx={{ py: 1.5 }}>
+                <TableCell align="center" sx={{ py: 2 }}>
                   <IconButton
                     onClick={() => onOpenFormula(row)}
                     size="small"

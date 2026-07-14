@@ -117,9 +117,9 @@ export default function Home() {
             <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
           </Paper>
           {hasSearched && (
-            <Paper variant="outlined" sx={{ mt: 2.5, p: { xs: 2.5, sm: 4 }, textAlign: "left", borderRadius: 2 }}>
+            <Box sx={{ mt: 2.5, px: { xs: 0, md: "60px" } }}>
               <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
-            </Paper>
+            </Box>
           )}
         </Container>
       </Box>
