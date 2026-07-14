@@ -27,6 +27,7 @@ interface FormulaDrawerProps {
   result: SearchResult | null;
   onClose: () => void;
   initialFormulaIdx?: number;
+  formulaId?: string;
 }
 
 function formatComponents(components: FormulaComponent[]): string[] {
@@ -74,7 +75,7 @@ function parseHexInput(raw: string, fallback: string): string {
   return t.startsWith("#") ? t : `#${t}`;
 }
 
-export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: FormulaDrawerProps) {
+export default function FormulaDrawer({ result, onClose, initialFormulaIdx, formulaId }: FormulaDrawerProps) {
   const { t } = useLang();
   const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
   const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
@@ -89,12 +90,18 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
 
   useEffect(() => {
     if (result) {
-      setActiveFormulaIdx(initialFormulaIdx ?? 0);
+      // 优先通过 formulaId 精确定位，否则用 initialFormulaIdx
+      if (formulaId) {
+        const idx = result.formulas.findIndex((f) => f.id === formulaId);
+        setActiveFormulaIdx(idx >= 0 ? idx : 0);
+      } else {
+        setActiveFormulaIdx(initialFormulaIdx ?? 0);
+      }
       setHexInput(result.color.hex_preview);
       setActiveGroup("Pearl Paint");
       setInfoTab(0);
     }
-  }, [result, initialFormulaIdx]);
+  }, [result, initialFormulaIdx, formulaId]);
 
   const handleClose = useCallback(() => { onClose(); }, [onClose]);
 
@@ -177,24 +184,6 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx }: Fo
         <Box sx={{ display: "flex", flex: 1, flexDirection: { xs: "column", lg: "row" }, overflow: "hidden" }}>
           {/* 左：配方表 */}
           <Box sx={{ flex: 1, overflow: "auto", p: { xs: 2, sm: 4 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider" }}>
-            {formulas.length > 1 && (
-              <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap", mb: 2 }}>
-                {formulas.map((f, idx) => {
-                  const v = color.variants.find((x) => x.id === f.variant_id);
-                  return (
-                    <Chip
-                      key={f.id}
-                      label={v?.name ?? f.variant_id}
-                      onClick={() => setActiveFormulaIdx(idx)}
-                      variant={idx === activeFormulaIdx ? "filled" : "outlined"}
-                      color={idx === activeFormulaIdx ? "primary" : "default"}
-                      size="small"
-                    />
-                  );
-                })}
-              </Stack>
-            )}
-
             {activeFormula && displayedFormula && (
               <Box>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1.5 }}>

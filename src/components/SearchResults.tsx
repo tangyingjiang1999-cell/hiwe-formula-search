@@ -15,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
+import Chip from "@mui/material/Chip";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 
@@ -46,6 +47,7 @@ function SkeletonRows() {
           <TableCell><Skeleton variant="rounded" width={40} height={20} /></TableCell>
           <TableCell><Skeleton variant="text" /></TableCell>
           <TableCell><Skeleton variant="text" /></TableCell>
+          <TableCell><Skeleton variant="text" width={80} height={24} /></TableCell>
           <TableCell><Skeleton variant="text" width="60%" /></TableCell>
           <TableCell><Skeleton variant="text" /></TableCell>
           <TableCell><Skeleton variant="text" width={40} /></TableCell>
@@ -125,6 +127,7 @@ export default function SearchResults({
               <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.colorType}</TableCell>
               <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.manufacturerLabel}</TableCell>
               <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.carModelLabel}</TableCell>
+              <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.formulaVariants}</TableCell>
               <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.codeLabel}</TableCell>
               <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.colorName}</TableCell>
               <TableCell sx={{ fontWeight: 500, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE }}>{t.yearsLabel}</TableCell>
@@ -155,6 +158,16 @@ export default function SearchResults({
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "text.primary" }}>
                     {row.color.car_model || "—"}
                   </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 2 }}>
+                  <Chip
+                    label={row.variant?.name ?? row.formula.variant_id}
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => onOpenFormula(row)}
+                    sx={{ fontFamily: FONT, fontSize: "0.8125rem", fontWeight: 500, cursor: "pointer" }}
+                  />
                 </TableCell>
                 <TableCell sx={{ py: 2 }}>
                   <Typography sx={{ fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, color: "text.primary" }}>

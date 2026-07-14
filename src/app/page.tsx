@@ -21,6 +21,7 @@ export default function Home() {
   const [hasSearched, setHasSearched] = useState(false);
   const [drawerResult, setDrawerResult] = useState<SearchResult | null>(null);
   const [drawerInitialIdx, setDrawerInitialIdx] = useState(0);
+  const [drawerFormulaId, setDrawerFormulaId] = useState<string | undefined>();
 
   const dataPromiseRef = useRef<Promise<{ colors: Color[]; formulas: Formula[]; brands: CarMake[] }> | null>(null);
 
@@ -90,9 +91,8 @@ export default function Home() {
   function handleOpenFormula(row: FormulaTableRow) {
     const r = searchResults.find((x) => x.color.id === row.color.id);
     if (!r) return;
-    const idx = r.formulas.findIndex((f) => f.id === row.formula.id);
     setDrawerResult(r);
-    setDrawerInitialIdx(idx >= 0 ? idx : 0);
+    setDrawerFormulaId(row.formula.id);
   }
 
   return (
@@ -124,7 +124,7 @@ export default function Home() {
         )}
       </Box>
       <Footer />
-      <FormulaDrawer result={drawerResult} initialFormulaIdx={drawerInitialIdx} onClose={() => setDrawerResult(null)} />
+      <FormulaDrawer result={drawerResult} formulaId={drawerFormulaId} onClose={() => setDrawerResult(null)} />
     </Box>
   );
 }
