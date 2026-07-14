@@ -1,12 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest, requireAuth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 import { getFormulas } from "@/lib/db-formula";
 
-// 公开读取接口：搜索页普通用户可访问
-export async function GET(req: NextRequest) {
-  const user = getUserFromRequest(req);
-  const unauthorized = requireAuth(user);
-  if (unauthorized) return unauthorized;
-
+// 公开读取接口：搜索页普通用户可访问（无需登录）
+export async function GET() {
   return NextResponse.json(await getFormulas());
 }

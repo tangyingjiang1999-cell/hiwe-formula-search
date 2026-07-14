@@ -1,5 +1,4 @@
 import { supabaseAdmin } from "./supabase-server";
-import bcrypt from "bcryptjs";
 
 export interface User {
   id: number;
@@ -96,13 +95,4 @@ export async function deleteUser(id: number): Promise<void> {
   if (!target || target.username === "admin") return;
   const { error } = await supabaseAdmin.from("users").delete().eq("id", id);
   if (error) throw error;
-}
-
-// 确保默认管理员存在（表为空时创建 admin / admin123）
-export async function initDefaultAdmin(): Promise<void> {
-  const user = await getUserByUsername("admin");
-  if (!user) {
-    const hash = bcrypt.hashSync("admin123", 10);
-    await createUser("admin", hash, "admin");
-  }
 }

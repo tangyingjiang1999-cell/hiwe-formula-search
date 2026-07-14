@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse as NextResponseClass } from "next/server";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "hiwen-mix-secret-key-change-in-production";
+// JWT_SECRET：生产环境必须通过环境变量设置，开发环境使用内置 fallback
+const FALLBACK_SECRET = "hiwen-mix-secret-key-dev-only";
+const JWT_SECRET = process.env.JWT_SECRET || (() => {
+  if (process.env.NODE_ENV === "production") {
+    console.error("⚠️  JWT_SECRET 环境变量未设置！生产环境请务必配置。");
+  } else {
+    console.warn("⚠️  JWT_SECRET 未设置，使用开发默认密钥。生产环境请配置环境变量。");
+  }
+  return FALLBACK_SECRET;
+})();
 
 export interface AuthToken {
   userId: number;

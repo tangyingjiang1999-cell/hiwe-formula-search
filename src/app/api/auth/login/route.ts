@@ -40,7 +40,10 @@ export async function POST(req: NextRequest) {
     setAuthCookie(res, token);
     return res;
   } catch {
-    // KV 未配置时，使用默认管理员账号
+    // Supabase 未配置时，仅在开发环境启用默认管理员兜底
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({ error: "登录服务暂不可用" }, { status: 503 });
+    }
     const fallbackUser = fallbackLogin(username, password);
     if (!fallbackUser) {
       return NextResponse.json({ error: "用户名或密码错误" }, { status: 401 });
