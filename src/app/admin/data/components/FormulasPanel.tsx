@@ -315,9 +315,10 @@ export default function FormulasPanel() {
   // 输入框样式常量
   const INPUT_STYLE: React.CSSProperties = {
     width: "100%",
+    boxSizing: "border-box",
     border: "1px solid #E5E7EB",
     borderRadius: 4,
-    padding: "8px 12px",
+    padding: "6px 10px",
     fontSize: CELL_FONT_SIZE,
     fontFamily: FONT,
     outline: "none",
@@ -325,13 +326,14 @@ export default function FormulasPanel() {
 
   const INPUT_SMALL_STYLE: React.CSSProperties = {
     ...INPUT_STYLE,
-    width: 100,
+    width: "100%",
+    maxWidth: 120,
   };
 
   const RGB_INPUT_STYLE: React.CSSProperties = {
     ...INPUT_STYLE,
-    width: 72,
-    padding: "8px 8px",
+    width: "30%",
+    padding: "6px 6px",
   };
 
   function renderComponentTable(group?: ComponentGroup) {
@@ -340,20 +342,71 @@ export default function FormulasPanel() {
       ? components.filter((c) => c.component_group === group)
       : components;
     return (
-      <Box key={group ?? "regular"} sx={{ mt: 2 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
+      <Box key={group ?? "regular"} sx={{
+        mt: 2,
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
+      }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5, flexShrink: 0 }}>
           <Box sx={{ fontWeight: 600, fontSize: CELL_FONT_SIZE, color: "#1a1a1a", fontFamily: FONT }}>{title}</Box>
           <Button onClick={() => addComponent(group)} variant="outlined" size="small" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>+ 添加色母</Button>
         </Box>
-        <TableContainer component={Paper} variant="outlined" sx={tableContainerSx}>
+        <TableContainer component={Paper} variant="outlined" sx={{
+          ...tableContainerSx,
+          flex: 1,
+          overflow: "auto",
+          minHeight: 0,
+        }}>
           <Table sx={tableSx}>
             <TableHead>
-              <TableRow sx={{ bgcolor: HEADER_BG }}>
-                <TableCell sx={{ ...headerCellSx, width: "25%" }}>色母编号</TableCell>
-                <TableCell sx={{ ...headerCellSx, width: "30%" }}>名称</TableCell>
-                <TableCell sx={{ ...headerCellSx, width: "15%" }}>百分比</TableCell>
-                <TableCell sx={{ ...headerCellSx, width: "25%" }}>RGB</TableCell>
-                <TableCell sx={{ ...headerCellSx, width: "5%" }}></TableCell>
+              <TableRow sx={{
+                bgcolor: HEADER_BG,
+                position: "sticky",
+                top: 0,
+                zIndex: 10,
+              }}>
+                <TableCell sx={{
+                  ...headerCellSx,
+                  width: "22%",
+                  position: "sticky",
+                  top: 0,
+                  bgcolor: HEADER_BG,
+                  zIndex: 10,
+                }}>色母编号</TableCell>
+                <TableCell sx={{
+                  ...headerCellSx,
+                  width: "28%",
+                  position: "sticky",
+                  top: 0,
+                  bgcolor: HEADER_BG,
+                  zIndex: 10,
+                }}>名称</TableCell>
+                <TableCell sx={{
+                  ...headerCellSx,
+                  width: "15%",
+                  position: "sticky",
+                  top: 0,
+                  bgcolor: HEADER_BG,
+                  zIndex: 10,
+                }}>百分比</TableCell>
+                <TableCell sx={{
+                  ...headerCellSx,
+                  width: "25%",
+                  position: "sticky",
+                  top: 0,
+                  bgcolor: HEADER_BG,
+                  zIndex: 10,
+                }}>RGB</TableCell>
+                <TableCell sx={{
+                  ...headerCellSx,
+                  width: "10%",
+                  position: "sticky",
+                  top: 0,
+                  bgcolor: HEADER_BG,
+                  zIndex: 10,
+                }}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -495,7 +548,14 @@ export default function FormulasPanel() {
       </Box>
 
       {/* 右栏：配方编辑 */}
-      <Paper variant="outlined" sx={{ flex: 1, p: 2 }}>
+      <Paper variant="outlined" sx={{
+        flex: 1,
+        p: 2,
+        display: "flex",
+        flexDirection: "column",
+        maxHeight: "calc(100vh - 120px)",
+        overflow: "hidden",
+      }}>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
           <TextField label="配方 ID（自动生成）" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!selectedId} size="small" fullWidth />
           <Box sx={{ position: "relative" }}>
