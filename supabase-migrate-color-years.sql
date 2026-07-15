@@ -1,8 +1,31 @@
 -- =====================================================================
 -- 迁移脚本：从 ColorVariant.year_range 迁移到 color_years 表
--- 功能：1. 从现有变体年份范围提取年份
---       2. 为没有年份数据的颜色随机分配年份
+-- 功能：1. 创建 color_years 表
+--       2. 从现有变体年份范围提取年份
+--       3. 为没有年份数据的颜色随机分配年份
 -- =====================================================================
+
+-- Step0: 创建 color_years 表（如果不存在）
+CREATE TABLE IF NOT EXISTS public.color_years (
+  color_id TEXT NOT NULL REFERENCES public.colors(id) ON DELETE CASCADE,
+  year INTEGER NOT NULL,
+  PRIMARY KEY (color_id, year),
+  CHECK (year >= 1900 AND year <= 2100)
+);
+
+COMMENT ON TABLE public.color_years IS '颜色-年份多对多关联表';
+COMMENT ON COLUMN public.color_years.color_id IS '关联颜色 ID';
+COMMENT ON COLUMN public.color_years.year IS '年份值';
+
+-- 添加索引
+CREATE INDEX IF NOT EXISTS idx_color_years_color_id ON public.color_years (color_id);
+CREATE INDEX IF NOT EXISTS idx_color_years_year ON public.color_years (year);
+
+-- 启用 RLS
+ALTER TABLE public.color_years ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS color_years_select_all ON public.color_years;
+CREATE POLICY color_years_select_all ON public.color_years FOR SELECT TO public USING (true);
 
 -- Step1: 从现有 ColorVariant.year_range 提取年份到 color_years
 DO $$
