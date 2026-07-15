@@ -165,6 +165,11 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
               </Stack>
             )}
 
+            <Chip label={activeFormula?.paint_system} size="small"
+              sx={{ fontWeight: 600, fontSize: "0.625rem",
+                ...(activeFormula?.paint_system === "2K" ? { bgcolor: "#DBEAFE", color: "#1D4ED8" } : { bgcolor: "#D1FAE5", color: "#047857" }) }} />
+            <Chip label={activeFormula?.formula_type} size="small" variant="outlined" sx={{ fontWeight: 600, fontSize: "0.625rem" }} />
+
             <IconButton onClick={handleClose} edge="end"><CloseIcon /></IconButton>
           </Toolbar>
         </AppBar>
@@ -190,12 +195,6 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
                   <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     {t.version} {activeFormula.version}
                   </Typography>
-                  <Divider orientation="vertical" flexItem />
-                  <Chip label={activeFormula.paint_system} size="small"
-                    sx={{ fontWeight: 600, fontSize: "0.625rem",
-                      ...(activeFormula.paint_system === "2K" ? { bgcolor: "#DBEAFE", color: "#1D4ED8" } : { bgcolor: "#D1FAE5", color: "#047857" }) }} />
-                  <Divider orientation="vertical" flexItem />
-                  <Chip label={activeFormula.formula_type} size="small" variant="outlined" sx={{ fontWeight: 600, fontSize: "0.625rem" }} />
                 </Stack>
 
                 <KapciFormulaTable key={`${activeFormula.id}-${activeGroup}`} formula={displayedFormula} />
