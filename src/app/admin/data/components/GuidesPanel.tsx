@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { Guide, GuideCategory } from "@/types";
-import type { GridColDef } from "@mui/x-data-grid";
-import { DataGrid } from "@mui/x-data-grid";
 import { generateGuideId, generateGuideCategoryId } from "@/lib/id-generator";
+import { FONT, HEADER_BG, CELL_FONT_SIZE, COLUMN_BG, ROW_BG, HOVER_BG, HOVER_TRANSITION, tableContainerSx, tableSx, cellSx, headerCellSx, getRowSx, actionButtonSx, deleteButtonSx } from "@/components/admin-table-styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -15,6 +14,15 @@ import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TablePagination from "@mui/material/TablePagination";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -31,6 +39,8 @@ export default function GuidesPanel() {
   const [form, setForm] = useState({ id: "", categoryId: "", title: "", titleZh: "", content: "", contentZh: "" });
   const [error, setError] = useState("");
   const [catForm, setCatForm] = useState({ id: "", name: "", nameZh: "" });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const guideIdEdited = useRef(false);
   const catIdEdited = useRef(false);
 
@@ -60,20 +70,11 @@ export default function GuidesPanel() {
   const catMap = new Map(categories.map((c) => [c.id, c.nameZh]));
   const filtered: GuideRow[] = (filterCat ? guides.filter((g) => g.categoryId === filterCat) : guides).map((g) => ({ ...g, categoryName: catMap.get(g.categoryId) ?? g.categoryId }));
 
-  const columns: GridColDef<GuideRow>[] = [
-    { field: "id", headerName: "ID", flex: 2, minWidth: 140 },
-    { field: "titleZh", headerName: "中文标题", flex: 2, minWidth: 140 },
-    { field: "title", headerName: "英文标题", flex: 2, minWidth: 140 },
-    { field: "categoryName", headerName: "分类", flex: 1.2, minWidth: 100 },
-    { field: "actions", headerName: "操作", flex: 1, minWidth: 100, sortable: false, filterable: false,
-      renderCell: (p) => (
-        <Box sx={{ display: "flex", gap: 0.5 }}>
-          <IconButton onClick={() => openEdit(p.row)} size="small" color="primary"><EditIcon fontSize="small" /></IconButton>
-          <IconButton onClick={() => handleDelete(p.row)} size="small" color="error"><DeleteIcon fontSize="small" /></IconButton>
-        </Box>
-      ),
-    },
-  ];
+  useEffect(() => {
+    setPage(0);
+  }, [filtered]);
+
+  const pageRows = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box>
@@ -87,11 +88,68 @@ export default function GuidesPanel() {
         <Button onClick={openCreate} variant="contained" size="small">+ 新增指南</Button>
       </Stack>
 
-      <DataGrid rows={filtered} columns={columns} getRowId={(r) => r.id} loading={loading}
-        density="compact" autoHeight disableRowSelectionOnClick
-        pageSizeOptions={[10, 25, 50]} initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-        sx={{ border: 1, borderColor: "grey.200", borderRadius: 1.5, "& .MuiDataGrid-columnHeader": { bgcolor: "grey.50", fontWeight: 600 }, "& .MuiDataGrid-row:hover": { bgcolor: "rgba(13,148,136,0.04)" } }}
-      />
+      <TableContainer component={Paper} variant="outlined" sx={tableContainerSx}>
+        <Table sx={tableSx}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: HEADER_BG }}>
+              <TableCell sx={{ ...headerCellSx, width: 120 }}>ID</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 200 }}>中文标题</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 200 }}>英文标题</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 120 }}>分类</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 100 }}></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {pageRows.map((guide, rowIndex) => (
+              <TableRow key={guide.id} sx={getRowSx(rowIndex)}>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151", fontWeight: 500 }}>
+                    {guide.id}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even }}>
+                  <Typography noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#1a1a1a" }}>
+                    {guide.titleZh}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd }}>
+                  <Typography noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {guide.title}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {guide.categoryName}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
+                  <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center" }}>
+                    <IconButton onClick={() => openEdit(guide)} size="small" sx={actionButtonSx}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(guide)} size="small" sx={deleteButtonSx}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          count={filtered.length}
+          page={page}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[10, 25, 50]}
+          labelRowsPerPage="每页行数"
+        />
+      </TableContainer>
 
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editing ? "编辑指南" : "新增指南"}</DialogTitle>

@@ -2,9 +2,18 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { CarMake, Color, ColorVariant } from "@/types";
-import type { GridColDef } from "@mui/x-data-grid";
-import { DataGrid } from "@mui/x-data-grid";
+import { colorSwatchStyle } from "@/lib/utils";
 import { generateColorId } from "@/lib/id-generator";
+import { FONT, HEADER_BG, HEADER_FONT_SIZE, CELL_FONT_SIZE, COLUMN_BG, ROW_BG, HOVER_BG, HOVER_TRANSITION, tableContainerSx, tableSx, cellSx, headerCellSx, getRowSx, actionButtonSx, deleteButtonSx } from "@/components/admin-table-styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TablePagination from "@mui/material/TablePagination";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -23,6 +32,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const COLOR_TYPES = ["solid", "metallic", "pearl", "matte", "candy", "special"] as const;
 
+const COLUMN_WIDTHS = {
+  preview: 60,
+  colorCode: 120,
+  colorName: 150,
+  carModel: 120,
+  brand: 120,
+  colorType: 80,
+  variantCount: 70,
+  yearCount: 70,
+  actions: 100,
+};
+
 interface ColorRow extends Color {
   brandName: string;
   variantCount: number;
@@ -40,6 +61,8 @@ export default function ColorsPanel() {
   const [variantIds, setVariantIds] = useState<string[]>([]);
   const [years, setYears] = useState<number[]>([]);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const idManuallyEdited = useRef(false);
 
   useEffect(() => {
@@ -54,6 +77,10 @@ export default function ColorsPanel() {
     setLoading(false);
   }, []);
   useEffect(() => { fetchColors(); fetch("/api/admin/brands").then((r) => r.ok ? r.json() : []).then(setBrands); fetch("/api/admin/variants").then((r) => r.ok ? r.json() : []).then(setAllVariants); }, [fetchColors]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [colors]);
 
   function openCreate() {
     setEditing(null); setForm({ id: "", make_id: "", color_code: "", color_name: "", color_type: "solid", hex_preview: "#FFFFFF", car_model: "" });
@@ -81,46 +108,111 @@ export default function ColorsPanel() {
   const brandMap = new Map(brands.map((b) => [b.id, b.name]));
   const rows: ColorRow[] = colors.map((c) => ({ ...c, brandName: brandMap.get(c.make_id) ?? c.make_id, variantCount: c.variants.length, yearCount: c.years?.length || 0 }));
 
-  const columns: GridColDef<ColorRow>[] = [
-    {
-      field: "hex_preview", headerName: "预览", width: 60, sortable: false, filterable: false,
-      renderCell: (p) => <Box sx={{ width: 32, height: 20, borderRadius: 0.5, border: 1, borderColor: "grey.200", bgcolor: p.value }} />,
-    },
-    { field: "color_code", headerName: "颜色代码", flex: 1.2, minWidth: 100 },
-    { field: "color_name", headerName: "颜色名称", flex: 1.5, minWidth: 140 },
-    { field: "car_model", headerName: "车型", flex: 1, minWidth: 100, valueGetter: (_, r) => r.car_model || "—" },
-    { field: "brandName", headerName: "品牌", flex: 1.2, minWidth: 100 },
-    { field: "color_type", headerName: "类型", flex: 0.8, minWidth: 80 },
-    { field: "variantCount", headerName: "变体", width: 70, type: "number" },
-    { field: "yearCount", headerName: "年份", width: 70, type: "number" },
-    {
-      field: "actions", headerName: "操作", width: 100, sortable: false, filterable: false,
-      renderCell: (p) => (
-        <Box sx={{ display: "flex", gap: 0.5 }}>
-          <IconButton onClick={() => openEdit(p.row)} size="small" color="primary"><EditIcon fontSize="small" /></IconButton>
-          <IconButton onClick={() => handleDelete(p.row)} size="small" color="error"><DeleteIcon fontSize="small" /></IconButton>
-        </Box>
-      ),
-    },
-  ];
+  const pageRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1.5 }}>
         <Button onClick={openCreate} variant="contained" size="small">+ 新增颜色</Button>
       </Box>
-      <DataGrid
-        rows={rows} columns={columns} getRowId={(r) => r.id} loading={loading}
-        density="compact" autoHeight disableRowSelectionOnClick
-        pageSizeOptions={[10, 25, 50]}
-        initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-        sx={{
-          border: 1, borderColor: "grey.200", borderRadius: 1.5,
-          "& .MuiDataGrid-columnHeader": { bgcolor: "grey.50", fontWeight: 600 },
-          "& .MuiDataGrid-row:hover": { bgcolor: "rgba(13,148,136,0.04)" },
-          "& .MuiDataGrid-cell:focus": { outline: "none" },
-        }}
-      />
+
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{ borderRadius: 1, border: "1px solid", borderColor: "grey.200" }}
+      >
+        <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: "#1a1a1a" }}>
+              <TableCell sx={{ width: COLUMN_WIDTHS.preview, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>预览</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorCode, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>颜色代码</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>颜色名称</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>车型</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.brand, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>品牌</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorType, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>类型</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.variantCount, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>变体</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.yearCount, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>年份</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.actions, borderBottom: "2px solid #333", py: 1.5 }}></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {pageRows.map((row, index) => (
+              <TableRow
+                key={row.id}
+                sx={{
+                  borderBottom: "1px solid #e5e7eb",
+                  "&:last-child td": { borderBottom: "none" },
+                }}
+              >
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Box
+                    sx={{ width: 40, height: 24, borderRadius: 0.5, border: 1, borderColor: "grey.200" }}
+                    style={colorSwatchStyle(row.hex_preview)}
+                  />
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151", fontWeight: 500 }}>
+                    {row.color_code}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#1a1a1a" }}>
+                    {row.color_name}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {row.car_model || "—"}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, fontWeight: 500, color: "#1a1a1a" }}>
+                    {row.brandName}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                  <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {row.color_type}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
+                  <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {row.variantCount}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                  <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#9ca3af" }}>
+                    {row.yearCount}
+                  </Typography>
+                </TableCell>
+                <TableCell align="center" sx={{ py: 1.4, bgcolor: COLUMN_BG.odd }}>
+                  <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center" }}>
+                    <IconButton onClick={() => openEdit(row)} size="small" sx={{ color: "#9ca3af", "&:hover": { bgcolor: "rgba(13,148,136,0.08)", color: "primary.main" } }}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(row)} size="small" sx={{ color: "#9ca3af", "&:hover": { bgcolor: "rgba(239,68,68,0.08)", color: "error.main" } }}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          count={rows.length}
+          page={page}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[10, 25, 50]}
+          labelRowsPerPage="每页行数"
+        />
+      </TableContainer>
 
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{editing ? "编辑颜色" : "新增颜色"}</DialogTitle>

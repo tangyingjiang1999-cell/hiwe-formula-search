@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { CarMake } from "@/types";
-import type { GridColDef } from "@mui/x-data-grid";
-import { DataGrid } from "@mui/x-data-grid";
 import { generateBrandId } from "@/lib/id-generator";
+import { FONT, HEADER_BG, CELL_FONT_SIZE, COLUMN_BG, ROW_BG, HOVER_BG, HOVER_TRANSITION, tableContainerSx, tableSx, cellSx, headerCellSx, getRowSx, actionButtonSx, deleteButtonSx } from "@/components/admin-table-styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -14,6 +13,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TablePagination from "@mui/material/TablePagination";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -26,6 +34,8 @@ export default function BrandsPanel() {
   const [editing, setEditing] = useState<CarMake | null>(null);
   const [form, setForm] = useState({ id: "", name: "", region: "JPN" as CarMake["region"] });
   const [error, setError] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const idManuallyEdited = useRef(false);
 
   useEffect(() => {
@@ -40,6 +50,10 @@ export default function BrandsPanel() {
     setLoading(false);
   }, []);
   useEffect(() => { fetchBrands(); }, [fetchBrands]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [brands]);
 
   function openCreate() {
     setEditing(null); setForm({ id: "", name: "", region: "JPN" }); setError(""); idManuallyEdited.current = false; setShowModal(true);
@@ -61,43 +75,70 @@ export default function BrandsPanel() {
     fetchBrands();
   }
 
-  const columns: GridColDef<CarMake>[] = [
-    { field: "id", headerName: "ID", flex: 2, minWidth: 120 },
-    { field: "name", headerName: "名称", flex: 2, minWidth: 120 },
-    { field: "region", headerName: "产地", flex: 1, minWidth: 80 },
-    {
-      field: "actions", headerName: "操作", flex: 1, minWidth: 140, sortable: false, filterable: false,
-      renderCell: (p) => (
-        <Box sx={{ display: "flex", gap: 0.5 }}>
-          <IconButton onClick={() => openEdit(p.row)} size="small" color="primary" sx={{ "&:hover": { bgcolor: "primary.light", color: "#fff" } }}><EditIcon fontSize="small" /></IconButton>
-          <IconButton onClick={() => handleDelete(p.row)} size="small" color="error" sx={{ "&:hover": { bgcolor: "error.light", color: "#fff" } }}><DeleteIcon fontSize="small" /></IconButton>
-        </Box>
-      ),
-    },
-  ];
+  const pageRows = brands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1.5 }}>
         <Button onClick={openCreate} variant="contained" size="small">+ 新增品牌</Button>
       </Box>
-      <DataGrid
-        rows={brands}
-        columns={columns}
-        getRowId={(r) => r.id}
-        loading={loading}
-        density="compact"
-        autoHeight
-        disableRowSelectionOnClick
-        pageSizeOptions={[10, 25, 50]}
-        initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-        sx={{
-          border: 1, borderColor: "grey.200", borderRadius: 1.5,
-          "& .MuiDataGrid-columnHeader": { bgcolor: "grey.50", fontWeight: 600 },
-          "& .MuiDataGrid-row:hover": { bgcolor: "rgba(13,148,136,0.04)" },
-          "& .MuiDataGrid-cell:focus": { outline: "none" },
-        }}
-      />
+
+      <TableContainer component={Paper} variant="outlined" sx={tableContainerSx}>
+        <Table sx={tableSx}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: HEADER_BG }}>
+              <TableCell sx={{ ...headerCellSx, width: 120 }}>ID</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 200 }}>名称</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 150 }}>产地</TableCell>
+              <TableCell sx={{ ...headerCellSx, width: 100 }}></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {pageRows.map((brand, rowIndex) => (
+              <TableRow key={brand.id} sx={getRowSx(rowIndex)}>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151", fontWeight: 500 }}>
+                    {brand.id}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even }}>
+                  <Typography noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#1a1a1a" }}>
+                    {brand.name}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd }}>
+                  <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {brand.region}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                  <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center" }}>
+                    <IconButton onClick={() => openEdit(brand)} size="small" sx={actionButtonSx}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(brand)} size="small" sx={deleteButtonSx}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          count={brands.length}
+          page={page}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[10, 25, 50]}
+          labelRowsPerPage="每页行数"
+        />
+      </TableContainer>
 
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
         <DialogTitle>{editing ? "编辑品牌" : "新增品牌"}</DialogTitle>
