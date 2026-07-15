@@ -18,3 +18,12 @@ export function cn(...inputs: ClassValue[]): string {
   }
   return classes.join(" ");
 }
+
+/** 生成金属漆光泽渐变效果的样式对象 */
+export function colorSwatchStyle(hex: string) {
+  return {
+    backgroundColor: hex,
+    backgroundImage:
+      "linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.12) 16%, rgba(0,0,0,0) 32%, rgba(255,255,255,0.28) 42%, rgba(255,255,255,0.50) 50%, rgba(255,255,255,0.28) 58%, rgba(0,0,0,0) 68%, rgba(0,0,0,0.12) 84%, rgba(0,0,0,0.32) 100%)",
+  };
+}

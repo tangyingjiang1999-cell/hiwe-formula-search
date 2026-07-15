@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { SearchResult, Formula, FormulaComponent, ComponentGroup, Color } from "@/types";
 import { COLOR_TYPE_MAP } from "@/lib/constants";
+import { colorSwatchStyle } from "@/lib/utils";
 import { useLang } from "@/components/LanguageContext";
 import KapciFormulaTable from "./KapciFormulaTable";
 import Toast from "./Toast";
@@ -152,7 +153,10 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
       <Dialog open onClose={handleClose} maxWidth="lg" fullWidth slotProps={{ paper: { sx: { height: "90vh", maxWidth: "85rem" } } }}>
         <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Toolbar sx={{ gap: 2 }}>
-            <Box sx={{ width: 48, height: 48, borderRadius: 1.5, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: previewColor }} />
+            <Box
+              sx={{ width: 48, height: 48, borderRadius: 1.5, border: 1, borderColor: "grey.200", flexShrink: 0 }}
+              style={colorSwatchStyle(previewColor)}
+            />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flex: 1 }}>
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle1" noWrap sx={{ fontWeight: 600 }}>{color.color_name}</Typography>
@@ -229,7 +233,10 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
               <Typography variant="overline" sx={{ color: "#1a1a1a", fontWeight: 600, letterSpacing: 1, fontSize: FONT_SIZES.small }}>
                 {t.colorPreview}
               </Typography>
-              <Box sx={{ mt: 1.5, height: { xs: 150, sm: 240 }, borderRadius: 1, border: 1, borderColor: "grey.200", bgcolor: previewColor }} />
+              <Box
+                sx={{ mt: 1.5, height: { xs: 75, sm: 120 }, borderRadius: 1, border: 1, borderColor: "grey.200" }}
+                style={colorSwatchStyle(previewColor)}
+              />
             </Box>
 
             <Box sx={{ borderTop: 1, borderColor: "divider" }}>

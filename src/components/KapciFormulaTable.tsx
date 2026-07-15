@@ -137,7 +137,7 @@ export default function KapciFormulaTable({ formula }: KapciFormulaTableProps) {
 
               return (
                 <TableRow key={comp.toner_code}>
-                  <TableCell sx={{ py: 1, fontSize: FONT_SIZES.tiny, fontFamily: "monospace", color: "#1a1a1a" }}>
+                  <TableCell sx={{ py: 1, fontSize: FONT_SIZES.tiny, fontFamily: "var(--font-inter), sans-serif", fontWeight: 600, color: "#1a1a1a" }}>
                     {comp.toner_code}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontSize: FONT_SIZES.small, color: "#1a1a1a" }}>{comp.toner_name}</TableCell>

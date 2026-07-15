@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useLang } from "@/components/LanguageContext";
+import { colorSwatchStyle } from "@/lib/utils";
 import type { FormulaTableRow } from "@/types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -34,11 +35,11 @@ const CAPTION_FONT_SIZE = "0.875rem";
 const COLUMN_WIDTHS = {
   colorType: 105,
   manufacturer: 125,
-  carModel: 150,
-  formulaVariants: 120,
   code: 100,
   colorName: 150,
+  carModel: 150,
   years: 120,
+  formulaVariants: 120,
   version: 100,
   action: 60,
 };
@@ -48,14 +49,6 @@ const COLUMN_BG = {
   odd: "transparent",           // 奇数列：透明（跟随行色）
   even: "rgba(0, 0, 0, 0.025)", // 偶数列：2.5% 黑色透明度
 };
-
-function colorSwatchStyle(hex: string): React.CSSProperties {
-  return {
-    backgroundColor: hex,
-    backgroundImage:
-      "linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.12) 16%, rgba(0,0,0,0) 32%, rgba(255,255,255,0.28) 42%, rgba(255,255,255,0.50) 50%, rgba(255,255,255,0.28) 58%, rgba(0,0,0,0) 68%, rgba(0,0,0,0.12) 84%, rgba(0,0,0,0.32) 100%)",
-  };
-}
 
 function SkeletonRows() {
   return (
@@ -144,11 +137,11 @@ export default function SearchResults({
             <TableRow sx={{ bgcolor: "#1a1a1a" }}>
               <TableCell sx={{ width: COLUMN_WIDTHS.colorType, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorType}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.manufacturer, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.manufacturerLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.carModelLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.formulaVariants, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>Variants</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.code, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.codeLabel}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorName}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.carModelLabel}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.years, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.yearsLabel}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.formulaVariants, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>Variants</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.version, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.versionLabel}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.action, borderBottom: "2px solid #333", py: 1.5 }}></TableCell>
             </TableRow>
@@ -182,32 +175,32 @@ export default function SearchResults({
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, fontWeight: 500, color: "#1a1a1a" }}>{row.makeName}</Typography>
                 </TableCell>
-                {/* col 2: carModel (odd) */}
-                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
-                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
-                    {row.color.car_model || "—"}
-                  </Typography>
-                </TableCell>
-                {/* col 3: Variants (even) */}
-                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
-                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
-                    {row.variant?.name ?? row.formula.variant_id}
-                  </Typography>
-                </TableCell>
-                {/* col 4: code (odd) */}
+                {/* col 2: code (odd) */}
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
                   <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151", fontWeight: 500 }}>
                     {row.color.color_code}
                   </Typography>
                 </TableCell>
-                {/* col 5: colorName (even) */}
+                {/* col 3: colorName (even) */}
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#1a1a1a" }}>{row.color.color_name}</Typography>
                 </TableCell>
-                {/* col 6: years (odd) */}
+                {/* col 4: carModel (odd) */}
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {row.color.car_model || "—"}
+                  </Typography>
+                </TableCell>
+                {/* col 5: years (even) */}
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#9ca3af" }}>
                     {row.variant?.year_range ?? "-"}
+                  </Typography>
+                </TableCell>
+                {/* col 6: Variants (odd) */}
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {row.variant?.name ?? row.formula.variant_id}
                   </Typography>
                 </TableCell>
                 {/* col 7: version (even) */}
