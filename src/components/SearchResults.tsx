@@ -166,11 +166,11 @@ export default function SearchResults({
                 }}
               >
                 {/* col 0: colorType (odd) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd }}>
+                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd, display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <Box
                     sx={{
-                      width: 32,
-                      height: 16,
+                      width: 64,
+                      height: 32,
                       borderRadius: 0.5,
                       border: 1,
                       borderColor: "grey.200",
