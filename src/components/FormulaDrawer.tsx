@@ -150,6 +150,13 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
               <Typography variant="caption" sx={{ color: "text.secondary" }}>{color.color_code}</Typography>
             </Box>
 
+            <Stack direction="row" spacing={1} sx={{ ml: 2.5 }}>
+              <Chip label={activeFormula?.paint_system} size="small"
+                sx={{ fontWeight: 600, fontSize: "0.625rem",
+                  ...(activeFormula?.paint_system === "2K" ? { bgcolor: "#DBEAFE", color: "#1D4ED8" } : { bgcolor: "#D1FAE5", color: "#047857" }) }} />
+              <Chip label={activeFormula?.formula_type} size="small" variant="outlined" sx={{ fontWeight: 600, fontSize: "0.625rem" }} />
+            </Stack>
+
             {activeFormula?.formula_type === "Pearl Paint" && (
               <Stack direction="row" spacing={0.5} sx={{ display: { xs: "none", sm: "flex" } }}>
                 {(["Pearl Paint", "Ground Paint"] as ComponentGroup[]).map((g) => (
@@ -164,11 +171,6 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
                 ))}
               </Stack>
             )}
-
-            <Chip label={activeFormula?.paint_system} size="small"
-              sx={{ fontWeight: 600, fontSize: "0.625rem",
-                ...(activeFormula?.paint_system === "2K" ? { bgcolor: "#DBEAFE", color: "#1D4ED8" } : { bgcolor: "#D1FAE5", color: "#047857" }) }} />
-            <Chip label={activeFormula?.formula_type} size="small" variant="outlined" sx={{ fontWeight: 600, fontSize: "0.625rem" }} />
 
             <IconButton onClick={handleClose} edge="end"><CloseIcon /></IconButton>
           </Toolbar>
