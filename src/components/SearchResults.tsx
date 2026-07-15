@@ -166,7 +166,7 @@ export default function SearchResults({
                 }}
               >
                 {/* col 0: colorType (odd) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <Box
                     sx={{
                       width: 64,
@@ -179,43 +179,43 @@ export default function SearchResults({
                   />
                 </TableCell>
                 {/* col 1: manufacturer (even) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.even }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, fontWeight: 500, color: "#1a1a1a" }}>{row.makeName}</Typography>
                 </TableCell>
                 {/* col 2: carModel (odd) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
                     {row.color.car_model || "—"}
                   </Typography>
                 </TableCell>
                 {/* col 3: Variants (even) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
                     {row.variant?.name ?? row.formula.variant_id}
                   </Typography>
                 </TableCell>
                 {/* col 4: code (odd) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
                   <Typography sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151", fontWeight: 500 }}>
                     {row.color.color_code}
                   </Typography>
                 </TableCell>
                 {/* col 5: colorName (even) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.even }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#1a1a1a" }}>{row.color.color_name}</Typography>
                 </TableCell>
                 {/* col 6: years (odd) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, textAlign: "center" }}>
                   <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#9ca3af" }}>
                     {row.variant?.year_range ?? "-"}
                   </Typography>
                 </TableCell>
                 {/* col 7: version (even) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.even }}>
+                <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151", fontWeight: 500 }}>{row.formula.version}</Typography>
                 </TableCell>
                 {/* col 8: action (odd) */}
-                <TableCell align="center" sx={{ py: 2, bgcolor: COLUMN_BG.odd }}>
+                <TableCell align="center" sx={{ py: 1.4, bgcolor: COLUMN_BG.odd }}>
                   <IconButton
                     onClick={() => onOpenFormula(row)}
                     size="small"
