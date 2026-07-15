@@ -86,11 +86,13 @@ export default function FormulasPanel() {
     paint_system: "2K" as Formula["paint_system"],
     formula_type: AUTO_2K_TYPE,
     notes: "",
+    year: undefined as number | undefined,
   });
   const [components, setComponents] = useState<FormulaComponent[]>([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const idManuallyEdited = useRef(false);
+  const [availableYears, setAvailableYears] = useState<number[]>([]);
 
   // 关联颜色搜索下拉
   const [colorQuery, setColorQuery] = useState("");
@@ -157,11 +159,16 @@ export default function FormulasPanel() {
       paint_system: formula.paint_system,
       formula_type: formula.formula_type,
       notes: formula.notes,
+      year: formula.year,
     });
     setComponents(formula.components.map((c) => ({ ...c })));
     setError("");
     setMessage("");
     setColorQuery("");
+
+    // 加载选中颜色的可用年份
+    const color = colors.find((c) => c.id === formula.color_id);
+    setAvailableYears(color?.years || []);
   }
 
   function newFormula() {
@@ -174,11 +181,13 @@ export default function FormulasPanel() {
       paint_system: "2K",
       formula_type: AUTO_2K_TYPE,
       notes: "",
+      year: undefined,
     });
     setComponents([]);
     setError("");
     setMessage("");
     setColorQuery("");
+    setAvailableYears([]);
     idManuallyEdited.current = false;
   }
 
@@ -266,6 +275,7 @@ export default function FormulasPanel() {
       variant_id: form.variant_id || "",
       components: comps,
       updated_at: "",
+      year: form.year,
     };
     const method = selectedId ? "PUT" : "POST";
     try {
@@ -444,7 +454,7 @@ export default function FormulasPanel() {
                   return (
                     <Button
                       key={c.id}
-                      onMouseDown={() => { setForm((prev) => ({ ...prev, color_id: c.id })); setColorQuery(""); setColorDropdownOpen(false); }}
+                      onMouseDown={() => { setForm((prev) => ({ ...prev, color_id: c.id, year: undefined })); setColorQuery(""); setColorDropdownOpen(false); setAvailableYears(c.years || []); }}
                       fullWidth
                       sx={{
                         justifyContent: "flex-start", gap: 1, px: 1, py: 1, borderRadius: 0,
@@ -464,6 +474,20 @@ export default function FormulasPanel() {
             )}
             {selectedColor && <Box sx={{ mt: 0.25, color: "primary.main", fontSize: "0.6875rem", overflow: "hidden", textOverflow: "ellipsis" }}>{colorDisplay}</Box>}
           </Box>
+          <TextField
+            select
+            label="适用年份（可选）"
+            value={form.year || ""}
+            onChange={(e) => setForm({ ...form, year: e.target.value ? parseInt(e.target.value, 10) : undefined })}
+            size="small"
+            fullWidth
+            disabled={!form.color_id}
+          >
+            <MenuItem value="">所有年份</MenuItem>
+            {availableYears.map((y) => (
+              <MenuItem key={y} value={y}>{y}</MenuItem>
+            ))}
+          </TextField>
           <TextField select label="关联变体（可选）" value={form.variant_id} onChange={(e) => setForm({ ...form, variant_id: e.target.value })} size="small" fullWidth>
             <MenuItem value="">无</MenuItem>
             {variants.map((v) => <MenuItem key={v.id} value={v.id}>{v.name} ({v.year_range})</MenuItem>)}

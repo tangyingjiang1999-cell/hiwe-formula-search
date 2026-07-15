@@ -38,6 +38,50 @@ export async function getVariants(): Promise<ColorVariant[]> {
   return (data ?? []) as ColorVariant[];
 }
 
+// ====== Color Years ======
+
+export async function getColorYears(colorId: string): Promise<number[]> {
+  const { data, error } = await supabase
+    .from("color_years")
+    .select("year")
+    .eq("color_id", colorId)
+    .order("year", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((r) => r.year as number);
+}
+
+export async function getAllColorYears(): Promise<Record<string, number[]>> {
+  const { data, error } = await supabase
+    .from("color_years")
+    .select("color_id, year")
+    .order("year", { ascending: true });
+  if (error) throw error;
+  const map: Record<string, number[]> = {};
+  for (const row of data ?? []) {
+    const colorId = row.color_id as string;
+    const year = row.year as number;
+    if (!map[colorId]) map[colorId] = [];
+    map[colorId].push(year);
+  }
+  return map;
+}
+
+export async function saveColorYears(colorId: string, years: number[]): Promise<void> {
+  // 删除现有的年份
+  const { error: delErr } = await supabaseAdmin
+    .from("color_years")
+    .delete()
+    .eq("color_id", colorId);
+  if (delErr) throw delErr;
+
+  // 插入新的年份
+  if (years.length > 0) {
+    const rows = years.map((year) => ({ color_id: colorId, year }));
+    const { error: insErr } = await supabaseAdmin.from("color_years").insert(rows);
+    if (insErr) throw insErr;
+  }
+}
+
 // ====== Colors ======
 
 export async function getColors(): Promise<Color[]> {
@@ -46,7 +90,15 @@ export async function getColors(): Promise<Color[]> {
     .select("*, color_variant_map(color_variants(*))")
     .order("color_code", { ascending: true });
   if (error) throw error;
-  return (data ?? []).map(mapColorRow);
+
+  // 批量获取所有颜色的年份
+  const yearsMap = await getAllColorYears();
+
+  return (data ?? []).map((row) => {
+    const color = mapColorRow(row);
+    color.years = yearsMap[color.id] || [];
+    return color;
+  });
 }
 
 // ====== Formulas ======

@@ -17,6 +17,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
+import Chip from "@mui/material/Chip";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -25,6 +26,7 @@ const COLOR_TYPES = ["solid", "metallic", "pearl", "matte", "candy", "special"] 
 interface ColorRow extends Color {
   brandName: string;
   variantCount: number;
+  yearCount: number;
 }
 
 export default function ColorsPanel() {
@@ -36,6 +38,7 @@ export default function ColorsPanel() {
   const [editing, setEditing] = useState<Color | null>(null);
   const [form, setForm] = useState({ id: "", make_id: "", color_code: "", color_name: "", color_type: "solid" as Color["color_type"], hex_preview: "#FFFFFF", car_model: "" });
   const [variantIds, setVariantIds] = useState<string[]>([]);
+  const [years, setYears] = useState<number[]>([]);
   const [error, setError] = useState("");
   const idManuallyEdited = useRef(false);
 
@@ -54,17 +57,17 @@ export default function ColorsPanel() {
 
   function openCreate() {
     setEditing(null); setForm({ id: "", make_id: "", color_code: "", color_name: "", color_type: "solid", hex_preview: "#FFFFFF", car_model: "" });
-    setVariantIds([]); setError(""); idManuallyEdited.current = false; setShowModal(true);
+    setVariantIds([]); setYears([]); setError(""); idManuallyEdited.current = false; setShowModal(true);
   }
   function openEdit(c: Color) {
     setEditing(c); setForm({ id: c.id, make_id: c.make_id, color_code: c.color_code, color_name: c.color_name, color_type: c.color_type, hex_preview: c.hex_preview, car_model: c.car_model ?? "" });
-    setVariantIds(c.variants.map((v) => v.id)); setError(""); setShowModal(true);
+    setVariantIds(c.variants.map((v) => v.id)); setYears(c.years || []); setError(""); setShowModal(true);
   }
   async function handleSave() {
     setError("");
     if (!form.id || !form.make_id || !form.color_code || !form.color_name) { setError("所有字段不能为空"); return; }
     const m = editing ? "PUT" : "POST";
-    const res = await fetch("/api/admin/colors", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, variantIds }) });
+    const res = await fetch("/api/admin/colors", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, variantIds, years }) });
     if (res.ok) { setShowModal(false); fetchColors(); }
     else { const d = await res.json(); setError(d.error || "保存失败"); }
   }
@@ -76,7 +79,7 @@ export default function ColorsPanel() {
   function toggleVariant(id: string) { setVariantIds((prev) => prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]); }
 
   const brandMap = new Map(brands.map((b) => [b.id, b.name]));
-  const rows: ColorRow[] = colors.map((c) => ({ ...c, brandName: brandMap.get(c.make_id) ?? c.make_id, variantCount: c.variants.length }));
+  const rows: ColorRow[] = colors.map((c) => ({ ...c, brandName: brandMap.get(c.make_id) ?? c.make_id, variantCount: c.variants.length, yearCount: c.years?.length || 0 }));
 
   const columns: GridColDef<ColorRow>[] = [
     {
@@ -89,6 +92,7 @@ export default function ColorsPanel() {
     { field: "brandName", headerName: "品牌", flex: 1.2, minWidth: 100 },
     { field: "color_type", headerName: "类型", flex: 0.8, minWidth: 80 },
     { field: "variantCount", headerName: "变体", width: 70, type: "number" },
+    { field: "yearCount", headerName: "年份", width: 70, type: "number" },
     {
       field: "actions", headerName: "操作", width: 100, sortable: false, filterable: false,
       renderCell: (p) => (
@@ -137,6 +141,60 @@ export default function ColorsPanel() {
             <TextField label="预览色" type="color" value={form.hex_preview} onChange={(e) => setForm({ ...form, hex_preview: e.target.value })} size="small" sx={{ "& input": { height: 32, p: 0.5 } }} fullWidth />
           </Stack>
           <TextField label="车型" value={form.car_model} onChange={(e) => setForm({ ...form, car_model: e.target.value })} placeholder="例如 Camry / Corolla" size="small" fullWidth />
+          <Box>
+            <Box sx={{ fontSize: "0.8125rem", fontWeight: 500, mb: 1 }}>适用年份</Box>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 1 }}>
+              {years.map((year) => (
+                <Chip
+                  key={year}
+                  label={year}
+                  onDelete={() => setYears(years.filter((y) => y !== year))}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+              {years.length === 0 && <Box sx={{ fontSize: "0.8125rem", color: "text.disabled" }}>暂无年份</Box>}
+            </Box>
+            <Stack direction="row" spacing={1}>
+              <TextField
+                label="添加年份"
+                type="number"
+                size="small"
+                sx={{ width: 120 }}
+                slotProps={{ htmlInput: { min: 1900, max: 2100 } }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const target = e.target as HTMLInputElement;
+                    const val = parseInt(target.value, 10);
+                    if (val >= 1900 && val <= 2100 && !years.includes(val)) {
+                      setYears([...years, val].sort());
+                      target.value = "";
+                    }
+                  }
+                }}
+              />
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  const input = document.querySelector('input[type="number"]') as HTMLInputElement;
+                  if (input) {
+                    const val = parseInt(input.value, 10);
+                    if (val >= 1900 && val <= 2100 && !years.includes(val)) {
+                      setYears([...years, val].sort());
+                      input.value = "";
+                    }
+                  }
+                }}
+              >
+                添加
+              </Button>
+            </Stack>
+            <Box sx={{ fontSize: "0.75rem", color: "text.disabled", mt: 0.5 }}>
+              按 Enter 或点击「添加」按钮添加年份
+            </Box>
+          </Box>
           <Box>
             <Box sx={{ fontSize: "0.8125rem", fontWeight: 500, mb: 1 }}>关联变体</Box>
             <Box sx={{ maxHeight: 160, overflow: "auto", border: 1, borderColor: "grey.300", borderRadius: 1, p: 1 }}>

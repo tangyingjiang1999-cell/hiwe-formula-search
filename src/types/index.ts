@@ -22,6 +22,7 @@ export interface Color {
   hex_preview: string     // 颜色预览 hex，例如 "#F5F5F0"
   car_model?: string      // 车型，例如 "Camry" "Corolla"
   variants: ColorVariant[]
+  years?: number[]        // 适用年份列表，例如 [2018, 2019, 2020, 2021, 2022]
 }
 
 // 配方类型
@@ -54,6 +55,8 @@ export interface Formula {
   components: FormulaComponent[]
   notes: string            // 施工备注，例如 "建议喷涂2遍底色"
   updated_at: string
+  year?: number            // 适用年份（可选，用于反规范化搜索）
+  color_name?: string      // 颜色名称（可选，用于快速搜索）
 }
 
 // 搜索参数

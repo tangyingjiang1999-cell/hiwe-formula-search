@@ -54,16 +54,11 @@ export default function Home() {
       }
       if (params.color_type) filtered = filtered.filter((c) => c.color_type.toLowerCase() === params.color_type);
       if (params.year) {
-        // 年份范围匹配：将 year_range 如 "2018-2022" 解析为起止年份，检查输入年份是否落在区间内
+        // 年份匹配：检查颜色的年份列表中是否包含搜索的年份
         const searchYear = parseInt(params.year, 10);
         if (!isNaN(searchYear)) {
           filtered = filtered.filter((c) =>
-            c.variants.some((v) => {
-              const parts = v.year_range.split("-").map((s) => parseInt(s.trim(), 10));
-              const minY = parts[0] || 0;
-              const maxY = parts[1] || parts[0] || 9999;
-              return searchYear >= minY && searchYear <= maxY;
-            })
+            c.years && c.years.some((y) => y === searchYear)
           );
         }
       }

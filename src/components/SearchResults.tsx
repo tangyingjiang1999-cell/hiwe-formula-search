@@ -194,7 +194,9 @@ export default function SearchResults({
                 {/* col 5: years (even) */}
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
                   <Typography variant="body2" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#9ca3af" }}>
-                    {row.variant?.year_range ?? "-"}
+                    {row.color.years?.length
+                      ? row.color.years.join(", ")
+                      : "-"}
                   </Typography>
                 </TableCell>
                 {/* col 6: Variants (odd) */}

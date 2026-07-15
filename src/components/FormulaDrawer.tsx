@@ -145,7 +145,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
     );
   }
 
-  const years = color.variants.map((v) => v.year_range).join(", ");
+  const years = color.years?.join(", ") || "";
   const typeLabel = color.color_type;
 
   return (

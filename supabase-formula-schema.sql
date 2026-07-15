@@ -227,6 +227,38 @@ DROP POLICY IF EXISTS guides_select_all ON public.guides;
 CREATE POLICY guides_select_all ON public.guides FOR SELECT TO public USING (true);
 
 -- ---------------------------------------------------------------------
--- 11. 刷新 PostgREST schema cache（让 REST API 立即认识新建的表）
+-- 12. color_years: 颜色-年份多对多关联（新增）
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.color_years (
+  color_id TEXT NOT NULL REFERENCES public.colors(id) ON DELETE CASCADE,
+  year INTEGER NOT NULL,
+  PRIMARY KEY (color_id, year),
+  CHECK (year >= 1900 AND year <= 2100)
+);
+
+COMMENT ON TABLE public.color_years IS '颜色-年份多对多关联表';
+COMMENT ON COLUMN public.color_years.color_id IS '关联颜色 ID';
+COMMENT ON COLUMN public.color_years.year IS '年份值';
+
+-- 为 formulas 表添加 year 和 color_name 字段（可选，用于反规范化搜索）
+ALTER TABLE public.formulas ADD COLUMN IF NOT EXISTS year INTEGER;
+ALTER TABLE public.formulas ADD COLUMN IF NOT EXISTS color_name TEXT;
+
+-- ---------------------------------------------------------------------
+-- 13. 索引 - color_years
+-- ---------------------------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_color_years_color_id ON public.color_years (color_id);
+CREATE INDEX IF NOT EXISTS idx_color_years_year ON public.color_years (year);
+
+-- ---------------------------------------------------------------------
+-- 14. RLS 行级安全策略 - color_years
+-- ---------------------------------------------------------------------
+ALTER TABLE public.color_years ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS color_years_select_all ON public.color_years;
+CREATE POLICY color_years_select_all ON public.color_years FOR SELECT TO public USING (true);
+
+-- ---------------------------------------------------------------------
+-- 15. 刷新 PostgREST schema cache（让 REST API 立即认识新建的表）
 -- ---------------------------------------------------------------------
 NOTIFY pgrst, 'reload schema';

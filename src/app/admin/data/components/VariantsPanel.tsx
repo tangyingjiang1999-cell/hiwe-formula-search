@@ -21,7 +21,7 @@ export default function VariantsPanel() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<ColorVariant | null>(null);
-  const [form, setForm] = useState({ id: "", name: "", year_range: "" });
+  const [form, setForm] = useState({ id: "", name: "" });
   const [error, setError] = useState("");
   const idManuallyEdited = useRef(false);
 
@@ -29,12 +29,12 @@ export default function VariantsPanel() {
   const fetchVariants = useCallback(async () => { const r = await fetch("/api/admin/variants"); if (r.ok) setVariants(await r.json()); setLoading(false); }, []);
   useEffect(() => { fetchVariants(); }, [fetchVariants]);
 
-  function openCreate() { setEditing(null); setForm({ id: "", name: "", year_range: "" }); setError(""); idManuallyEdited.current = false; setShowModal(true); }
-  function openEdit(v: ColorVariant) { setEditing(v); setForm({ id: v.id, name: v.name, year_range: v.year_range }); setError(""); setShowModal(true); }
+  function openCreate() { setEditing(null); setForm({ id: "", name: "" }); setError(""); idManuallyEdited.current = false; setShowModal(true); }
+  function openEdit(v: ColorVariant) { setEditing(v); setForm({ id: v.id, name: v.name }); setError(""); setShowModal(true); }
   async function handleSave() {
-    setError(""); if (!form.id || !form.name || !form.year_range) { setError("所有字段不能为空"); return; }
+    setError(""); if (!form.id || !form.name) { setError("ID 和名称不能为空"); return; }
     const m = editing ? "PUT" : "POST";
-    const r = await fetch("/api/admin/variants", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    const r = await fetch("/api/admin/variants", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, year_range: "" }) });
     if (r.ok) { setShowModal(false); fetchVariants(); } else { const d = await r.json(); setError(d.error || "保存失败"); }
   }
   async function handleDelete(v: ColorVariant) { if (!confirm(`确定删除变体「${v.name}」吗？`)) return; await fetch("/api/admin/variants", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: v.id }) }); fetchVariants(); }
@@ -68,7 +68,9 @@ export default function VariantsPanel() {
         <DialogContent><Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 0.5 }}>
           <TextField label="ID" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} size="small" fullWidth />
           <TextField label="名称" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} size="small" fullWidth />
-          <TextField label="年份范围" value={form.year_range} onChange={(e) => setForm({ ...form, year_range: e.target.value })} size="small" fullWidth />
+          <Box sx={{ fontSize: "0.75rem", color: "text.disabled", mt: 1 }}>
+            注意：年份管理已移至颜色级别。此字段已弃用。
+          </Box>
           {error && <Box sx={{ color: "error.main", fontSize: "0.8125rem" }}>{error}</Box>}
         </Box></DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}><Button onClick={() => setShowModal(false)} variant="outlined">取消</Button><Button onClick={handleSave} variant="contained">保存</Button></DialogActions>
