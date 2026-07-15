@@ -222,14 +222,6 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
                 {t.colorPreview}
               </Typography>
               <Box sx={{ mt: 1.5, height: { xs: 150, sm: 240 }, borderRadius: 1, border: 1, borderColor: "grey.200", bgcolor: previewColor }} />
-              <TextField
-                value={hexInput.replace(/^#/, "")}
-                onChange={(e) => setHexInput(e.target.value)}
-                size="small"
-                fullWidth
-                sx={{ mt: 1.5 }}
-                slotProps={{ input: { startAdornment: <Box component="span" sx={{ color: "text.secondary", mr: 0.5, fontSize: "0.8125rem" }}>#</Box> } }}
-              />
             </Box>
 
             <Box sx={{ borderTop: 1, borderColor: "divider" }}>
