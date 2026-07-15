@@ -169,9 +169,9 @@ export default function SearchResults({
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <Box
                     sx={{
-                      width: 64,
-                      height: 32,
-                      borderRadius: 0.5,
+                      width: 83,
+                      height: 37,
+                      borderRadius: 2,
                       border: 1,
                       borderColor: "grey.200",
                     }}
