@@ -150,7 +150,7 @@ export default function SearchResults({
               <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorName}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.years, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.yearsLabel}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.version, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.versionLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.action }}></TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.action, borderBottom: "2px solid #333", py: 1.5 }}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
