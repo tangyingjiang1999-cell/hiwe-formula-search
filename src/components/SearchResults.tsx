@@ -15,7 +15,6 @@ import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
-import Chip from "@mui/material/Chip";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 
@@ -33,10 +32,10 @@ const CAPTION_FONT_SIZE = "0.875rem";
 
 // 列宽定义，确保间距均匀
 const COLUMN_WIDTHS = {
-  colorType: 80,
-  manufacturer: 150,
+  colorType: 150,
+  manufacturer: 80,
   carModel: 150,
-  formulaVariants: 130,
+  formulaVariants: 120,
   code: 100,
   colorName: 150,
   years: 120,
@@ -143,14 +142,14 @@ export default function SearchResults({
         <Table sx={{ tableLayout: "fixed", width: "100%" }}>
           <TableHead>
             <TableRow sx={{ bgcolor: "#1a1a1a" }}>
-              <TableCell sx={{ width: COLUMN_WIDTHS.colorType, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.colorType}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.manufacturer, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.manufacturerLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.carModelLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.formulaVariants, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.formulaVariants}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.code, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.codeLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.colorName}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.years, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.yearsLabel}</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.version, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5 }}>{t.versionLabel}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorType, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorType}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.manufacturer, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.manufacturerLabel}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.carModelLabel}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.formulaVariants, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>Variants</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.code, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.codeLabel}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorName}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.years, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.yearsLabel}</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.version, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.versionLabel}</TableCell>
               <TableCell sx={{ width: COLUMN_WIDTHS.action }}></TableCell>
             </TableRow>
           </TableHead>
@@ -189,23 +188,11 @@ export default function SearchResults({
                     {row.color.car_model || "—"}
                   </Typography>
                 </TableCell>
-                {/* col 3: formulaVariants (even) */}
-                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.even }}>
-                  <Chip
-                    label={row.variant?.name ?? row.formula.variant_id}
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => onOpenFormula(row)}
-                    sx={{
-                      fontFamily: FONT,
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      height: 24,
-                      "&:hover": { bgcolor: "primary.main", color: "white" },
-                    }}
-                  />
+                {/* col 3: Variants (even) */}
+                <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.even, textAlign: "center" }}>
+                  <Typography variant="body2" noWrap sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE, color: "#374151" }}>
+                    {row.variant?.name ?? row.formula.variant_id}
+                  </Typography>
                 </TableCell>
                 {/* col 4: code (odd) */}
                 <TableCell sx={{ py: 2, bgcolor: COLUMN_BG.odd }}>
