@@ -18,7 +18,7 @@ const theme = createTheme({
       disabled: "#888888",
     },
     background: {
-      default: "#FAFAFA",
+      default: "#FFFFFF",
       paper: "#FFFFFF",
     },
     divider: "#EBEBEB",
