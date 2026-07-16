@@ -92,7 +92,7 @@ export default function LoginPage() {
     }
   }
 
-  const primaryColor = isRegister ? "#7C3AED" : "#0D9488";
+  const primaryColor = isRegister ? "#7C3AED" : "#2487ca";
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", flexDirection: { xs: "column", lg: "row" } }}>
@@ -360,7 +360,7 @@ export default function LoginPage() {
               sx={{
                 py: 1.5,
                 bgcolor: primaryColor,
-                "&:hover": { bgcolor: isRegister ? "#6D28D9" : "#0F766E" },
+                "&:hover": { bgcolor: isRegister ? "#6D28D9" : "#1d6fb0" },
                 fontSize: "0.8125rem",
                 fontWeight: 600,
                 textTransform: "none",
@@ -388,7 +388,7 @@ export default function LoginPage() {
                     fontWeight: 500,
                     textTransform: "none",
                     fontSize: "0.8125rem",
-                    "&:hover": { color: isRegister ? "#6D28D9" : "#0F766E" },
+                    "&:hover": { color: isRegister ? "#6D28D9" : "#1d6fb0" },
                   }}
                 >
                   {t.registerLoginLink}
@@ -404,7 +404,7 @@ export default function LoginPage() {
                     fontWeight: 500,
                     textTransform: "none",
                     fontSize: "0.8125rem",
-                    "&:hover": { color: isRegister ? "#6D28D9" : "#0F766E" },
+                    "&:hover": { color: isRegister ? "#6D28D9" : "#1d6fb0" },
                   }}
                 >
                   {t.loginRegisterLink}

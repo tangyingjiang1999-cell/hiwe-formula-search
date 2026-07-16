@@ -5,8 +5,8 @@
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%, rgba(45, 212, 191, 0.55) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 70%, rgba(99, 102, 241, 0.45) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 50% 50%, rgba(13, 148, 136, 0.6) 0%, transparent 70%),
-    linear-gradient(135deg, #0D9488 0%, #14B8A6 50%, #6366F1 100%);
+    radial-gradient(ellipse 60% 80% at 50% 50%, rgba(36, 135, 202, 0.6) 0%, transparent 70%),
+    linear-gradient(135deg, #2487ca 0%, #3a9de0 50%, #6366F1 100%);
   background-blend-mode: screen, screen, screen, normal;
 }
 
@@ -36,9 +36,9 @@
 
 :root {
   /* Brand */
-  --color-primary: #0D9488;
-  --color-primary-hover: #0F766E;
-  --color-primary-soft: #E6F7F5;
+  --color-primary: #2487ca;
+  --color-primary-hover: #1d6fb0;
+  --color-primary-soft: #e8f4fc;
   /* Surface — 4-step ladder */
   --color-canvas: #FFFFFF;
   --color-canvas-soft: #FAFAFA;
