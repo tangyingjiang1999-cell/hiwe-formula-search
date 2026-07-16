@@ -130,7 +130,7 @@ export default function Home() {
           </Paper>
         </Container>
         {hasSearched && (
-          <Box sx={{ mx: "60px", mt: 2.5 }}>
+          <Box sx={{ mx: { xs: 1, sm: 3, md: "60px" }, mt: 2.5 }}>
             <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
           </Box>
         )}

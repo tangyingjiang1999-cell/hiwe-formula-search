@@ -38,6 +38,7 @@ export type ComponentGroup = "Pearl Paint" | "Ground Paint";
 
 // 调漆配方中的单个色母用量
 export interface FormulaComponent {
+  uid?: string            // 唯一标识，用于 React key（客户端生成）
   toner_code: string      // 色母编号，例如 "HW-2001"
   toner_name: string      // 色母名称，例如 "Titanium White"
   percentage: number      // 在总配方中的百分比，例如 45.5

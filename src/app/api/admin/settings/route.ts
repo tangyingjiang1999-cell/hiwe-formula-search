@@ -13,7 +13,24 @@ export async function PUT(req: NextRequest) {
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
-  const body = await req.json();
-  const saved = await saveSettings(body);
+
+  let body: unknown;
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: "请求格式错误" }, { status: 400 });
+  }
+
+  const b = body as Record<string, unknown>;
+  if (!Array.isArray(b.finishes) || !Array.isArray(b.types) ||
+      typeof b.yearMin !== "number" || typeof b.yearMax !== "number" ||
+      b.yearMin > b.yearMax || b.yearMin < 0 || b.yearMax > 9999) {
+    return NextResponse.json({ error: "设置参数无效" }, { status: 400 });
+  }
+
+  const saved = await saveSettings({
+    finishes: b.finishes.filter((f): f is string => typeof f === "string"),
+    types: b.types.filter((t): t is string => typeof t === "string"),
+    yearMin: Math.floor(b.yearMin),
+    yearMax: Math.floor(b.yearMax),
+  });
   return NextResponse.json(saved);
 }

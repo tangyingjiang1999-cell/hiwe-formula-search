@@ -26,7 +26,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function VariantsPanel() {
   const [variants, setVariants] = useState<ColorVariant[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<ColorVariant | null>(null);
   const [form, setForm] = useState({ id: "", name: "" });
@@ -36,7 +35,7 @@ export default function VariantsPanel() {
   const idManuallyEdited = useRef(false);
 
   useEffect(() => { if (!editing && !idManuallyEdited.current && form.name) setForm((prev) => ({ ...prev, id: generateVariantId(form.name) })); }, [form.name, editing]);
-  const fetchVariants = useCallback(async () => { const r = await fetch("/api/admin/variants"); if (r.ok) setVariants(await r.json()); setLoading(false); }, []);
+  const fetchVariants = useCallback(async () => { try { const r = await fetch("/api/admin/variants"); if (r.ok) setVariants(await r.json()); } catch { /* network error */ } }, []);
   useEffect(() => { fetchVariants(); }, [fetchVariants]);
 
   useEffect(() => {
@@ -47,11 +46,13 @@ export default function VariantsPanel() {
   function openEdit(v: ColorVariant) { setEditing(v); setForm({ id: v.id, name: v.name }); setError(""); setShowModal(true); }
   async function handleSave() {
     setError(""); if (!form.id || !form.name) { setError("ID 和名称不能为空"); return; }
-    const m = editing ? "PUT" : "POST";
-    const r = await fetch("/api/admin/variants", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, year_range: "" }) });
-    if (r.ok) { setShowModal(false); fetchVariants(); } else { const d = await r.json(); setError(d.error || "保存失败"); }
+    try {
+      const m = editing ? "PUT" : "POST";
+      const r = await fetch("/api/admin/variants", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, year_range: "" }) });
+      if (r.ok) { setShowModal(false); fetchVariants(); } else { const d = await r.json(); setError(d.error || "保存失败"); }
+    } catch { setError("网络错误，请重试"); }
   }
-  async function handleDelete(v: ColorVariant) { if (!confirm(`确定删除变体「${v.name}」吗？`)) return; await fetch("/api/admin/variants", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: v.id }) }); fetchVariants(); }
+  async function handleDelete(v: ColorVariant) { if (!confirm(`确定删除变体「${v.name}」吗？`)) return; try { await fetch("/api/admin/variants", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: v.id }) }); fetchVariants(); } catch { /* network error */ } }
 
   const pageRows = variants.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 

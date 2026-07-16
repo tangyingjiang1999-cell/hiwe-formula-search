@@ -47,32 +47,33 @@ export default function GuidesPanel() {
   useEffect(() => { if (!editing && !guideIdEdited.current && form.title) setForm((prev) => ({ ...prev, id: generateGuideId(form.title) })); }, [form.title, editing]);
   useEffect(() => { if (!catIdEdited.current && catForm.name) setCatForm((prev) => ({ ...prev, id: generateGuideCategoryId(catForm.name) })); }, [catForm.name]);
 
-  const fetchGuides = useCallback(async () => { const r = await fetch("/api/admin/guides"); if (r.ok) setGuides(await r.json()); setLoading(false); }, []);
-  const fetchCategories = useCallback(async () => { const r = await fetch("/api/admin/guide-categories"); if (r.ok) setCategories(await r.json()); }, []);
+  const fetchGuides = useCallback(async () => { try { const r = await fetch("/api/admin/guides"); if (r.ok) setGuides(await r.json()); } catch { /* network error */ } setLoading(false); }, []);
+  const fetchCategories = useCallback(async () => { try { const r = await fetch("/api/admin/guide-categories"); if (r.ok) setCategories(await r.json()); } catch { /* network error */ } }, []);
   useEffect(() => { fetchGuides(); fetchCategories(); }, [fetchGuides, fetchCategories]);
 
   function openCreate() { setEditing(null); setForm({ id: "", categoryId: categories[0]?.id || "", title: "", titleZh: "", content: "", contentZh: "" }); setError(""); guideIdEdited.current = false; setShowModal(true); }
   function openEdit(g: Guide) { setEditing(g); setForm({ id: g.id, categoryId: g.categoryId, title: g.title, titleZh: g.titleZh, content: g.content, contentZh: g.contentZh }); setError(""); setShowModal(true); }
   async function handleSave() {
     setError(""); if (!form.id || !form.categoryId || !form.title || !form.titleZh) { setError("必填字段不能为空"); return; }
-    const m = editing ? "PUT" : "POST";
-    const r = await fetch("/api/admin/guides", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, sortOrder: 0 }) });
-    if (r.ok) { setShowModal(false); fetchGuides(); } else { const d = await r.json(); setError(d.error || "保存失败"); }
+    try {
+      const m = editing ? "PUT" : "POST";
+      const r = await fetch("/api/admin/guides", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, sortOrder: 0 }) });
+      if (r.ok) { setShowModal(false); fetchGuides(); } else { const d = await r.json(); setError(d.error || "保存失败"); }
+    } catch { setError("网络错误，请重试"); }
   }
-  async function handleDelete(g: Guide) { if (!confirm(`确定删除指南「${g.titleZh}」吗？`)) return; await fetch("/api/admin/guides", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: g.id }) }); fetchGuides(); }
+  async function handleDelete(g: Guide) { if (!confirm(`确定删除指南「${g.titleZh}」吗？`)) return; try { await fetch("/api/admin/guides", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: g.id }) }); fetchGuides(); } catch { /* network error */ } }
   async function handleSaveCategory() {
     if (!catForm.id || !catForm.name || !catForm.nameZh) return;
-    await fetch("/api/admin/guide-categories", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...catForm, sortOrder: 0 }) });
-    setCatForm({ id: "", name: "", nameZh: "" }); catIdEdited.current = false; fetchCategories();
+    try { await fetch("/api/admin/guide-categories", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...catForm, sortOrder: 0 }) }); setCatForm({ id: "", name: "", nameZh: "" }); catIdEdited.current = false; fetchCategories(); } catch { /* network error */ }
   }
-  async function handleDeleteCategory(cat: GuideCategory) { if (!confirm(`确定删除「${cat.nameZh}」吗？`)) return; await fetch("/api/admin/guide-categories", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: cat.id }) }); fetchCategories(); fetchGuides(); }
+  async function handleDeleteCategory(cat: GuideCategory) { if (!confirm(`确定删除「${cat.nameZh}」吗？`)) return; try { await fetch("/api/admin/guide-categories", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: cat.id }) }); fetchCategories(); fetchGuides(); } catch { /* network error */ } }
 
   const catMap = new Map(categories.map((c) => [c.id, c.nameZh]));
   const filtered: GuideRow[] = (filterCat ? guides.filter((g) => g.categoryId === filterCat) : guides).map((g) => ({ ...g, categoryName: catMap.get(g.categoryId) ?? g.categoryId }));
 
   useEffect(() => {
     setPage(0);
-  }, [filtered]);
+  }, [guides, filterCat]);
 
   const pageRows = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 

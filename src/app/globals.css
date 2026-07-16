@@ -140,3 +140,29 @@ html[dir="ltr"] .rtl-only { display: none; }
 h1, h2, h3 {
   text-wrap: balance;
 }
+
+/* ===== 响应式全局工具类 ===== */
+
+/* 移动端表格横向滚动 */
+.table-responsive-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-responsive-scroll table {
+  min-width: 600px;
+}
+
+/* 移动端安全内边距 */
+@media (max-width: 599px) {
+  .mobile-safe-x {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* 移动端隐藏低优先级列 */
+@media (max-width: 899px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}

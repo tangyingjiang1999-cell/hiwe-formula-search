@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse as NextResponseClass } from "next/server";
 import jwt from "jsonwebtoken";
 
-// JWT_SECRET：生产环境必须通过环境变量设置，开发环境使用内置 fallback
+// JWT_SECRET：生产环境必须通过环境变量设置，否则终止启动
 const FALLBACK_SECRET = "hiwen-mix-secret-key-dev-only";
-const JWT_SECRET = process.env.JWT_SECRET || (() => {
+const JWT_SECRET = (() => {
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
   if (process.env.NODE_ENV === "production") {
-    console.error("⚠️  JWT_SECRET 环境变量未设置！生产环境请务必配置。");
-  } else {
-    console.warn("⚠️  JWT_SECRET 未设置，使用开发默认密钥。生产环境请配置环境变量。");
+    throw new Error("FATAL: JWT_SECRET 环境变量未设置，生产环境无法启动。");
   }
+  console.warn("⚠️  JWT_SECRET 未设置，使用开发默认密钥。生产环境请配置环境变量。");
   return FALLBACK_SECRET;
 })();
 

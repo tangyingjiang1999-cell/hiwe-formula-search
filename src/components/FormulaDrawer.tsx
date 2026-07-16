@@ -178,12 +178,12 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
           </Toolbar>
         </AppBar>
 
-        <Box sx={{ display: "flex", flex: 1, flexDirection: { xs: "column", md: "row" }, overflow: "hidden", width: "100%", height: "100%" }}>
+        <Box sx={{ display: "flex", flex: 1, flexDirection: { xs: "column", md: "row" }, overflow: { xs: "auto", md: "hidden" }, width: "100%", height: "100%" }}>
 
           {/* 左侧：配方详情 (~62.5% 宽度) */}
           <Box sx={{
-            flex: { xs: "none", md: "1 1 62.5%" },
-            overflow: "auto",
+            flex: { xs: "1 1 auto", md: "1 1 62.5%" },
+            overflow: { xs: "visible", md: "auto" },
             p: { xs: 2, sm: 4 },
             borderRight: { md: 1 },
             borderBottom: { xs: 1, md: "none" },

@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try { body = await req.json(); } catch { return NextResponse.json({ error: "请求格式错误" }, { status: 400 }); }
   const { variantIds, years, ...color } = body;
   if (!color.id || !color.make_id || !color.color_code) {
     return NextResponse.json({ error: "缺少必填字段（id/make_id/color_code）" }, { status: 400 });
@@ -32,7 +33,8 @@ export async function PUT(req: NextRequest) {
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try { body = await req.json(); } catch { return NextResponse.json({ error: "请求格式错误" }, { status: 400 }); }
   const { variantIds, years, ...color } = body;
   if (!color.id) {
     return NextResponse.json({ error: "缺少 ID" }, { status: 400 });
@@ -51,7 +53,8 @@ export async function DELETE(req: NextRequest) {
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
-  const body = await req.json();
+  let body: { id?: string };
+  try { body = await req.json(); } catch { return NextResponse.json({ error: "请求格式错误" }, { status: 400 }); }
   const { id } = body;
   if (!id) return NextResponse.json({ error: "缺少 ID" }, { status: 400 });
   await deleteColor(id);

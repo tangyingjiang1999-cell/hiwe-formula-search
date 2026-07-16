@@ -29,7 +29,6 @@ import AddIcon from "@mui/icons-material/Add";
 export default function BrandsPanel() {
   const [brands, setBrands] = useState<CarMake[]>([]);
   const [regions, setRegions] = useState<Region[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showBrandModal, setShowBrandModal] = useState(false);
   const [showRegionModal, setShowRegionModal] = useState(false);
   const [editing, setEditing] = useState<CarMake | null>(null);
@@ -43,23 +42,27 @@ export default function BrandsPanel() {
 
   // Fetch brands
   const fetchBrands = useCallback(async () => {
-    const res = await fetch("/api/admin/brands");
-    if (res.ok) setBrands(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetch("/api/admin/brands");
+      if (res.ok) setBrands(await res.json());
+    } catch { /* network error */ }
   }, []);
 
   // Fetch regions
+  const defaultRegionSet = useRef(false);
   const fetchRegions = useCallback(async () => {
-    const res = await fetch("/api/admin/regions");
-    if (res.ok) {
-      const data: Region[] = await res.json();
-      setRegions(data);
-      // Set default region if not set
-      if (!brandForm.region && data.length > 0) {
-        setBrandForm((prev) => ({ ...prev, region: data[0].code }));
+    try {
+      const res = await fetch("/api/admin/regions");
+      if (res.ok) {
+        const data: Region[] = await res.json();
+        setRegions(data);
+        if (!defaultRegionSet.current && data.length > 0) {
+          defaultRegionSet.current = true;
+          setBrandForm((prev) => prev.region ? prev : { ...prev, region: data[0].code });
+        }
       }
-    }
-  }, [brandForm.region]);
+    } catch { /* network error */ }
+  }, []);
 
   useEffect(() => {
     fetchBrands();
@@ -100,68 +103,40 @@ export default function BrandsPanel() {
 
   async function handleSaveBrand() {
     setBrandError("");
-    if (!brandForm.id || !brandForm.name) {
-      setBrandError("ID 和名称不能为空");
-      return;
-    }
-    const method = editing ? "PUT" : "POST";
-    const res = await fetch("/api/admin/brands", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(brandForm),
-    });
-    if (res.ok) {
-      setShowBrandModal(false);
-      fetchBrands();
-    } else {
-      const data = await res.json();
-      setBrandError(data.error || "保存失败");
-    }
+    if (!brandForm.id || !brandForm.name) { setBrandError("ID 和名称不能为空"); return; }
+    try {
+      const method = editing ? "PUT" : "POST";
+      const res = await fetch("/api/admin/brands", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(brandForm) });
+      if (res.ok) { setShowBrandModal(false); fetchBrands(); }
+      else { const data = await res.json(); setBrandError(data.error || "保存失败"); }
+    } catch { setBrandError("网络错误，请重试"); }
   }
 
   async function handleDeleteBrand(brand: CarMake) {
     if (!confirm(`确定删除品牌「${brand.name}」吗？`)) return;
-    await fetch("/api/admin/brands", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: brand.id }),
-    });
-    fetchBrands();
+    try {
+      await fetch("/api/admin/brands", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: brand.id }) });
+      fetchBrands();
+    } catch { /* network error */ }
   }
 
   async function handleSaveRegion() {
     setRegionError("");
-    if (!regionForm.code.trim()) {
-      setRegionError("产地代码不能为空");
-      return;
-    }
-    const res = await fetch("/api/admin/regions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(regionForm),
-    });
-    if (res.ok) {
-      setShowRegionModal(false);
-      fetchRegions();
-    } else {
-      const data = await res.json();
-      setRegionError(data.error || "保存失败");
-    }
+    if (!regionForm.code.trim()) { setRegionError("产地代码不能为空"); return; }
+    try {
+      const res = await fetch("/api/admin/regions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(regionForm) });
+      if (res.ok) { setShowRegionModal(false); fetchRegions(); }
+      else { const data = await res.json(); setRegionError(data.error || "保存失败"); }
+    } catch { setRegionError("网络错误，请重试"); }
   }
 
   async function handleDeleteRegion(code: string) {
     if (!confirm(`确定删除产地「${code}」吗？`)) return;
-    const res = await fetch("/api/admin/regions", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
-    if (res.ok) {
-      fetchRegions();
-    } else {
-      const data = await res.json();
-      alert(data.error || "删除失败");
-    }
+    try {
+      const res = await fetch("/api/admin/regions", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }) });
+      if (res.ok) fetchRegions();
+      else { const data = await res.json(); alert(data.error || "删除失败"); }
+    } catch { alert("网络错误，请重试"); }
   }
 
   const pageRows = brands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);

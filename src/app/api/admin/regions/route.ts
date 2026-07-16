@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
     .order("code", { ascending: true });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("DB error in GET /api/admin/regions:", error);
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 
   const regions: Region[] = (data ?? []).map((r) => ({ code: r.code }));
@@ -57,7 +58,8 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("DB error in POST /api/admin/regions:", error);
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 
   const region: Region = { code: data.code };
@@ -85,7 +87,8 @@ export async function DELETE(req: NextRequest) {
     .limit(1);
 
   if (checkError) {
-    return NextResponse.json({ error: checkError.message }, { status: 500 });
+    console.error("DB error in DELETE /api/admin/regions (check):", checkError);
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 
   if (brandsWithRegion && brandsWithRegion.length > 0) {
@@ -102,7 +105,8 @@ export async function DELETE(req: NextRequest) {
     .eq("code", code);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("DB error in DELETE /api/admin/regions:", error);
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

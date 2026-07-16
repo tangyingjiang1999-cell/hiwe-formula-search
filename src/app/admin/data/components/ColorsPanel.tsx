@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type { CarMake, Color, ColorVariant } from "@/types";
 import { colorSwatchStyle } from "@/lib/utils";
 import { generateColorId } from "@/lib/id-generator";
@@ -98,6 +98,7 @@ export default function ColorsPanel() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const idManuallyEdited = useRef(false);
+  const yearInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!editing && !idManuallyEdited.current && form.make_id && form.color_code) {
@@ -106,11 +107,19 @@ export default function ColorsPanel() {
   }, [form.make_id, form.color_code, editing]);
 
   const fetchColors = useCallback(async () => {
-    const res = await fetch("/api/admin/colors");
-    if (res.ok) setColors(await res.json());
+    try {
+      const res = await fetch("/api/admin/colors");
+      if (res.ok) setColors(await res.json());
+    } catch { /* network error */ }
     setLoading(false);
   }, []);
-  useEffect(() => { fetchColors(); fetch("/api/admin/brands").then((r) => r.ok ? r.json() : []).then(setBrands); fetch("/api/admin/variants").then((r) => r.ok ? r.json() : []).then(setAllVariants); }, [fetchColors]);
+  useEffect(() => {
+    const ctrl = new AbortController();
+    fetchColors();
+    fetch("/api/admin/brands", { signal: ctrl.signal }).then((r) => r.ok ? r.json() : []).then(setBrands).catch(() => {});
+    fetch("/api/admin/variants", { signal: ctrl.signal }).then((r) => r.ok ? r.json() : []).then(setAllVariants).catch(() => {});
+    return () => ctrl.abort();
+  }, [fetchColors]);
 
   useEffect(() => {
     setPage(0);
@@ -127,27 +136,31 @@ export default function ColorsPanel() {
   async function handleSave() {
     setError("");
     if (!form.id || !form.make_id || !form.color_code || !form.color_name) { setError("所有字段不能为空"); return; }
-    const m = editing ? "PUT" : "POST";
-    const res = await fetch("/api/admin/colors", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, variantIds, years }) });
-    if (res.ok) { setShowModal(false); fetchColors(); }
-    else { const d = await res.json(); setError(d.error || "保存失败"); }
+    try {
+      const m = editing ? "PUT" : "POST";
+      const res = await fetch("/api/admin/colors", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, variantIds, years }) });
+      if (res.ok) { setShowModal(false); fetchColors(); }
+      else { const d = await res.json(); setError(d.error || "保存失败"); }
+    } catch { setError("网络错误，请重试"); }
   }
   async function handleDelete(c: Color) {
     if (!confirm(`确定删除颜色「${c.color_name}」吗？`)) return;
-    await fetch("/api/admin/colors", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: c.id }) });
-    fetchColors();
+    try {
+      await fetch("/api/admin/colors", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: c.id }) });
+      fetchColors();
+    } catch { /* network error */ }
   }
   function toggleVariant(id: string) { setVariantIds((prev) => prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]); }
 
-  const brandMap = new Map(brands.map((b) => [b.id, b.name]));
+  const brandMap = useMemo(() => new Map(brands.map((b) => [b.id, b.name])), [brands]);
 
   // 将 colors 转换为展开后的行数组
-  const allExpandedRows: ExpandedColorRow[] = colors.flatMap((c) => {
+  const allExpandedRows: ExpandedColorRow[] = useMemo(() => colors.flatMap((c) => {
     const brandName = brandMap.get(c.make_id) ?? c.make_id;
-    const years = c.years ?? [];
-    const groupSize = Math.max(years.length, 1); // 至少1行，即使没有年份
+    const sortedYears = [...(c.years ?? [])].sort((a, b) => a - b);
+    const groupSize = Math.max(sortedYears.length, 1);
 
-    if (years.length === 0) {
+    if (sortedYears.length === 0) {
       // 没有年份：单行，year = undefined
       return [{
         colorId: c.id,
@@ -167,10 +180,10 @@ export default function ColorsPanel() {
     }
 
     // 有年份：每个年份一行
-    return years.sort((a, b) => a - b).map((year, i): ExpandedColorRow => ({
+    return sortedYears.map((year, i): ExpandedColorRow => ({
       colorId: c.id,
       groupIndex: i,
-      groupSize: years.length,
+      groupSize: sortedYears.length,
       year,
       color_code: c.color_code,
       color_name: c.color_name,
@@ -179,10 +192,10 @@ export default function ColorsPanel() {
       car_model: c.car_model,
       brandName,
       variantCount: c.variants.length,
-      yearCount: years.length,
+      yearCount: sortedYears.length,
       originalColor: c,
     }));
-  });
+  }), [colors, brandMap]);
 
   // 分页展开后的行
   const pageRows = allExpandedRows.slice(
@@ -400,13 +413,13 @@ export default function ColorsPanel() {
                     type="number"
                     size="small"
                     sx={{ width: 120 }}
-                    slotProps={{ htmlInput: { min: 1900, max: 2100 } }}
+                    slotProps={{ htmlInput: { min: 1900, max: 2100, ref: yearInputRef } }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         const target = e.target as HTMLInputElement;
                         const val = parseInt(target.value, 10);
                         if (val >= 1900 && val <= 2100 && !years.includes(val)) {
-                          setYears([...years, val].sort());
+                          setYears([...years, val].sort((a, b) => a - b));
                           target.value = "";
                         }
                       }
@@ -416,11 +429,11 @@ export default function ColorsPanel() {
                     variant="outlined"
                     size="small"
                     onClick={() => {
-                      const input = document.querySelector('input[type="number"]') as HTMLInputElement;
+                      const input = yearInputRef.current;
                       if (input) {
                         const val = parseInt(input.value, 10);
                         if (val >= 1900 && val <= 2100 && !years.includes(val)) {
-                          setYears([...years, val].sort());
+                          setYears([...years, val].sort((a, b) => a - b));
                           input.value = "";
                         }
                       }

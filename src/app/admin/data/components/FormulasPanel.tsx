@@ -45,11 +45,17 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
 }
 
+// 按体系过滤色母列表
+function filterTonersBySystem(system: "1K" | "2K"): Toner[] {
+  if (system === "2K") return TONERS.filter((t) => t.category === "2K_BASECOAT");
+  return TONERS.filter((t) => t.category !== "2K_BASECOAT");
+}
+
 // 模糊匹配色母（空查询时返回全部）
-function matchingToners(query: string): Toner[] {
+function matchingToners(query: string, pool: Toner[]): Toner[] {
   const q = query.toLowerCase().trim();
-  if (!q) return TONERS;
-  return TONERS.filter(
+  if (!q) return pool;
+  return pool.filter(
     (t) =>
       t.code.toLowerCase().includes(q) ||
       t.tradeName.toLowerCase().includes(q) ||
@@ -135,6 +141,9 @@ export default function FormulasPanel() {
   const tonerBlurRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 选中颜色后的预览文本
+  // 根据体系过滤色母列表
+  const tonerPool = useMemo(() => filterTonersBySystem(form.paint_system), [form.paint_system]);
+
   const selectedColor = colors.find((c) => c.id === form.color_id);
   const brandMap = new Map(brands.map((b) => [b.id, b.name]));
   const colorDisplay = selectedColor
@@ -161,22 +170,20 @@ export default function FormulasPanel() {
   }, [form.color_id, form.variant_id, form.version, selectedId]);
 
   const fetchFormulas = useCallback(async () => {
-    const res = await fetch("/api/admin/formulas");
-    if (res.ok) setFormulas(await res.json());
+    try {
+      const res = await fetch("/api/admin/formulas");
+      if (res.ok) setFormulas(await res.json());
+    } catch { /* network error */ }
     setLoading(false);
   }, []);
 
   useEffect(() => {
+    const ctrl = new AbortController();
     fetchFormulas();
-    fetch("/api/admin/colors")
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setColors);
-    fetch("/api/admin/variants")
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setVariants);
-    fetch("/api/admin/brands")
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setBrands);
+    fetch("/api/admin/colors", { signal: ctrl.signal }).then((r) => r.ok ? r.json() : []).then(setColors).catch(() => {});
+    fetch("/api/admin/variants", { signal: ctrl.signal }).then((r) => r.ok ? r.json() : []).then(setVariants).catch(() => {});
+    fetch("/api/admin/brands", { signal: ctrl.signal }).then((r) => r.ok ? r.json() : []).then(setBrands).catch(() => {});
+    return () => ctrl.abort();
   }, [fetchFormulas]);
 
   function selectFormula(formula: Formula) {
@@ -231,14 +238,27 @@ export default function FormulasPanel() {
       const nextType = next === "2K" ? AUTO_2K_TYPE : prev.formula_type;
       return { ...prev, paint_system: next, formula_type: nextType };
     });
-    if (next === "2K") {
-      setComponents((prev) =>
-        prev.map((c) => {
-          const { component_group: _, ...rest } = c;
+    // 切换体系时清空所有已选色母，避免数据不一致
+    setComponents((prev) =>
+      prev.map((c) => {
+        const cleared = {
+          ...c,
+          toner_code: "",
+          toner_name: "",
+          percentage: 0,
+          grams_per_100g: 0,
+          rgb_r: undefined,
+          rgb_g: undefined,
+          rgb_b: undefined,
+        };
+        // 2K 模式不支持 component_group
+        if (next === "2K") {
+          const { component_group: _, ...rest } = cleared;
           return rest;
-        })
-      );
-    }
+        }
+        return cleared;
+      })
+    );
   }
 
   function handleFormulaTypeChange(next: FormulaType) {
@@ -254,10 +274,9 @@ export default function FormulasPanel() {
   }
 
   function addComponent(group?: ComponentGroup) {
-    setComponents((prev) => [
-      ...prev,
-      group ? { ...EMPTY_COMPONENT, component_group: group } : { ...EMPTY_COMPONENT },
-    ]);
+    const newComp: FormulaComponent = { ...EMPTY_COMPONENT, uid: crypto.randomUUID() };
+    if (group) newComp.component_group = group;
+    setComponents((prev) => [...prev, newComp]);
   }
 
   function updateComponent(
@@ -346,39 +365,55 @@ export default function FormulasPanel() {
   async function handleDelete() {
     if (!selectedId) return;
     if (!confirm(`确定删除配方「${selectedId}」吗？`)) return;
-    const res = await fetch("/api/admin/formulas", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: selectedId }),
-    });
-    if (res.ok) {
-      newFormula();
-      fetchFormulas();
-    }
+    try {
+      const res = await fetch("/api/admin/formulas", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: selectedId }),
+      });
+      if (res.ok) {
+        newFormula();
+        fetchFormulas();
+      } else {
+        setError("删除失败");
+      }
+    } catch { setError("网络错误，请重试"); }
   }
 
   // 输入框样式常量
   const INPUT_STYLE: React.CSSProperties = {
     width: "100%",
     boxSizing: "border-box",
-    border: "1px solid #E5E7EB",
-    borderRadius: 4,
-    padding: "6px 10px",
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    padding: "8px 12px",
+    height: 38,
     fontSize: CELL_FONT_SIZE,
     fontFamily: FONT,
     outline: "none",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+  };
+
+  const INPUT_FOCUS_HANDLER = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.style.borderColor = "#3b82f6";
+    e.target.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+  };
+  const INPUT_BLUR_HANDLER = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.style.borderColor = "#d1d5db";
+    e.target.style.boxShadow = "none";
   };
 
   const INPUT_SMALL_STYLE: React.CSSProperties = {
     ...INPUT_STYLE,
     width: "100%",
-    maxWidth: 120,
+    maxWidth: 130,
   };
 
   const RGB_INPUT_STYLE: React.CSSProperties = {
     ...INPUT_STYLE,
-    width: "30%",
-    padding: "6px 6px",
+    width: "31%",
+    padding: "8px 6px",
+    textAlign: "center" as const,
   };
 
   function renderComponentTable(group?: ComponentGroup) {
@@ -389,20 +424,34 @@ export default function FormulasPanel() {
     return (
       <Box key={group ?? "regular"} sx={{
         mt: 2,
-        flex: 1,
         display: "flex",
         flexDirection: "column",
-        minHeight: 0,
       }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5, flexShrink: 0 }}>
-          <Box sx={{ fontWeight: 600, fontSize: CELL_FONT_SIZE, color: "#1a1a1a", fontFamily: FONT }}>{title}</Box>
-          <Button onClick={() => addComponent(group)} variant="outlined" size="small" sx={{ fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>+ 添加色母</Button>
+          <Box sx={{ fontWeight: 600, fontSize: "0.9375rem", color: "#111827", fontFamily: FONT, letterSpacing: "-0.01em" }}>{title}</Box>
+          <Button onClick={() => addComponent(group)} variant="outlined" size="small" sx={{
+            fontFamily: FONT,
+            fontSize: "0.8125rem",
+            fontWeight: 500,
+            borderRadius: "10px",
+            px: 2,
+            py: 0.75,
+            textTransform: "none",
+            borderColor: "#d1d5db",
+            color: "#374151",
+            transition: "all 0.2s ease",
+            "&:hover": {
+              borderColor: "#3b82f6",
+              color: "#2563eb",
+              bgcolor: "rgba(59,130,246,0.04)",
+              transform: "translateY(-1px)",
+              boxShadow: "0 2px 6px rgba(59,130,246,0.1)",
+            },
+          }}>+ 添加色母</Button>
         </Box>
         <TableContainer component={Paper} variant="outlined" sx={{
           ...tableContainerSx,
-          flex: 1,
-          overflow: "auto",
-          minHeight: 0,
+          minHeight: 250,
         }}>
           <Table sx={tableSx}>
             <TableHead>
@@ -457,32 +506,32 @@ export default function FormulasPanel() {
             <TableBody>
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ color: "#9ca3af", fontSize: CELL_FONT_SIZE, fontFamily: FONT, py: 6 }}>
-                    暂无色母，点击「添加色母」
+                  <TableCell colSpan={5} align="center" sx={{ color: "#9ca3af", fontSize: "0.8125rem", fontFamily: FONT, py: 8, fontStyle: "italic" }}>
+                    暂无色母，点击「+ 添加色母」开始
                   </TableCell>
                 </TableRow>
               )}
               {filtered.map((c, rowIndex) => {
                 const globalIndex = components.indexOf(c);
                 return (
-                  <TableRow key={globalIndex} sx={getRowSx(rowIndex)}>
+                  <TableRow key={c.uid ?? globalIndex} sx={getRowSx(rowIndex)}>
                     <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd, position: "relative" }}>
                       <input
                         type="text"
                         value={c.toner_code}
                         onChange={(e) => { updateComponent(globalIndex, "toner_code", e.target.value); setTonerQuery(e.target.value); }}
-                        onFocus={() => openTonerDropdown(globalIndex, c.toner_code)}
-                        onBlur={() => scheduleCloseTonerDropdown()}
+                        onFocus={(e) => { INPUT_FOCUS_HANDLER(e); openTonerDropdown(globalIndex, c.toner_code); }}
+                        onBlur={(e) => { INPUT_BLUR_HANDLER(e); scheduleCloseTonerDropdown(); }}
                         style={INPUT_SMALL_STYLE}
                       />
-                      {tonerDropdownFor === globalIndex && matchingToners(tonerQuery).length > 0 && (
-                        <Paper sx={{ position: "absolute", left: 8, top: "100%", zIndex: 50, mt: 0.5, maxHeight: 240, width: 280, overflow: "auto", boxShadow: 3 }}>
-                          {matchingToners(tonerQuery).map((toner) => (
+                      {tonerDropdownFor === globalIndex && matchingToners(tonerQuery, tonerPool).length > 0 && (
+                        <Paper sx={{ position: "absolute", left: 8, top: "100%", zIndex: 50, mt: 0.5, maxHeight: 240, width: 280, overflow: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)", borderRadius: "10px", border: "1px solid #e5e7eb" }}>
+                          {matchingToners(tonerQuery, tonerPool).map((toner) => (
                             <Button
                               key={toner.code}
                               onMouseDown={() => { selectToner(globalIndex, toner); setTonerDropdownFor(null); }}
                               fullWidth
-                              sx={{ justifyContent: "flex-start", gap: 1, px: 1.5, py: 1, borderRadius: 0, fontSize: CELL_FONT_SIZE, fontFamily: FONT, textTransform: "none", "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}
+                              sx={{ justifyContent: "flex-start", gap: 1, px: 1.5, py: 1, borderRadius: 0, fontSize: "0.8125rem", fontFamily: FONT, textTransform: "none", transition: "background-color 0.15s ease", "&:hover": { bgcolor: "rgba(59,130,246,0.06)" } }}
                             >
                               <Box sx={{ width: 32, height: 20, borderRadius: 0.5, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: toner.hex }} />
                               <Box component="span" sx={{ fontFamily: "monospace", color: "#1a1a1a", fontWeight: 500 }}>{toner.code}</Box>
@@ -497,6 +546,8 @@ export default function FormulasPanel() {
                         type="text"
                         value={c.toner_name}
                         onChange={(e) => updateComponent(globalIndex, "toner_name", e.target.value)}
+                        onFocus={INPUT_FOCUS_HANDLER}
+                        onBlur={INPUT_BLUR_HANDLER}
                         style={INPUT_STYLE}
                       />
                     </TableCell>
@@ -511,7 +562,9 @@ export default function FormulasPanel() {
                           if (raw !== "" && !/^[\d.]*$/.test(raw)) return;
                           setPctInputs((prev) => ({ ...prev, [globalIndex]: raw }));
                         }}
-                        onBlur={() => {
+                        onFocus={INPUT_FOCUS_HANDLER}
+                        onBlur={(e) => {
+                          INPUT_BLUR_HANDLER(e);
                           const raw = pctInputs[globalIndex];
                           if (raw === undefined) return;
                           if (raw === "" || raw === ".") {
@@ -533,11 +586,13 @@ export default function FormulasPanel() {
                       />
                     </TableCell>
                     <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even }}>
-                      <Box sx={{ display: "flex", gap: 1 }}>
+                      <Box sx={{ display: "flex", gap: 0.75 }}>
                         <input
                           type="number"
                           value={c.rgb_r ?? ""}
                           onChange={(e) => updateComponent(globalIndex, "rgb_r", e.target.value === "" ? undefined : Number(e.target.value))}
+                          onFocus={INPUT_FOCUS_HANDLER}
+                          onBlur={INPUT_BLUR_HANDLER}
                           placeholder="R"
                           style={RGB_INPUT_STYLE}
                         />
@@ -545,6 +600,8 @@ export default function FormulasPanel() {
                           type="number"
                           value={c.rgb_g ?? ""}
                           onChange={(e) => updateComponent(globalIndex, "rgb_g", e.target.value === "" ? undefined : Number(e.target.value))}
+                          onFocus={INPUT_FOCUS_HANDLER}
+                          onBlur={INPUT_BLUR_HANDLER}
                           placeholder="G"
                           style={RGB_INPUT_STYLE}
                         />
@@ -552,6 +609,8 @@ export default function FormulasPanel() {
                           type="number"
                           value={c.rgb_b ?? ""}
                           onChange={(e) => updateComponent(globalIndex, "rgb_b", e.target.value === "" ? undefined : Number(e.target.value))}
+                          onFocus={INPUT_FOCUS_HANDLER}
+                          onBlur={INPUT_BLUR_HANDLER}
                           placeholder="B"
                           style={RGB_INPUT_STYLE}
                         />
@@ -562,15 +621,28 @@ export default function FormulasPanel() {
                         onClick={() => removeComponent(globalIndex)}
                         size="small"
                         sx={{
-                          color: "#9ca3af",
-                          fontSize: CELL_FONT_SIZE,
+                          minWidth: 0,
+                          px: 1.5,
+                          py: 0.5,
+                          borderRadius: "8px",
+                          fontSize: "0.75rem",
                           fontFamily: FONT,
+                          fontWeight: 500,
+                          color: "#ef4444",
+                          bgcolor: "rgba(239,68,68,0.06)",
+                          border: "1px solid rgba(239,68,68,0.15)",
+                          textTransform: "none",
+                          transition: "all 0.2s ease",
                           "&:hover": {
-                            bgcolor: "rgba(239,68,68,0.08)",
-                            color: "error.main",
+                            bgcolor: "rgba(239,68,68,0.12)",
+                            borderColor: "rgba(239,68,68,0.3)",
+                            transform: "scale(1.03)",
                           },
                         }}
                       >
+                        <Box component="svg" sx={{ width: 14, height: 14, mr: 0.5 }} viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022 1.005 11.075A2.75 2.75 0 007.765 19h4.47a2.75 2.75 0 002.748-2.973L15.985 5.95l.149.022a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clipRule="evenodd" />
+                        </Box>
                         删除
                       </Button>
                     </TableCell>
@@ -590,22 +662,32 @@ export default function FormulasPanel() {
           if (!hasComponents) return null;
           return (
             <Box sx={{
-              mt: 1,
-              py: 0.75,
+              mt: 1.5,
+              py: 1,
               px: 1.5,
-              borderRadius: 1,
-              fontSize: CELL_FONT_SIZE,
+              borderRadius: "10px",
+              fontSize: "0.8125rem",
               fontFamily: FONT,
-              fontWeight: 600,
-              bgcolor: isValid ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
-              color: isValid ? "#16a34a" : "#dc2626",
+              fontWeight: 500,
+              bgcolor: isValid ? "#f0fdf4" : "#fef2f2",
+              border: isValid ? "1px solid #bbf7d0" : "1px solid #fecaca",
+              color: isValid ? "#166534" : "#991b1b",
               display: "flex",
               alignItems: "center",
-              gap: 0.5,
+              gap: 1,
             }}>
-              {isValid ? "✓" : "⚠"} 百分比总和：{sum.toFixed(2)}%
+              {isValid ? (
+                <Box component="svg" sx={{ width: 18, height: 18, flexShrink: 0, color: "#22c55e" }} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                </Box>
+              ) : (
+                <Box component="svg" sx={{ width: 18, height: 18, flexShrink: 0, color: "#ef4444" }} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                </Box>
+              )}
+              <Box component="span" sx={{ fontWeight: 600 }}>百分比总和：{sum.toFixed(2)}%</Box>
               {!isValid && (
-                <Box component="span" sx={{ ml: 1, fontWeight: 400, color: "#dc2626" }}>
+                <Box component="span" sx={{ ml: 0.5, fontWeight: 400 }}>
                   （必须等于 100%）
                 </Box>
               )}
@@ -619,9 +701,9 @@ export default function FormulasPanel() {
   if (loading) return <Box sx={{ textAlign: "center", py: 2 }}><Button disabled>加载中...</Button></Box>;
 
   return (
-    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", lg: "row" }, height: "calc(100vh - 140px)" }}>
+    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", lg: "row" }, minHeight: "calc(100vh - 140px)" }}>
       {/* 左栏：配方列表 */}
-      <Box sx={{ width: { lg: 256 }, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <Box sx={{ width: { lg: 256 }, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0, maxHeight: { xs: 200, lg: "none" } }}>
         <Button onClick={newFormula} variant="contained" fullWidth sx={{ mb: 1.5, flexShrink: 0 }}>+ 新增配方</Button>
         <Paper variant="outlined" sx={{ flex: 1, overflow: "auto", minHeight: 0 }}>
           {formulas.map((f) => {
@@ -651,13 +733,16 @@ export default function FormulasPanel() {
       {/* 右栏：配方编辑 */}
       <Paper variant="outlined" sx={{
         flex: 1,
-        p: 2,
+        p: 3,
+        pb: 8,
         display: "flex",
         flexDirection: "column",
         minHeight: 0,
-        overflow: "auto",
+        borderRadius: "16px",
+        border: "1px solid #e5e7eb",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
       }}>
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
           <TextField label="配方 ID（自动生成）" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!selectedId} size="small" fullWidth />
           <Box sx={{ position: "relative" }}>
             <TextField
@@ -724,11 +809,11 @@ export default function FormulasPanel() {
             {(form.paint_system === "2K" ? [AUTO_2K_TYPE] : MANUAL_1K_TYPES).map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </TextField>
         </Box>
-        <TextField label="施工备注" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} size="small" multiline rows={2} fullWidth sx={{ mt: 1.5 }} />
+        <TextField label="施工备注" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} size="small" multiline rows={2} fullWidth sx={{ mt: 2 }} />
 
         {/* 色母组件表 */}
         {form.formula_type === "Pearl Paint" ? (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minHeight: 0 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {PEARL_GROUPS.map((g) => renderComponentTable(g))}
           </Box>
         ) : (
@@ -738,22 +823,22 @@ export default function FormulasPanel() {
         {error && <Box sx={{ color: "error.main", fontSize: "0.8125rem", mt: 2 }}>{error}</Box>}
         {message && <Box sx={{ color: "success.main", fontSize: "0.8125rem", mt: 2 }}>{message}</Box>}
 
-        {/* 底部按钮区域 - 固定在底部 */}
+        {/* 底部按钮区域 */}
         <Box sx={{
           display: "flex",
           justifyContent: "flex-end",
           gap: 1.5,
-          p: 2,
-          mt: 2,
-          borderTop: 1,
-          borderColor: "divider",
-          position: "sticky",
-          bottom: 0,
-          bgcolor: "background.paper",
-          zIndex: 10,
+          p: 2.5,
+          mt: 3,
+          borderTop: "1px solid #e5e7eb",
+          bgcolor: "#fafafa",
+          borderRadius: "0 0 16px 16px",
+          mx: -3,
+          mb: -8,
+          px: 3,
         }}>
           {selectedId && (
-            <Button onClick={handleDelete} variant="outlined" color="error" size="small">删除配方</Button>
+            <Button onClick={handleDelete} variant="outlined" color="error" size="small" sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 500, px: 2.5 }}>删除配方</Button>
           )}
           <Button
             onClick={handleSave}
@@ -761,8 +846,15 @@ export default function FormulasPanel() {
             size="small"
             disabled={!percentageValid}
             sx={{
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 600,
+              px: 3,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+              transition: "all 0.2s ease",
+              "&:hover": { boxShadow: "0 2px 8px rgba(0,0,0,0.18)", transform: "translateY(-1px)" },
               "&.Mui-disabled": {
-                bgcolor: "#9ca3af",
+                bgcolor: "#d1d5db",
                 color: "#fff",
               },
             }}

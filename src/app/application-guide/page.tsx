@@ -96,9 +96,9 @@ export default function ApplicationGuidePage() {
         />
       </Box>
 
-      <Box sx={{ display: "flex", flex: 1, flexDirection: { xs: "column", lg: "row" } }}>
+      <Box sx={{ display: "flex", flex: 1, flexDirection: { xs: "column", lg: "row" }, overflow: { xs: "auto", lg: "hidden" } }}>
         {/* 左栏：分类 */}
-        <Box sx={{ width: { lg: 256 }, flexShrink: 0, bgcolor: "#fff", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: 2 }}>
+        <Box sx={{ width: { lg: 256 }, flexShrink: 0, bgcolor: "#fff", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: 2, maxHeight: { xs: 200, lg: "none" }, overflow: { xs: "auto", lg: "visible" } }}>
           <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600 }}>{t.guideCategories}</Typography>
           <List dense>
             <ListItemButton selected={selectedCategory === ""} onClick={() => setSelectedCategory("")}
@@ -115,7 +115,7 @@ export default function ApplicationGuidePage() {
         </Box>
 
         {/* 中栏：指南列表 */}
-        <Box sx={{ width: { lg: 320 }, flexShrink: 0, bgcolor: "grey.50", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: 2 }}>
+        <Box sx={{ width: { lg: 320 }, flexShrink: 0, bgcolor: "grey.50", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: 2, maxHeight: { xs: 280, lg: "none" }, overflow: { xs: "auto", lg: "visible" } }}>
           <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600 }}>
             {t.guideListLabel} ({filteredGuides.length})
           </Typography>

@@ -18,7 +18,8 @@ export default function Toast({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    requestAnimationFrame(() => setOpen(true));
+    const id = requestAnimationFrame(() => setOpen(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   function handleClose(_: unknown, reason?: string) {

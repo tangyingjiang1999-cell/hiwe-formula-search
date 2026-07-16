@@ -110,7 +110,7 @@ export default function SiteHeader() {
         </Stack>
 
         {/* 右侧 actions */}
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+        <Stack direction="row" spacing={{ xs: 1, md: 1.5 }} sx={{ alignItems: "center" }}>
           {authUser ? (
             <>
               {authUser.role === "admin" && (
@@ -121,6 +121,7 @@ export default function SiteHeader() {
                   color="inherit"
                   size="small"
                   sx={{
+                    display: { xs: "none", md: "inline-flex" },
                     bgcolor: "#171717",
                     color: "#fff",
                     transition: "transform 0.1s, background-color 0.15s",
@@ -140,11 +141,9 @@ export default function SiteHeader() {
                   variant="contained"
                   size="small"
                   sx={{
+                    display: { xs: "none", md: "inline-flex" },
                     textTransform: "none",
                     fontWeight: 600,
-                    maxWidth: { xs: 80, md: "none" },
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
                   }}
                 >
                   {authUser.username}
@@ -232,6 +231,26 @@ export default function SiteHeader() {
               );
             })}
           </List>
+          {/* 移动端：管理员快捷入口 */}
+          {authUser?.role === "admin" && (
+            <>
+              <Divider />
+              <List dense>
+                <ListItem disablePadding>
+                  <ListItemButton component={Link} href="/admin/data" onClick={() => setMobileMenuOpen(false)}
+                    sx={{ py: 1.5, "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}>
+                    <ListItemText primary={t.navAdmin} slotProps={{ primary: { sx: { fontSize: "0.875rem", fontWeight: 500 } } }} />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton component={Link} href="/admin/users" onClick={() => setMobileMenuOpen(false)}
+                    sx={{ py: 1.5, "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}>
+                    <ListItemText primary={`${authUser.username}`} slotProps={{ primary: { sx: { fontSize: "0.875rem", fontWeight: 500 } } }} />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </>
+          )}
           <Divider />
         </Box>
       </Drawer>

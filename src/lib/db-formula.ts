@@ -139,13 +139,13 @@ function mapColorRow(row: Record<string, unknown>): Color {
     .map((m) => m?.color_variants)
     .filter((v): v is ColorVariant => v != null);
   return {
-    id: row.id as string,
-    make_id: row.make_id as string,
-    color_code: row.color_code as string,
-    color_name: row.color_name as string,
-    color_type: row.color_type as Color["color_type"],
-    hex_preview: row.hex_preview as string,
-    car_model: (row.car_model as string) || undefined,
+    id: String(row.id ?? ""),
+    make_id: String(row.make_id ?? ""),
+    color_code: String(row.color_code ?? ""),
+    color_name: String(row.color_name ?? ""),
+    color_type: (row.color_type as Color["color_type"]) ?? "solid",
+    hex_preview: String(row.hex_preview ?? "#000000"),
+    car_model: row.car_model ? String(row.car_model) : undefined,
     variants,
   };
 }
@@ -155,16 +155,17 @@ function mapFormulaRow(row: Record<string, unknown>): Formula {
     (row.formula_components as Array<Record<string, unknown>> | null) ?? [];
   const components: FormulaComponent[] = comps.map((c) => {
     const comp: FormulaComponent = {
-      toner_code: c.toner_code as string,
-      toner_name: c.toner_name as string,
-      percentage: Number(c.percentage),
-      grams_per_100g: Number(c.percentage),  // 始终从 percentage 派生
+      uid: crypto.randomUUID(),
+      toner_code: String(c.toner_code ?? ""),
+      toner_name: String(c.toner_name ?? ""),
+      percentage: Number(c.percentage) || 0,
+      grams_per_100g: Number(c.percentage) || 0,  // 始终从 percentage 派生
     };
     if (c.density != null) comp.density = Number(c.density);
     if (c.rgb_r != null) {
-      comp.rgb_r = c.rgb_r as number;
-      comp.rgb_g = c.rgb_g as number;
-      comp.rgb_b = c.rgb_b as number;
+      comp.rgb_r = Number(c.rgb_r) || 0;
+      comp.rgb_g = Number(c.rgb_g) || 0;
+      comp.rgb_b = Number(c.rgb_b) || 0;
     }
     if (c.component_group != null) {
       comp.component_group = c.component_group as FormulaComponent["component_group"];
@@ -172,15 +173,15 @@ function mapFormulaRow(row: Record<string, unknown>): Formula {
     return comp;
   });
   return {
-    id: row.id as string,
-    color_id: row.color_id as string,
-    variant_id: row.variant_id as string,
-    version: row.version as string,
-    paint_system: row.paint_system as Formula["paint_system"],
-    formula_type: row.formula_type as Formula["formula_type"],
+    id: String(row.id ?? ""),
+    color_id: String(row.color_id ?? ""),
+    variant_id: String(row.variant_id ?? ""),
+    version: String(row.version ?? ""),
+    paint_system: (row.paint_system as Formula["paint_system"]) ?? "1K",
+    formula_type: (row.formula_type as Formula["formula_type"]) ?? "Single Stage",
     components,
-    notes: (row.notes as string) ?? "",
-    updated_at: row.updated_at as string,
+    notes: String(row.notes ?? ""),
+    updated_at: String(row.updated_at ?? ""),
   };
 }
 

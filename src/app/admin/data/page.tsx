@@ -9,7 +9,6 @@ import ColorsPanel from "./components/ColorsPanel";
 import VariantsPanel from "./components/VariantsPanel";
 import FormulasPanel from "./components/FormulasPanel";
 import GuidesPanel from "./components/GuidesPanel";
-import SettingsPanel from "./components/SettingsPanel";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -26,7 +25,6 @@ import PaletteIcon from "@mui/icons-material/Palette";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ScienceIcon from "@mui/icons-material/Science";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import SettingsIcon from "@mui/icons-material/Settings";
 
 const DRAWER_WIDTH = 224;
 
@@ -36,7 +34,6 @@ const TABS = [
   { key: "variants", label: "施工工艺", icon: <GridViewIcon /> },
   { key: "formulas", label: "配方", icon: <ScienceIcon /> },
   { key: "guides", label: "指南", icon: <MenuBookIcon /> },
-  { key: "settings", label: "设置", icon: <SettingsIcon /> },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -103,7 +100,7 @@ export default function DataManagementPage() {
       <IconButton
         onClick={() => setMobileNavOpen((v) => !v)}
         sx={{
-          position: "fixed", left: 16, top: 80, zIndex: 1250,
+          position: "fixed", left: 16, top: 72, zIndex: 1250,
           bgcolor: "#fff", border: 1, borderColor: "divider", boxShadow: 1,
           display: { md: "none" },
         }}
@@ -166,7 +163,6 @@ export default function DataManagementPage() {
           {activeTab === "variants" && <VariantsPanel />}
           {activeTab === "formulas" && <FormulasPanel />}
           {activeTab === "guides" && <GuidesPanel />}
-          {activeTab === "settings" && <SettingsPanel />}
         </Box>
       </Box>
     </Box>
