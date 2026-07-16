@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type {
   Formula,
   FormulaComponent,
@@ -95,6 +95,35 @@ export default function FormulasPanel() {
   const idManuallyEdited = useRef(false);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
 
+  // 百分比输入框的原始字符串（允许输入中间态如 "5."）
+  const [pctInputs, setPctInputs] = useState<Record<number, string>>({});
+
+  // 计算百分比总和（按组件组或全部）
+  const percentageSums = useMemo(() => {
+    if (form.formula_type === "Pearl Paint") {
+      return {
+        "Pearl Paint": components
+          .filter((c) => c.component_group === "Pearl Paint")
+          .reduce((s, c) => s + c.percentage, 0),
+        "Ground Paint": components
+          .filter((c) => c.component_group === "Ground Paint")
+          .reduce((s, c) => s + c.percentage, 0),
+      } as Record<ComponentGroup, number>;
+    }
+    return { all: components.reduce((s, c) => s + c.percentage, 0) };
+  }, [components, form.formula_type]);
+
+  // 百分比是否全部合法（总和=100%）
+  const percentageValid = useMemo(() => {
+    if (components.length === 0) return false;
+    if (form.formula_type === "Pearl Paint") {
+      const sums = percentageSums as Record<ComponentGroup, number>;
+      return Math.abs((sums["Pearl Paint"] ?? 0) - 100) < 0.01
+        && Math.abs((sums["Ground Paint"] ?? 0) - 100) < 0.01;
+    }
+    return Math.abs(((percentageSums as { all: number }).all) - 100) < 0.01;
+  }, [percentageSums, form.formula_type, components.length]);
+
   // 关联颜色搜索下拉
   const [colorQuery, setColorQuery] = useState("");
   const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
@@ -166,6 +195,7 @@ export default function FormulasPanel() {
       ...c,
       grams_per_100g: c.percentage,
     })));
+    setPctInputs({});
     setError("");
     setMessage("");
     setColorQuery("");
@@ -188,6 +218,7 @@ export default function FormulasPanel() {
       year: undefined,
     });
     setComponents([]);
+    setPctInputs({});
     setError("");
     setMessage("");
     setColorQuery("");
@@ -260,6 +291,17 @@ export default function FormulasPanel() {
 
   function removeComponent(index: number) {
     setComponents((prev) => prev.filter((_, i) => i !== index));
+    // 清理该索引及之后的 pctInputs（因为删除后索引会前移）
+    setPctInputs((prev) => {
+      const next: Record<number, string> = {};
+      Object.entries(prev).forEach(([k, v]) => {
+        const ki = Number(k);
+        if (ki < index) next[ki] = v;
+        if (ki > index) next[ki - 1] = v;
+        // ki === index 的不保留（已删除）
+      });
+      return next;
+    });
   }
 
   async function handleSave() {
@@ -460,10 +502,34 @@ export default function FormulasPanel() {
                     </TableCell>
                     <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd }}>
                       <input
-                        type="number"
-                        value={c.percentage}
-                        onChange={(e) => updateComponent(globalIndex, "percentage", Number(e.target.value))}
-                        style={INPUT_SMALL_STYLE}
+                        type="text"
+                        inputMode="decimal"
+                        value={globalIndex in pctInputs ? pctInputs[globalIndex] : (c.percentage || "")}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          // 只允许数字和小数点
+                          if (raw !== "" && !/^[\d.]*$/.test(raw)) return;
+                          setPctInputs((prev) => ({ ...prev, [globalIndex]: raw }));
+                        }}
+                        onBlur={() => {
+                          const raw = pctInputs[globalIndex];
+                          if (raw === undefined) return;
+                          if (raw === "" || raw === ".") {
+                            updateComponent(globalIndex, "percentage", 0);
+                          } else {
+                            const num = parseFloat(raw);
+                            if (!isNaN(num)) {
+                              const clamped = Math.round(Math.min(100, Math.max(0, num)) * 100) / 100;
+                              updateComponent(globalIndex, "percentage", clamped);
+                            }
+                          }
+                          setPctInputs((prev) => { const n = { ...prev }; delete n[globalIndex]; return n; });
+                        }}
+                        placeholder="0"
+                        style={{
+                          ...INPUT_SMALL_STYLE,
+                          borderColor: c.percentage < 0 || c.percentage > 100 ? "#EF4444" : INPUT_SMALL_STYLE.borderColor,
+                        }}
                       />
                     </TableCell>
                     <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even }}>
@@ -514,6 +580,38 @@ export default function FormulasPanel() {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* 百分比总和提示 */}
+        {(() => {
+          const sum = group
+            ? (percentageSums as Record<ComponentGroup, number>)[group] ?? 0
+            : (percentageSums as { all: number }).all ?? 0;
+          const isValid = Math.abs(sum - 100) < 0.01;
+          const hasComponents = filtered.length > 0;
+          if (!hasComponents) return null;
+          return (
+            <Box sx={{
+              mt: 1,
+              py: 0.75,
+              px: 1.5,
+              borderRadius: 1,
+              fontSize: CELL_FONT_SIZE,
+              fontFamily: FONT,
+              fontWeight: 600,
+              bgcolor: isValid ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
+              color: isValid ? "#16a34a" : "#dc2626",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+            }}>
+              {isValid ? "✓" : "⚠"} 百分比总和：{sum.toFixed(2)}%
+              {!isValid && (
+                <Box component="span" sx={{ ml: 1, fontWeight: 400, color: "#dc2626" }}>
+                  （必须等于 100%）
+                </Box>
+              )}
+            </Box>
+          );
+        })()}
       </Box>
     );
   }
@@ -521,11 +619,11 @@ export default function FormulasPanel() {
   if (loading) return <Box sx={{ textAlign: "center", py: 2 }}><Button disabled>加载中...</Button></Box>;
 
   return (
-    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", lg: "row" } }}>
+    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", lg: "row" }, height: "calc(100vh - 140px)" }}>
       {/* 左栏：配方列表 */}
-      <Box sx={{ width: { lg: 256 }, flexShrink: 0 }}>
-        <Button onClick={newFormula} variant="contained" fullWidth sx={{ mb: 1.5 }}>+ 新增配方</Button>
-        <Paper variant="outlined" sx={{ maxHeight: 600, overflow: "auto" }}>
+      <Box sx={{ width: { lg: 256 }, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <Button onClick={newFormula} variant="contained" fullWidth sx={{ mb: 1.5, flexShrink: 0 }}>+ 新增配方</Button>
+        <Paper variant="outlined" sx={{ flex: 1, overflow: "auto", minHeight: 0 }}>
           {formulas.map((f) => {
             const isSel = selectedId === f.id;
             return (
@@ -556,7 +654,7 @@ export default function FormulasPanel() {
         p: 2,
         display: "flex",
         flexDirection: "column",
-        height: "100%",
+        minHeight: 0,
         overflow: "auto",
       }}>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
@@ -630,7 +728,7 @@ export default function FormulasPanel() {
 
         {/* 色母组件表 */}
         {form.formula_type === "Pearl Paint" ? (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minHeight: 0 }}>
             {PEARL_GROUPS.map((g) => renderComponentTable(g))}
           </Box>
         ) : (
@@ -657,7 +755,20 @@ export default function FormulasPanel() {
           {selectedId && (
             <Button onClick={handleDelete} variant="outlined" color="error" size="small">删除配方</Button>
           )}
-          <Button onClick={handleSave} variant="contained" size="small">保存配方</Button>
+          <Button
+            onClick={handleSave}
+            variant="contained"
+            size="small"
+            disabled={!percentageValid}
+            sx={{
+              "&.Mui-disabled": {
+                bgcolor: "#9ca3af",
+                color: "#fff",
+              },
+            }}
+          >
+            保存配方
+          </Button>
         </Box>
       </Paper>
     </Box>
