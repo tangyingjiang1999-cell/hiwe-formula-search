@@ -211,7 +211,7 @@ export default function SiteHeader() {
                     sx={{
                       py: 1.5,
                       "&.Mui-selected": {
-                        bgcolor: "rgba(13,148,136,0.08)",
+                        bgcolor: "rgba(36,135,202,0.08)",
                         color: "primary.main",
                       },
                     }}

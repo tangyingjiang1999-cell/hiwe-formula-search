@@ -102,12 +102,12 @@ export default function ApplicationGuidePage() {
           <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600 }}>{t.guideCategories}</Typography>
           <List dense>
             <ListItemButton selected={selectedCategory === ""} onClick={() => setSelectedCategory("")}
-              sx={{ borderRadius: 1, "&.Mui-selected": { bgcolor: "rgba(13,148,136,0.08)", color: "primary.main" } }}>
+              sx={{ borderRadius: 1, "&.Mui-selected": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}>
               <ListItemText primary={t.guideAllCategories} slotProps={{ primary: { sx: { fontSize: "0.8125rem" } } }} />
             </ListItemButton>
             {categories.map((cat) => (
               <ListItemButton key={cat.id} selected={selectedCategory === cat.id} onClick={() => setSelectedCategory(cat.id)}
-                sx={{ borderRadius: 1, "&.Mui-selected": { bgcolor: "rgba(13,148,136,0.08)", color: "primary.main" } }}>
+                sx={{ borderRadius: 1, "&.Mui-selected": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}>
                 <ListItemText primary={lang === "zh" ? cat.nameZh : cat.name} slotProps={{ primary: { sx: { fontSize: "0.8125rem" } } }} />
               </ListItemButton>
             ))}

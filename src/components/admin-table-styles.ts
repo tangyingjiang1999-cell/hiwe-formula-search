@@ -71,7 +71,7 @@ export const tableSx = {
 export const actionButtonSx = {
   color: "#9ca3af",
   "&:hover": {
-    bgcolor: "rgba(13,148,136,0.08)",
+    bgcolor: "rgba(36,135,202,0.08)",
     color: "primary.main",
   },
 };

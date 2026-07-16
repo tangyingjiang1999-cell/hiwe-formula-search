@@ -214,7 +214,7 @@ export default function SearchResults({
                   <IconButton
                     onClick={() => onOpenFormula(row)}
                     size="small"
-                    sx={{ color: "#9ca3af", "&:hover": { bgcolor: "rgba(13,148,136,0.08)", color: "primary.main" } }}
+                    sx={{ color: "#9ca3af", "&:hover": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}
                   >
                     <ZoomInIcon fontSize="small" />
                   </IconButton>

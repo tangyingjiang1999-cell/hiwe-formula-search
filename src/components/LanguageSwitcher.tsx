@@ -73,7 +73,7 @@ export default function LanguageSwitcher() {
           pl: 1.5,
         },
         "& fieldset": { border: "none" },
-        "&:hover": { bgcolor: "rgba(13,148,136,0.05)" },
+        "&:hover": { bgcolor: "rgba(36,135,202,0.05)" },
       }}
       MenuProps={{
         slotProps: {
@@ -89,7 +89,7 @@ export default function LanguageSwitcher() {
             fontSize: "0.875rem",
             gap: 1.5,
             "&.Mui-selected": {
-              bgcolor: "rgba(13,148,136,0.08)",
+              bgcolor: "rgba(36,135,202,0.08)",
               color: "primary.main",
               fontWeight: 600,
             },
