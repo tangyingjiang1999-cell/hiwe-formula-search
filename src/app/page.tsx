@@ -112,35 +112,41 @@ export default function Home() {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
-      <SiteHeader />
-      <Box component="section" sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", pt: 10, pb: 4 }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: "center", mb: 4 }}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem", lg: "3.25rem" },
-                lineHeight: 1.2,
-                color: "primary.main",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {t.heroTitlePrefix} {t.heroTitleHighlight}
-            </Typography>
-          </Box>
-          <Paper variant="outlined" sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 2 }}>
-            <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
-          </Paper>
-        </Container>
-        {hasSearched && (
-          <Box sx={{ mx: { xs: 1, sm: 3, md: "60px" }, mt: 2.5 }}>
-            <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
-          </Box>
-        )}
+    <Box sx={{ position: "relative", display: "flex", flexDirection: "column", minHeight: "100vh", backgroundImage: "url(/bg-home.png)", backgroundSize: "cover", backgroundPosition: "center top", backgroundRepeat: "no-repeat", backgroundAttachment: "fixed" }}>
+      {/* 遮罩（透明度0，保留结构便于后续调整） */}
+      <Box sx={{ position: "absolute", inset: 0, bgcolor: "rgba(255,255,255,0)", zIndex: 1 }} />
+
+      {/* 页面内容 */}
+      <Box sx={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", flex: 1 }}>
+        <SiteHeader />
+        <Box component="section" sx={{ flex: 1, display: "flex", flexDirection: "column", pt: 10, pb: 4 }}>
+          <Container maxWidth="lg">
+            <Box sx={{ textAlign: "center", mb: 4 }}>
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem", lg: "3.25rem" },
+                  lineHeight: 1.2,
+                  color: "primary.main",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {t.heroTitlePrefix} {t.heroTitleHighlight}
+              </Typography>
+            </Box>
+            <Paper variant="outlined" sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: 2 }}>
+              <SearchPanel onSearch={handleSearch} isLoading={isLoading} />
+            </Paper>
+          </Container>
+          {hasSearched && (
+            <Box sx={{ mx: { xs: 1, sm: 3, md: "60px" }, mt: 2.5 }}>
+              <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
+            </Box>
+          )}
+        </Box>
+        <Footer />
+        <FormulaDrawer result={drawerResult} formulaId={drawerFormulaId} onClose={() => setDrawerResult(null)} />
       </Box>
-      <Footer />
-      <FormulaDrawer result={drawerResult} formulaId={drawerFormulaId} onClose={() => setDrawerResult(null)} />
     </Box>
   );
 }
