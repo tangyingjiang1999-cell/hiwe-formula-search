@@ -183,7 +183,7 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
               for (let i = 0; i <= idx; i++) running += weights[i] ?? 0;
 
               return (
-                <TableRow key={comp.toner_code}>
+                <TableRow key={`${comp.toner_code}-${idx}`}>
                   <TableCell sx={{ py: 1, fontSize: FONT_SIZES.tiny, fontFamily: "var(--font-inter), sans-serif", fontWeight: 600, color: "#1a1a1a" }}>
                     {comp.toner_code}
                   </TableCell>

@@ -99,6 +99,7 @@ export default function FormulasPanel() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const idManuallyEdited = useRef(false);
+  const [formulaSearch, setFormulaSearch] = useState("");
   const [availableYears, setAvailableYears] = useState<number[]>([]);
 
   // 百分比输入框的原始字符串（允许输入中间态如 "5."）
@@ -705,6 +706,18 @@ export default function FormulasPanel() {
     );
   }
 
+  // 按搜索关键词过滤配方列表（匹配配方 ID 或颜色代码）
+  const filteredFormulas = useMemo(() => {
+    const q = formulaSearch.toLowerCase().trim();
+    if (!q) return formulas;
+    return formulas.filter((f) => {
+      if (f.id.toLowerCase().includes(q)) return true;
+      const colorCode = colors.find((c) => c.id === f.color_id)?.color_code ?? "";
+      if (colorCode.toLowerCase().includes(q)) return true;
+      return false;
+    });
+  }, [formulas, formulaSearch, colors]);
+
   if (loading) return <Box sx={{ textAlign: "center", py: 2 }}><Button disabled>加载中...</Button></Box>;
 
   return (
@@ -712,8 +725,40 @@ export default function FormulasPanel() {
       {/* 左栏：配方列表 */}
       <Box sx={{ width: { lg: 256 }, flexShrink: 0, display: "flex", flexDirection: "column", minHeight: 0, maxHeight: { xs: 200, lg: "none" } }}>
         <Button onClick={newFormula} variant="contained" fullWidth sx={{ mb: 1.5, flexShrink: 0 }}>+ 新增配方</Button>
+        {/* 搜索框 */}
+        <Box sx={{ mb: 1.5, flexShrink: 0 }}>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="搜索配方代码或名称..."
+            value={formulaSearch}
+            onChange={(e) => setFormulaSearch(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", mr: 0.75, color: "text.disabled" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.35-4.35" />
+                    </svg>
+                  </Box>
+                ),
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                fontSize: "0.8125rem",
+                bgcolor: "#fff",
+                "& fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
+                "&:hover fieldset": { borderColor: "#2563eb" },
+                "&.Mui-focused fieldset": { borderColor: "#2563eb", borderWidth: 2 },
+              },
+            }}
+          />
+        </Box>
         <Paper variant="outlined" sx={{ flex: 1, overflow: "auto", minHeight: 0 }}>
-          {formulas.map((f) => {
+          {filteredFormulas.map((f) => {
             const isSel = selectedId === f.id;
             return (
               <Button

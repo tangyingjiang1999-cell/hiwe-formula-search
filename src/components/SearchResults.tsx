@@ -119,11 +119,11 @@ export default function SearchResults({
   if (rows.length === 0) {
     return (
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 300, p: 3 }}>
-        <SearchOffIcon sx={{ fontSize: 56, color: "grey.300", mb: 2 }} />
-        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500, fontFamily: FONT, fontSize: CELL_FONT_SIZE }}>
+        <SearchOffIcon sx={{ fontSize: 56, color: "#ffffff", mb: 2, filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))" }} />
+        <Typography variant="body2" sx={{ color: "#ffffff", fontWeight: 600, fontFamily: FONT, fontSize: CELL_FONT_SIZE, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>
           {t.noResults}
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary", fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mt: 0.5 }}>
+        <Typography variant="body2" sx={{ color: "#ffffff", fontWeight: 500, fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mt: 0.5, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>
           {t.noResultsHint}
         </Typography>
       </Box>

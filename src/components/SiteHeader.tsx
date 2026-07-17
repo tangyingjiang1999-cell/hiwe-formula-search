@@ -43,11 +43,10 @@ export default function SiteHeader() {
     <AppBar
       position="fixed"
       color="default"
+      elevation={0}
       sx={{
-        bgcolor: "rgba(255,255,255,0.95)",
+        bgcolor: "#ffffff",
         backdropFilter: "blur(8px)",
-        borderBottom: 1,
-        borderColor: "divider",
         zIndex: 1100,
       }}
     >

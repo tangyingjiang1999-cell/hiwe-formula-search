@@ -153,6 +153,8 @@ interface I18nDict {
   totalWeightLabel: string;
   pearlPaintLabel: string;
   groundPaintLabel: string;
+  originLabel: string;
+  processLabel: string;
 
   // SearchResults
   searchHint: string;
@@ -222,7 +224,7 @@ const dict = (d: Omit<I18nDict,
   | "manufacturerLabel" | "emptyState" | "totalWeightLabel"
   | "pearlPaintLabel" | "groundPaintLabel"
   | "versionLabel" | "pageSizeLabel" | "previousPage" | "nextPage" | "pageOf" | "foundFormulas"
-  | "carModelLabel"
+  | "carModelLabel" | "originLabel" | "processLabel"
 > & {
   formulasCount?: (n: number) => string;
   foundCount?: (n: number) => string;
@@ -269,6 +271,8 @@ const dict = (d: Omit<I18nDict,
   pageOf?: (current: number, total: number) => string;
   foundFormulas?: (n: number) => string;
   carModelLabel?: string;
+  originLabel?: string;
+  processLabel?: string;
 }): I18nDict => ({
   formulasCount: d.formulasCount ?? ((n) => plural(n, "formula", "formulas")),
   foundCount: d.foundCount ?? ((n) => `Found ${n} color${n > 1 ? "s" : ""}`),
@@ -317,6 +321,8 @@ const dict = (d: Omit<I18nDict,
   pageOf: d.pageOf ?? ((current, total) => `Page ${current} of ${total}`),
   foundFormulas: d.foundFormulas ?? ((n) => `Found ${n} formula${n > 1 ? "s" : ""}`),
   carModelLabel: d.carModelLabel ?? "Car model",
+  originLabel: d.originLabel ?? "Origin",
+  processLabel: d.processLabel ?? "Process",
   ...d,
 });
 
@@ -402,7 +408,8 @@ export const i18n: Record<Lang, I18nDict> = {
     weight: "Weight", accum: "Accum", massTone: "Mass Tone",
     colorPreview: "Color Preview", hexInputLabel: "Hex Color",
     tabColorInfo: "Color Information", tabColorDocs: "Color Documents", tabPlasticParts: "Plastic Parts",
-    manufacturerLabel: "Manufacturer", emptyState: "No data available", totalWeightLabel: "Total",
+    manufacturerLabel: "Manufacturer", originLabel: "Origin", processLabel: "Process",
+    emptyState: "No data available", totalWeightLabel: "Total",
     versionLabel: "Version", pageSizeLabel: "Rows per page", previousPage: "Previous", nextPage: "Next",
     pageOf: (current, total) => `Page ${current} of ${total}`,
     foundFormulas: (n) => `Found ${n} formula${n > 1 ? "s" : ""}`,
@@ -516,7 +523,8 @@ export const i18n: Record<Lang, I18nDict> = {
     weight: "用量(g)", accum: "累计(g)", massTone: "色相",
     colorPreview: "颜色预览", hexInputLabel: "色值",
     tabColorInfo: "颜色信息", tabColorDocs: "颜色文档", tabPlasticParts: "塑料件",
-    manufacturerLabel: "品牌厂商", emptyState: "暂无数据", totalWeightLabel: "总计",
+    manufacturerLabel: "品牌厂商", originLabel: "产地", processLabel: "工序",
+    emptyState: "暂无数据", totalWeightLabel: "总计",
     versionLabel: "版本", pageSizeLabel: "每页", previousPage: "上一页", nextPage: "下一页",
     pageOf: (current, total) => `第 ${current} / ${total} 页`,
     foundFormulas: (n) => `找到 ${n} 个配方`,

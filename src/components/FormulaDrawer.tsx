@@ -37,6 +37,7 @@ interface FormulaDrawerProps {
   onClose: () => void;
   initialFormulaIdx?: number;
   formulaId?: string;
+  initialYear?: number;
 }
 
 function formatComponents(components: FormulaComponent[]): string[] {
@@ -84,10 +85,10 @@ function parseHexInput(raw: string, fallback: string): string {
   return t.startsWith("#") ? t : `#${t}`;
 }
 
-export default function FormulaDrawer({ result, onClose, initialFormulaIdx, formulaId }: FormulaDrawerProps) {
+export default function FormulaDrawer({ result, onClose, initialFormulaIdx, formulaId, initialYear }: FormulaDrawerProps) {
   const { t } = useLang();
   const [activeFormulaIdx, setActiveFormulaIdx] = useState(0);
-  const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
+  const [brands, setBrands] = useState<{ id: string; name: string; region: string }[]>([]);
   const [hexInput, setHexInput] = useState("");
   const [activeGroup, setActiveGroup] = useState<ComponentGroup>("Pearl Paint");
   const [infoTab, setInfoTab] = useState(0);
@@ -126,6 +127,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
 
   const { color, formulas } = result;
   const make = brands.find((m) => m.id === color.make_id)?.name ?? color.make_id;
+  const origin = brands.find((m) => m.id === color.make_id)?.region ?? "-";
   const activeFormula = formulas[activeFormulaIdx];
   const previewColor = parseHexInput(hexInput, color.hex_preview);
 
@@ -145,7 +147,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
     );
   }
 
-  const years = color.years?.join(", ") || "";
+  const currentYear = initialYear?.toString() || "-";
   const typeLabel = color.color_type;
 
   return (
@@ -252,9 +254,13 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
               {infoTab === 0 && (
                 <Stack spacing={2}>
                   <InfoRow label={t.manufacturerLabel} value={make} />
+                  <InfoRow label={t.originLabel} value={origin} />
                   <InfoRow label={t.codeLabel} value={color.color_code} />
                   <InfoRow label={t.colorName} value={color.color_name} />
-                  <InfoRow label={t.yearsLabel} value={years || "-"} />
+                  <InfoRow label={t.carModelLabel} value={color.car_model || "-"} />
+                  <InfoRow label={t.yearsLabel} value={currentYear} />
+                  <InfoRow label={t.processLabel} value={color.color_type} />
+                  <InfoRow label={t.versionLabel} value={activeFormula?.version || "-"} />
                 </Stack>
               )}
               {(infoTab === 1 || infoTab === 2) && (

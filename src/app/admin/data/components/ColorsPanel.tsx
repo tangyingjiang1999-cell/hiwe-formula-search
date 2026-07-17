@@ -104,6 +104,7 @@ export default function ColorsPanel() {
   const [error, setError] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
   const idManuallyEdited = useRef(false);
   const yearInputRef = useRef<HTMLInputElement>(null);
 
@@ -204,15 +205,64 @@ export default function ColorsPanel() {
     }));
   }), [colors, brandMap]);
 
+  // 按搜索关键词过滤（先过滤，再分页）
+  const filteredRows = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return allExpandedRows;
+    return allExpandedRows.filter((row) => {
+      if (row.color_code.toLowerCase().includes(q)) return true;
+      if (row.color_name.toLowerCase().includes(q)) return true;
+      if (row.car_model?.toLowerCase().includes(q)) return true;
+      if (row.brandName.toLowerCase().includes(q)) return true;
+      if (row.color_type.toLowerCase().includes(q)) return true;
+      const variantNames = row.originalColor.variants.map((v) => v.name).join(" ").toLowerCase();
+      if (variantNames.includes(q)) return true;
+      if (row.year !== undefined && String(row.year).includes(q)) return true;
+      return false;
+    });
+  }, [allExpandedRows, searchQuery]);
+
+  // 搜索时回到第一页
+  useEffect(() => { setPage(0); }, [searchQuery]);
+
   // 分页展开后的行
-  const pageRows = allExpandedRows.slice(
+  const pageRows = filteredRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1.5 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mb: 1.5, gap: 1.5 }}>
+        <TextField
+          size="small"
+          placeholder="搜索颜色、车型、品牌..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <Box component="span" sx={{ display: "flex", alignItems: "center", mr: 0.75, color: "text.disabled" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                  </svg>
+                </Box>
+              ),
+            },
+          }}
+          sx={{
+            width: 260,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              fontSize: "0.8125rem",
+              bgcolor: "#fff",
+              "& fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
+              "&:hover fieldset": { borderColor: "#2563eb" },
+              "&.Mui-focused fieldset": { borderColor: "#2563eb", borderWidth: 2 },
+            },
+          }}
+        />
         <Button onClick={openCreate} variant="contained" size="small">+ 新增颜色</Button>
       </Box>
 
@@ -303,7 +353,7 @@ export default function ColorsPanel() {
         </Table>
         <TablePagination
           component="div"
-          count={allExpandedRows.length}
+          count={filteredRows.length}
           page={page}
           onPageChange={(_, newPage) => setPage(newPage)}
           rowsPerPage={rowsPerPage}

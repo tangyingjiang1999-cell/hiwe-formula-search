@@ -59,7 +59,7 @@ export default function VariantsPanel() {
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1.5 }}>
-        <Button onClick={openCreate} variant="contained" size="small">+ 新增变体</Button>
+        <Button onClick={openCreate} variant="contained" size="small">+ 新增工艺</Button>
       </Box>
 
       <TableContainer component={Paper} variant="outlined" sx={tableContainerSx}>
@@ -113,7 +113,7 @@ export default function VariantsPanel() {
         />
       </TableContainer>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>{editing ? "编辑变体" : "新增变体"}</DialogTitle>
+        <DialogTitle>{editing ? "编辑工艺" : "新增工艺"}</DialogTitle>
         <DialogContent><Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 0.5 }}>
           <TextField label="ID" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} size="small" fullWidth />
           <TextField label="名称" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} size="small" fullWidth />

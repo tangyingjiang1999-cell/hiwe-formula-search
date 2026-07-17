@@ -17,9 +17,11 @@ export interface SearchPanelProps {
   onSearch: (params: SearchParams) => void;
   isLoading: boolean;
   onSubmitRef?: React.MutableRefObject<(() => void) | null>;
+  onFocusCapture?: () => void;
+  onBlurCapture?: () => void;
 }
 
-export default function SearchPanel({ onSearch, isLoading, onSubmitRef }: SearchPanelProps) {
+export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusCapture, onBlurCapture }: SearchPanelProps) {
   const { t } = useLang();
 
   const [makeId, setMakeId] = useState("");
@@ -98,7 +100,7 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef }: Search
   };
 
   return (
-    <Box component="form" onSubmit={(e) => handleSubmit(e)}>
+    <Box component="form" onSubmit={(e) => handleSubmit(e)} onFocus={onFocusCapture} onBlur={onBlurCapture}>
       {/* === 搜索条件：3×2 网格 === */}
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
         {/* Make select */}
