@@ -73,7 +73,7 @@ export default function DataManagementPage() {
               borderRadius: 1,
               mb: 0.25,
               "&.Mui-selected": {
-                bgcolor: "#1a1a1a",
+                bgcolor: "#2487ca",
                 color: "#FFFFFF",
                 "& .MuiListItemIcon-root": { color: "#FFFFFF" },
               },

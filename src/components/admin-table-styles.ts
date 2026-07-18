@@ -1,11 +1,11 @@
 // 共享的表格样式常量 - 供所有Data Management面板复用
 
 export const FONT = 'var(--font-inter), var(--font-noto), "Helvetica Neue", Arial, sans-serif';
-export const HEADER_BG = "#1f2937";
+export const HEADER_BG = "#2487ca";
 export const HEADER_FONT_SIZE = "0.75rem";
 export const CELL_FONT_SIZE = "0.875rem";
 export const CELL_BORDER_COLOR = "#e5e7eb";
-export const HEADER_BORDER_COLOR = "#374151";
+export const HEADER_BORDER_COLOR = "#1d6ea8";
 
 // 斑马纹背景
 export const COLUMN_BG = {

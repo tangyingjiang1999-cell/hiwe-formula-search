@@ -121,10 +121,10 @@ export default function SiteHeader() {
                   size="small"
                   sx={{
                     display: { xs: "none", md: "inline-flex" },
-                    bgcolor: "#171717",
+                    bgcolor: "#2487ca",
                     color: "#fff",
                     transition: "transform 0.1s, background-color 0.15s",
-                    "&:hover": { bgcolor: "#404040", color: "#fff" },
+                    "&:hover": { bgcolor: "#1d6ea8", color: "#fff" },
                     "&:active": { transform: "scale(0.8)" },
                     textTransform: "none",
                     fontWeight: 600,

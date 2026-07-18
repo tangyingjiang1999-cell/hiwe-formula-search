@@ -143,16 +143,16 @@ export default function SearchResults({
       <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 1, border: "1px solid", borderColor: "grey.200", overflowX: "auto" }}>
         <Table sx={{ tableLayout: { xs: "auto", md: "fixed" }, width: "100%", minWidth: { xs: 500, md: "100%" } }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: "#1a1a1a" }}>
-              <TableCell sx={{ width: { md: COLUMN_WIDTHS.colorType }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorType}</TableCell>
-              <TableCell sx={{ width: { md: COLUMN_WIDTHS.manufacturer }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.manufacturerLabel}</TableCell>
-              <TableCell sx={{ width: { md: COLUMN_WIDTHS.code }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.codeLabel}</TableCell>
-              <TableCell sx={{ width: { md: COLUMN_WIDTHS.colorName }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.colorName}</TableCell>
-              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.carModel }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.carModelLabel}</TableCell>
-              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.years }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.yearsLabel}</TableCell>
-              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.formulaVariants }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>Process</TableCell>
-              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.version }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #333", py: 1.5, textAlign: "center" }}>{t.versionLabel}</TableCell>
-              <TableCell sx={{ width: { md: COLUMN_WIDTHS.action }, borderBottom: "2px solid #333", py: 1.5 }}></TableCell>
+            <TableRow sx={{ bgcolor: "#2487ca" }}>
+              <TableCell sx={{ width: { md: COLUMN_WIDTHS.colorType }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.colorType}</TableCell>
+              <TableCell sx={{ width: { md: COLUMN_WIDTHS.manufacturer }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.manufacturerLabel}</TableCell>
+              <TableCell sx={{ width: { md: COLUMN_WIDTHS.code }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.codeLabel}</TableCell>
+              <TableCell sx={{ width: { md: COLUMN_WIDTHS.colorName }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.colorName}</TableCell>
+              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.carModel }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.carModelLabel}</TableCell>
+              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.years }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.yearsLabel}</TableCell>
+              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.formulaVariants }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>Process</TableCell>
+              <TableCell className="hide-on-mobile" sx={{ width: { md: COLUMN_WIDTHS.version }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "2px solid #1d6ea8", py: 1.5, textAlign: "center" }}>{t.versionLabel}</TableCell>
+              <TableCell sx={{ width: { md: COLUMN_WIDTHS.action }, borderBottom: "2px solid #1d6ea8", py: 1.5 }}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
