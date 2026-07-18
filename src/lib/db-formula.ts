@@ -206,7 +206,15 @@ export async function deleteBrand(id: string): Promise<void> {
 
 // --- Formula Types ---
 
-export async function saveFormulaType(variant: ColorVariant): Promise<ColorVariant> {
+export async function saveFormulaType(variant: ColorVariant, originalId?: string): Promise<ColorVariant> {
+  // 如果 ID 发生了变更，先删除旧记录再插入新记录
+  if (originalId && originalId !== variant.id) {
+    const { error: delErr } = await supabaseAdmin
+      .from("formula_types")
+      .delete()
+      .eq("id", originalId);
+    if (delErr) throw delErr;
+  }
   const { data, error } = await supabaseAdmin
     .from("formula_types")
     .upsert({ id: variant.id, name: variant.name, year_range: variant.year_range })

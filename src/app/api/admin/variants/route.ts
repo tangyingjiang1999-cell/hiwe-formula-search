@@ -27,12 +27,12 @@ export async function PUT(req: NextRequest) {
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
-  let body: ColorVariant;
+  let body: ColorVariant & { originalId?: string };
   try { body = await req.json(); } catch { return NextResponse.json({ error: "请求格式错误" }, { status: 400 }); }
   if (!body.id) {
     return NextResponse.json({ error: "缺少 ID" }, { status: 400 });
   }
-  const saved = await saveFormulaType(body);
+  const saved = await saveFormulaType(body, body.originalId);
   return NextResponse.json(saved);
 }
 

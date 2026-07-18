@@ -29,6 +29,7 @@ export default function VariantsPanel() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<ColorVariant | null>(null);
   const [form, setForm] = useState({ id: "", name: "" });
+  const [originalId, setOriginalId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -42,13 +43,16 @@ export default function VariantsPanel() {
     setPage(0);
   }, [variants]);
 
-  function openCreate() { setEditing(null); setForm({ id: "", name: "" }); setError(""); idManuallyEdited.current = false; setShowModal(true); }
-  function openEdit(v: ColorVariant) { setEditing(v); setForm({ id: v.id, name: v.name }); setError(""); setShowModal(true); }
+  function openCreate() { setEditing(null); setForm({ id: "", name: "" }); setError(""); idManuallyEdited.current = false; setOriginalId(null); setShowModal(true); }
+  function openEdit(v: ColorVariant) { setEditing(v); setForm({ id: v.id, name: v.name }); setError(""); setOriginalId(v.id); setShowModal(true); }
   async function handleSave() {
     setError(""); if (!form.id || !form.name) { setError("ID 和名称不能为空"); return; }
     try {
       const m = editing ? "PUT" : "POST";
-      const r = await fetch("/api/admin/variants", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, year_range: "" }) });
+      const body: Record<string, string> = { ...form, year_range: "" };
+      // 编辑时发送原始 ID，以便后端定位旧记录
+      if (editing && originalId) body.originalId = originalId;
+      const r = await fetch("/api/admin/variants", { method: m, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       if (r.ok) { setShowModal(false); fetchVariants(); } else { const d = await r.json(); setError(d.error || "保存失败"); }
     } catch { setError("网络错误，请重试"); }
   }
@@ -115,7 +119,7 @@ export default function VariantsPanel() {
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
         <DialogTitle>{editing ? "编辑配方类型" : "新增配方类型"}</DialogTitle>
         <DialogContent><Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 0.5 }}>
-          <TextField label="ID" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} disabled={!!editing} size="small" fullWidth />
+          <TextField label="ID" value={form.id} onChange={(e) => { idManuallyEdited.current = true; setForm({ ...form, id: e.target.value }); }} size="small" fullWidth helperText={editing ? "修改 ID 将自动更新所有引用" : ""} />
           <TextField label="名称" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} size="small" fullWidth />
           {error && <Box sx={{ color: "error.main", fontSize: "0.8125rem" }}>{error}</Box>}
         </Box></DialogContent>
