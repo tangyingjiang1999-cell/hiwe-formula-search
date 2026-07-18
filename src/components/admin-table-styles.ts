@@ -2,7 +2,7 @@
 
 export const FONT = 'var(--font-inter), var(--font-noto), "Helvetica Neue", Arial, sans-serif';
 export const HEADER_BG = "#2487ca";
-export const HEADER_FONT_SIZE = "0.75rem";
+export const HEADER_FONT_SIZE = "0.8125rem";
 export const CELL_FONT_SIZE = "0.875rem";
 export const CELL_BORDER_COLOR = "#e5e7eb";
 export const HEADER_BORDER_COLOR = "#1d6ea8";
@@ -31,7 +31,7 @@ export const headerCellSx = {
   letterSpacing: "0.025em",
   textTransform: "uppercase" as const,
   borderBottom: `2px solid ${HEADER_BORDER_COLOR}`,
-  py: 1.75,
+  py: 1,
   px: 1.5,
   textAlign: "center" as const,
 };
