@@ -35,7 +35,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const COLOR_TYPES = ["solid", "metallic", "pearl", "matte", "candy", "special"] as const;
 
 const CARD_STYLE = {
-  borderRadius: 2,
+  borderRadius: 0,
   border: "1px solid",
   borderColor: "grey.200",
   overflow: "hidden",
@@ -241,7 +241,7 @@ export default function ColorsPanel() {
           sx={{
             width: 260,
             "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
+              borderRadius: "0",
               fontSize: "0.8125rem",
               bgcolor: "#fff",
               "& fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
@@ -256,7 +256,7 @@ export default function ColorsPanel() {
       <TableContainer
         component={Paper}
         variant="outlined"
-        sx={{ borderRadius: 1, border: "1px solid", borderColor: "grey.200" }}
+        sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200" }}
       >
         <Table sx={{ tableLayout: "fixed", width: "100%" }}>
           <TableHead>
@@ -282,7 +282,7 @@ export default function ColorsPanel() {
               >
                 <TableCell sx={{ py: 1.4, bgcolor: COLUMN_BG.odd, display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <Box
-                    sx={{ width: 40, height: 24, borderRadius: 0.5, border: 1, borderColor: "grey.200" }}
+                    sx={{ width: 40, height: 24, borderRadius: 0, border: 1, borderColor: "grey.200" }}
                     style={colorSwatchStyle(row.hex_preview)}
                   />
                 </TableCell>
@@ -496,7 +496,7 @@ export default function ColorsPanel() {
                     overflow: "auto",
                     border: 1,
                     borderColor: "grey.200",
-                    borderRadius: 1,
+                    borderRadius: 0,
                     p: 1.5,
                   }}
                 >
@@ -535,8 +535,8 @@ export default function ColorsPanel() {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ borderTop: "1px solid #e5e7eb", pt: 2, pb: 2.5, px: 3 }}>
-          <Button onClick={() => setShowModal(false)} variant="outlined" sx={{ borderRadius: 2 }}>取消</Button>
-          <Button onClick={handleSave} variant="contained" sx={{ borderRadius: 2 }}>保存</Button>
+          <Button onClick={() => setShowModal(false)} variant="outlined" sx={{ borderRadius: 0 }}>取消</Button>
+          <Button onClick={handleSave} variant="contained" sx={{ borderRadius: 0 }}>保存</Button>
         </DialogActions>
       </Dialog>
     </Box>

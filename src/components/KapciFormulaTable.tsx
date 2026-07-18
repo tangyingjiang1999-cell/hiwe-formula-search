@@ -118,7 +118,7 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
       <Stack
         direction="row"
         spacing={1}
-        sx={{ mb: 1.5, p: 1.5, borderRadius: 1, bgcolor: "grey.50", flexWrap: "wrap", alignItems: "center" }}
+        sx={{ mb: 1.5, p: 1.5, borderRadius: 0, bgcolor: "grey.50", flexWrap: "wrap", alignItems: "center" }}
       >
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, flex: 1, alignItems: "center" }}>
           <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500, fontSize: "14px" }}>
@@ -203,7 +203,7 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
                   </TableCell>
                   <TableCell sx={{ py: 1 }}>
                     <Box
-                      sx={{ height: 28, width: "100%", borderRadius: 0.5, border: 1, borderColor: "grey.200" }}
+                      sx={{ height: 28, width: "100%", borderRadius: 0, border: 1, borderColor: "grey.200" }}
                       style={{ backgroundColor: massToneColor(comp) }}
                     />
                   </TableCell>

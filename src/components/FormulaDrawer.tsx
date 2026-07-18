@@ -166,7 +166,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
         <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Toolbar sx={{ gap: 2 }}>
             <Box
-              sx={{ width: 48, height: 48, borderRadius: 1.5, border: 1, borderColor: "grey.200", flexShrink: 0 }}
+              sx={{ width: 48, height: 48, borderRadius: 0, border: 1, borderColor: "grey.200", flexShrink: 0 }}
               style={colorSwatchStyle(previewColor)}
             />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flex: 1 }}>
@@ -224,7 +224,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
                 />
 
                 {activeFormula.notes && (
-                  <Box sx={{ mt: 2, p: 2, borderRadius: 1, border: 1, borderColor: "#FDE68A", bgcolor: "rgba(254,243,199,0.5)" }}>
+                  <Box sx={{ mt: 2, p: 2, borderRadius: 0, border: 1, borderColor: "#FDE68A", bgcolor: "rgba(254,243,199,0.5)" }}>
                     <Typography variant="caption" sx={{ fontWeight: 600, color: "#92400E" }}>{t.notesLabel}</Typography>
                     <Typography variant="caption" sx={{ display: "block", mt: 0.5, color: "#B45309" }}>{activeFormula.notes}</Typography>
                   </Box>
@@ -247,7 +247,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
                 {t.colorPreview}
               </Typography>
               <Box
-                sx={{ mt: 1.5, height: { xs: 75, sm: 120 }, borderRadius: 1, border: 1, borderColor: "grey.200" }}
+                sx={{ mt: 1.5, height: { xs: 75, sm: 120 }, borderRadius: 0, border: 1, borderColor: "grey.200" }}
                 style={colorSwatchStyle(previewColor)}
               />
             </Box>

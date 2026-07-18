@@ -212,7 +212,7 @@ export default function BrandsPanel() {
       </TableContainer>
 
       {/* Regions list */}
-      <Box sx={{ mt: 2, p: 1.5, border: "1px solid #E5E7EB", borderRadius: 1 }}>
+      <Box sx={{ mt: 2, p: 1.5, border: "1px solid #E5E7EB", borderRadius: 0 }}>
         <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
           已有产地：
         </Typography>
@@ -227,7 +227,7 @@ export default function BrandsPanel() {
                 px: 1.5,
                 py: 0.5,
                 bgcolor: "#F3F4F6",
-                borderRadius: 1,
+                borderRadius: 0,
               }}
             >
               <Typography variant="body2">{region.code}</Typography>

@@ -63,7 +63,7 @@ export const getRowSx = (rowIndex: number) => ({
 
 // 表格容器样式
 export const tableContainerSx = {
-  borderRadius: "12px",
+  borderRadius: "0",
   border: "1px solid #e5e7eb",
   boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
   overflow: "hidden",

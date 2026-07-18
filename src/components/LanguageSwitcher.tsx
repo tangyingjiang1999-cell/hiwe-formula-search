@@ -54,7 +54,7 @@ export default function LanguageSwitcher() {
               color: "primary.main",
             }}
           >
-            <FlagIcon code={l.flag} className="h-4 w-auto rounded-sm" />
+            <FlagIcon code={l.flag} className="h-4 w-auto rounded-none" />
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
               {l.code.toUpperCase()}
             </Box>
@@ -66,7 +66,7 @@ export default function LanguageSwitcher() {
         color: "primary.main",
         border: 1,
         borderColor: "primary.main",
-        borderRadius: 999,
+        borderRadius: 0,
         "& .MuiSelect-select": {
           py: 0.5,
           pr: "24px !important",
@@ -95,7 +95,7 @@ export default function LanguageSwitcher() {
             },
           }}
         >
-          <FlagIcon code={l.flag} className="h-4 w-auto rounded-sm" />
+          <FlagIcon code={l.flag} className="h-4 w-auto rounded-none" />
           <Box component="span" sx={{ flex: 1 }}>
             {l.name}
           </Box>

@@ -36,7 +36,7 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 0,
   },
   typography: {
     fontFamily:
@@ -107,7 +107,7 @@ const theme = createTheme({
         root: {
           textTransform: "none",
           fontWeight: 500,
-          borderRadius: 8,
+          borderRadius: 0,
         },
         contained: {
           boxShadow: "none",
@@ -145,7 +145,7 @@ const theme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 0,
         },
       },
     },

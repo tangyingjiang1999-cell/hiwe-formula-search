@@ -400,7 +400,7 @@ export default function FormulasPanel() {
     width: "100%",
     boxSizing: "border-box",
     border: "1px solid #d1d5db",
-    borderRadius: 6,
+    borderRadius: 0,
     padding: "8px 12px",
     height: 38,
     fontSize: CELL_FONT_SIZE,
@@ -448,7 +448,7 @@ export default function FormulasPanel() {
             fontFamily: FONT,
             fontSize: "0.8125rem",
             fontWeight: 500,
-            borderRadius: "10px",
+            borderRadius: "0",
             px: 2,
             py: 0.75,
             textTransform: "none",
@@ -540,7 +540,7 @@ export default function FormulasPanel() {
                         style={INPUT_SMALL_STYLE}
                       />
                       {tonerDropdownFor === globalIndex && matchingToners(tonerQuery, tonerPool).length > 0 && (
-                        <Paper sx={{ position: "absolute", left: 8, top: "100%", zIndex: 50, mt: 0.5, maxHeight: 240, width: 280, overflow: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)", borderRadius: "10px", border: "1px solid #e5e7eb" }}>
+                        <Paper sx={{ position: "absolute", left: 8, top: "100%", zIndex: 50, mt: 0.5, maxHeight: 240, width: 280, overflow: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)", borderRadius: "0", border: "1px solid #e5e7eb" }}>
                           {matchingToners(tonerQuery, tonerPool).map((toner) => (
                             <Button
                               key={toner.code}
@@ -548,7 +548,7 @@ export default function FormulasPanel() {
                               fullWidth
                               sx={{ justifyContent: "flex-start", gap: 1, px: 1.5, py: 1, borderRadius: 0, fontSize: "0.8125rem", fontFamily: FONT, textTransform: "none", transition: "background-color 0.15s ease", "&:hover": { bgcolor: "rgba(59,130,246,0.06)" } }}
                             >
-                              <Box sx={{ width: 32, height: 20, borderRadius: 0.5, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: toner.hex }} />
+                              <Box sx={{ width: 32, height: 20, borderRadius: 0, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: toner.hex }} />
                               <Box component="span" sx={{ color: "#1a1a1a", fontWeight: 500 }}>{toner.code}</Box>
                               <Box component="span" sx={{ fontWeight: 500, color: "#374151" }}>{toner.tradeName}</Box>
                             </Button>
@@ -639,7 +639,7 @@ export default function FormulasPanel() {
                           minWidth: 0,
                           px: 1.5,
                           py: 0.5,
-                          borderRadius: "8px",
+                          borderRadius: "0",
                           fontSize: "0.75rem",
                           fontFamily: FONT,
                           fontWeight: 500,
@@ -680,7 +680,7 @@ export default function FormulasPanel() {
               mt: 1.5,
               py: 1,
               px: 1.5,
-              borderRadius: "10px",
+              borderRadius: "0",
               fontSize: "0.8125rem",
               fontFamily: FONT,
               fontWeight: 500,
@@ -754,7 +754,7 @@ export default function FormulasPanel() {
             }}
             sx={{
               "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
+                borderRadius: "0",
                 fontSize: "0.8125rem",
                 bgcolor: "#fff",
                 "& fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
@@ -799,7 +799,7 @@ export default function FormulasPanel() {
         display: "flex",
         flexDirection: "column",
         minHeight: 0,
-        borderRadius: "16px",
+        borderRadius: "0",
         border: "1px solid #e5e7eb",
         boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
       }}>
@@ -830,7 +830,7 @@ export default function FormulasPanel() {
                         "&:hover": { bgcolor: "rgba(36,135,202,0.06)" },
                       }}
                     >
-                      <Box sx={{ width: 20, height: 16, borderRadius: 0.5, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: c.hex_preview }} />
+                      <Box sx={{ width: 20, height: 16, borderRadius: 0, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: c.hex_preview }} />
                       <Box component="span" sx={{ fontWeight: 500, color: "text.primary", fontSize: "0.75rem" }}>{c.color_code}</Box>
                       <Box component="span" sx={{ fontWeight: 500, color: "text.secondary", fontSize: "0.75rem", overflow: "hidden", textOverflow: "ellipsis" }}>{c.color_name}</Box>
                       <Box component="span" sx={{ ml: "auto", color: "text.disabled", fontSize: "0.6875rem" }}>{brandName}</Box>
@@ -891,13 +891,13 @@ export default function FormulasPanel() {
           mt: 3,
           borderTop: "1px solid #e5e7eb",
           bgcolor: "#fafafa",
-          borderRadius: "0 0 16px 16px",
+          borderRadius: "0",
           mx: -3,
           mb: -8,
           px: 3,
         }}>
           {selectedId && (
-            <Button onClick={handleDelete} variant="outlined" color="error" size="small" sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 500, px: 2.5 }}>删除配方</Button>
+            <Button onClick={handleDelete} variant="outlined" color="error" size="small" sx={{ borderRadius: "0", textTransform: "none", fontWeight: 500, px: 2.5 }}>删除配方</Button>
           )}
           <Button
             onClick={handleSave}
@@ -905,7 +905,7 @@ export default function FormulasPanel() {
             size="small"
             disabled={!percentageValid}
             sx={{
-              borderRadius: "10px",
+              borderRadius: "0",
               textTransform: "none",
               fontWeight: 600,
               px: 3,

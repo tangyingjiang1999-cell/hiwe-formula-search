@@ -178,7 +178,7 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
                 sx={{
                   fontWeight: 500,
                   fontSize: "0.8125rem",
-                  borderRadius: 1.5,
+                  borderRadius: 0,
                   px: 0.5,
                   ...(isSelected ? {} : { borderColor: "grey.300", color: "text.secondary" }),
                 }}
@@ -192,7 +192,7 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             disabled={isLoading}
             variant="contained"
             startIcon={<SearchIcon />}
-            sx={{ minWidth: 120, borderRadius: 1.5, textTransform: "none", fontWeight: 600, fontSize: "0.875rem" }}
+            sx={{ minWidth: 120, borderRadius: 0, textTransform: "none", fontWeight: 600, fontSize: "0.875rem" }}
           >
             {isLoading ? t.searching : t.search}
           </Button>
@@ -204,7 +204,7 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             startIcon={<RestartAltIcon />}
             sx={{
               minWidth: 120,
-              borderRadius: 1.5,
+              borderRadius: 0,
               textTransform: "none",
               fontWeight: 600,
               fontSize: "0.875rem",

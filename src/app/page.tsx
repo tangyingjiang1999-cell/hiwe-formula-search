@@ -222,7 +222,7 @@ export default function Home() {
               onMouseLeave={handleGlassLeave}
               sx={{
                 p: { xs: 2.5, sm: 4 },
-                borderRadius: 2,
+                borderRadius: 0,
                 // 玻璃拟态：半透明白底 + 毛玻璃
                 bgcolor: shouldBeBlurred ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.3)",
                 backdropFilter: shouldBeBlurred ? "blur(16px)" : "blur(8px)",

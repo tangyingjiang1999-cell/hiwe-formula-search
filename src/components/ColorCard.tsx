@@ -41,12 +41,12 @@ const ColorCard = memo(function ColorCard({
       tabIndex={0}
       onClick={() => onOpenDetail(result)}
       onKeyDown={handleKeyDown}
-      className="mb-3 cursor-pointer rounded-xl border border-[#E5E7EB] bg-white transition-shadow duration-200 ease-out hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] last:mb-0"
+      className="mb-3 cursor-pointer rounded-none border border-[#E5E7EB] bg-white transition-shadow duration-200 ease-out hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] last:mb-0"
     >
       <div className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
         <div className="flex min-w-0 flex-1 items-center gap-4 text-left">
           <div
-            className="h-10 w-10 shrink-0 rounded-[6px] border border-[#E5E7EB]"
+            className="h-10 w-10 shrink-0 rounded-none border border-[#E5E7EB]"
             style={{ backgroundColor: color.hex_preview }}
           />
           <div className="min-w-0 flex-1">
@@ -60,7 +60,7 @@ const ColorCard = memo(function ColorCard({
         <div className="flex items-center gap-2">
           <span
             className={[
-              "shrink-0 rounded-[6px] px-2 py-0.5 text-[10px] font-medium",
+              "shrink-0 rounded-none px-2 py-0.5 text-[10px] font-medium",
               typeInfo.badge,
             ].join(" ")}
           >

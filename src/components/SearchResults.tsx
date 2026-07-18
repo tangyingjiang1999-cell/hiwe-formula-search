@@ -140,7 +140,7 @@ export default function SearchResults({
         {t.foundFormulas(rows.length)}
       </Typography>
 
-      <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 1, border: "1px solid", borderColor: "grey.200", overflowX: "auto" }}>
+      <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200", overflowX: "auto" }}>
         <Table sx={{ tableLayout: { xs: "auto", md: "fixed" }, width: "100%", minWidth: { xs: 500, md: "100%" } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: "#2487ca" }}>
@@ -173,7 +173,7 @@ export default function SearchResults({
                     sx={{
                       width: 83,
                       height: 37,
-                      borderRadius: 1,
+                      borderRadius: 0,
                       border: 1,
                       borderColor: "grey.200",
                     }}

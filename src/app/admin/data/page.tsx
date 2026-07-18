@@ -70,7 +70,7 @@ export default function DataManagementPage() {
             selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
             sx={{
-              borderRadius: 1,
+              borderRadius: 0,
               mb: 0.25,
               "&.Mui-selected": {
                 bgcolor: "#2487ca",

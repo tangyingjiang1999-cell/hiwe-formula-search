@@ -99,7 +99,7 @@ export default function TonerPage() {
                 variant={activeCategory === cat.key ? "filled" : "outlined"}
                 color={activeCategory === cat.key ? "primary" : "default"}
                 size="small"
-                sx={{ borderRadius: "4px", fontWeight: 500 }}
+                sx={{ borderRadius: "0", fontWeight: 500 }}
               />
             ))}
           </Stack>

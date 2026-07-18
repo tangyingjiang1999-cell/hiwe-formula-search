@@ -43,7 +43,7 @@ export default function Toast({
           color: "#fff",
           fontSize: "0.8125rem",
           fontWeight: 500,
-          borderRadius: 1.5,
+          borderRadius: 0,
           "& .MuiAlert-icon": { color: "#fff" },
         }}
       >
