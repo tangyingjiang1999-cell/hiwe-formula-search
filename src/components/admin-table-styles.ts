@@ -30,7 +30,7 @@ export const headerCellSx = {
   fontSize: HEADER_FONT_SIZE,
   letterSpacing: "0.025em",
   textTransform: "uppercase" as const,
-  borderBottom: `2px solid ${HEADER_BORDER_COLOR}`,
+  borderBottom: "none",
   py: 1,
   px: 1.5,
   textAlign: "center" as const,
@@ -65,6 +65,7 @@ export const getRowSx = (rowIndex: number) => ({
 export const tableContainerSx = {
   borderRadius: "0",
   border: "1px solid #e5e7eb",
+  borderTop: "2px solid #2487ca",
   boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
   overflow: "hidden",
 };

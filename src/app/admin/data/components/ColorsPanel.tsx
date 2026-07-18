@@ -256,19 +256,19 @@ export default function ColorsPanel() {
       <TableContainer
         component={Paper}
         variant="outlined"
-        sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200" }}
+        sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca" }}
       >
         <Table sx={{ tableLayout: "fixed", width: "100%" }}>
           <TableHead>
             <TableRow sx={{ bgcolor: "#2487ca" }}>
-              <TableCell sx={{ width: COLUMN_WIDTHS.preview, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>预览</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.brand, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>品牌</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.colorCode, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>颜色代码</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>颜色名称</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>车型</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.colorType, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>类型</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.yearCount, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "2px solid #1d6ea8", py: 1, textAlign: "center" }}>年份</TableCell>
-              <TableCell sx={{ width: COLUMN_WIDTHS.actions, borderBottom: "2px solid #1d6ea8", py: 1 }}></TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.preview, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>预览</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.brand, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>品牌</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorCode, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>颜色代码</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorName, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>颜色名称</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.carModel, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>车型</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.colorType, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>类型</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.yearCount, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>年份</TableCell>
+              <TableCell sx={{ width: COLUMN_WIDTHS.actions, borderBottom: "none", py: 1 }}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
