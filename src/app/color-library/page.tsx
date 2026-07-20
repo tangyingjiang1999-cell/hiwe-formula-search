@@ -624,13 +624,12 @@ function ManagementModal({
         <DialogTitle sx={{ borderBottom: "1px solid #e5e7eb", pb: 2, mb: 0 }}>
           编辑色母 — {editingItem?.code}
         </DialogTitle>
-        <DialogContent sx={{ pt: 2.5, pb: 1 }}>
+        <DialogContent sx={{ pt: 4, pb: 1 }}>
           <Stack spacing={2}>
             <TextField
               label="色母代码"
               value={form.code}
               onChange={(e) => setForm({ ...form, code: e.target.value })}
-              disabled
               size="small"
               fullWidth
             />
