@@ -251,17 +251,28 @@ export async function saveColor(
     .single();
   if (error) throw new Error(error.message || JSON.stringify(error));
 
-  // 2. 同步 color_variant_map：先删后插
-  const { error: delErr } = await supabaseAdmin
-    .from("color_variant_map")
-    .delete()
-    .eq("color_id", color.id);
-  if (delErr) throw new Error(delErr.message || JSON.stringify(delErr));
-
+  // 2. 同步 color_variant_map：仅当 variantIds 非空时才写入（避免外键约束报错）
   if (variantIds.length > 0) {
-    const rows = variantIds.map((variant_id) => ({ color_id: color.id, variant_id }));
-    const { error: insErr } = await supabaseAdmin.from("color_variant_map").insert(rows);
-    if (insErr) throw new Error(insErr.message || JSON.stringify(insErr));
+    const { error: delErr } = await supabaseAdmin
+      .from("color_variant_map")
+      .delete()
+      .eq("color_id", color.id);
+    if (delErr) throw new Error(delErr.message || JSON.stringify(delErr));
+
+    // 只插入在 color_variants 表中实际存在的 variant_id
+    const { data: existingVariants, error: fetchErr } = await supabaseAdmin
+      .from("color_variants")
+      .select("id")
+      .in("id", variantIds);
+    if (fetchErr) throw new Error(fetchErr.message || JSON.stringify(fetchErr));
+    const validIds = (existingVariants ?? []).map((v: { id: string }) => v.id);
+    const validVariantIds = variantIds.filter((vid) => validIds.includes(vid));
+
+    if (validVariantIds.length > 0) {
+      const rows = validVariantIds.map((variant_id) => ({ color_id: color.id, variant_id }));
+      const { error: insErr } = await supabaseAdmin.from("color_variant_map").insert(rows);
+      if (insErr) throw new Error(insErr.message || JSON.stringify(insErr));
+    }
   }
 
   return data as Color;
