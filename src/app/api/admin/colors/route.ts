@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "缺少必填字段（id/make_id/color_code）" }, { status: 400 });
   }
   try {
+    // 打印收到的 variantIds 供调试
+    console.error("DEBUG variantIds:", JSON.stringify(variantIds));
     const saved = await saveColor(color, (variantIds as string[]) ?? []);
 
     // 保存年份
@@ -63,6 +65,8 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "缺少 ID" }, { status: 400 });
   }
   try {
+    // 打印收到的 variantIds 供调试
+    console.error("DEBUG variantIds:", JSON.stringify(variantIds));
     const saved = await saveColor(color, (variantIds as string[]) ?? []);
 
     // 保存年份
