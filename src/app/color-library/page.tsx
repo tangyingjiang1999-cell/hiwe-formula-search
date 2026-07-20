@@ -163,7 +163,6 @@ function AddMaterialDialog({
     setForm((prev) => ({ ...prev, code: newCode }));
   }, [form.category, open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const currentHex = rgbToHex(form.r, form.g, form.b);
 
   function handleSave() {
     setError("");
@@ -177,7 +176,10 @@ function AddMaterialDialog({
       tradeName: form.tradeName.trim(),
       nameZh: form.nameZh.trim(),
       category: form.category as TonerCategory,
-      hex: currentHex,
+      hex: displayHex,
+      rgb_r: form.r,
+      rgb_g: form.g,
+      rgb_b: form.b,
     };
 
     onSave(newToner);
@@ -186,13 +188,16 @@ function AddMaterialDialog({
 
   const RGB_MAX = 255;
 
+  // RGB 颜色信息
+  const displayHex = rgbToHex(form.r, form.g, form.b);
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ borderBottom: "1px solid #e5e7eb", pb: 2, mb: 0, display: "flex", alignItems: "center", gap: 1 }}>
         <AddIcon sx={{ color: "primary.main" }} />
         新增材料
       </DialogTitle>
-      <DialogContent sx={{ pt: 2.5, pb: 1 }}>
+      <DialogContent sx={{ pt: 3, pb: 1 }}>
         <Stack spacing={2.5}>
 
           {/* 分类选择 */}
@@ -255,11 +260,11 @@ function AddMaterialDialog({
                     flexShrink: 0,
                     transition: "background-color 0.15s",
                   }}
-                  style={{ backgroundColor: currentHex }}
+                  style={{ backgroundColor: displayHex }}
                 />
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: "#1a1a1a" }}>
-                    {currentHex}
+                    {displayHex}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
                     R: {form.r} &nbsp; G: {form.g} &nbsp; B: {form.b}
