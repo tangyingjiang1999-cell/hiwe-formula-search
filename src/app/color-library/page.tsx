@@ -533,12 +533,12 @@ function ManagementModal({
           <Table stickyHeader sx={{ tableLayout: "fixed", width: "100%" }}>
             <TableHead>
               <TableRow sx={{ bgcolor: "#2487ca" }}>
-                <TableCell sx={{ width: 56, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>预览</TableCell>
-                <TableCell sx={{ width: 110, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>色母代码</TableCell>
-                <TableCell sx={{ width: 160, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>英文商品名</TableCell>
-                <TableCell sx={{ width: 140, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>中文品名</TableCell>
-                <TableCell sx={{ width: 130, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1, textAlign: "center" }}>所属分类</TableCell>
-                <TableCell sx={{ width: 100, borderBottom: "none", py: 1 }}></TableCell>
+                <TableCell sx={{ width: 56, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1.5, textAlign: "center" }}>颜色</TableCell>
+                <TableCell sx={{ width: 110, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1.5, textAlign: "center" }}>产品代码</TableCell>
+                <TableCell sx={{ width: 160, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1.5, textAlign: "center" }}>英文名称</TableCell>
+                <TableCell sx={{ width: 140, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1.5, textAlign: "center" }}>中文名称</TableCell>
+                <TableCell sx={{ width: 130, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1.5, textAlign: "center" }}>所属分类</TableCell>
+                <TableCell sx={{ width: 100, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: "0.8125rem", borderBottom: "none", py: 1.5, textAlign: "center" }}>操作</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
