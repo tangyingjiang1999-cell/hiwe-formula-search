@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { applyRateLimit, PUBLIC_LIMIT } from "@/lib/rate-limit";
 import { supabase } from "@/lib/supabase-client";
 import type { Region } from "@/types";
 
 // GET /api/regions - Get all regions (public, no auth required)
 export async function GET(req: NextRequest) {
+  // 公开 API 限流：每分钟 120 次
+  const limitRes_GET = applyRateLimit(req, PUBLIC_LIMIT);
+  if (limitRes_GET) return limitRes_GET;
   const { data, error } = await supabase
     .from("regions")
     .select("code")

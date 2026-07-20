@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { applyRateLimit, PUBLIC_LIMIT } from "@/lib/rate-limit";
 import { getBrands } from "@/lib/db-formula";
 
 // 公开读取接口：搜索页、颜色库等普通用户均可访问（无需登录）

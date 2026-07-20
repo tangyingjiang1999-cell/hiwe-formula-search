@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { applyRateLimit, PUBLIC_LIMIT } from "@/lib/rate-limit";
 import { getSettings } from "@/lib/db-formula";
 
 // 公开读（无需登录），供 SearchPanel 加载自定义参数

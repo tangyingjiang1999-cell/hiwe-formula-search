@@ -1,0 +1,102 @@
+// ru 语言文案
+import { dict } from './_helpers';
+
+const dict_ru = dict({
+    brandName: "HIWE Поиск формул",
+    brandNameShort: "HIWE",
+    heroTitlePrefix: "Найдите своё",
+    heroTitleHighlight: "идеальное совпадение",
+    login: "Войти",
+    close: "Закрыть",
+    brandSlogan: "СИСТЕМА ПОИСКА АВТОЭМАЛЕЙ",
+    officialWebsite: "Официальный сайт",
+    loginMobileTitle: "Добро пожаловать в HAIWEN",
+    guideSearchPlaceholder: "Поиск руководств...",
+    guideCategories: "Категории",
+    guideAllCategories: "Все категории",
+    guideListLabel: "Список руководств",
+    guideSelectHint: "Выберите руководство слева",
+    navSearch: "Поиск", navProducts: "Продукты", navAbout: "О нас",
+    navFormulaSearch: "Поиск формул",
+    navColorLibrary: "Toner",
+    navAppGuide: "Руководство по применению",
+    navAdmin: "Управление данными",
+    userManagement: "Управление пользователями",
+    logout: "Выход",
+    loginWelcome: "С возвращением",
+    loginSubtitle: "Введите свои учётные данные для входа",
+    loginEmail: "Эл. почта", loginPassword: "Пароль",
+    loginPlaceholderEmail: "вы@пример.com",
+    loginPlaceholderPassword: "Введите пароль",
+    loginButton: "Начать", loginSigningIn: "Вход...",
+    loginErrorEmpty: "Введите имя пользователя и пароль",
+    loginErrorNetwork: "Ошибка сети, повторите попытку",
+    loginErrorFailed: "Не удалось войти",
+    panelTitle: "Поиск формул",
+    make: "Марка", colorCode: "Код цвета", colorName: "Название цвета", colorType: "Тип цвета",
+    allMakes: "Все марки",
+    colorTypeAll: "Все", colorTypeSolid: "Однотонный", colorTypeMetallic: "Металлик",
+    colorTypePearl: "Перламутр", colorTypeMatte: "Матовый", colorTypeCandy: "Канди",
+    search: "Поиск", searching: "Поиск...", reset: "Сброс",
+    codeTooLong: "Код цвета обычно <= 10 символов",
+    colorCodePlaceholder: "напр. 040, NH731P",
+    colorNamePlaceholder: "напр. Super White",
+    year: "Год", yearPlaceholder: "напр. 2020 или 2018-2022",
+    detail: "Подробнее", expand: "Развернуть", collapse: "Свернуть",
+    version: "Версия", paintSystemNotes: "Примечания",
+    volume: "Объём", tonerCode: "Код тонера", tonerName: "Название тонера",
+    percentage: "Процент(%)", actualAmount: "Факт. кол-во(г)",
+    colorInfo: "Информация о цвете", formulaVariants: "Варианты формулы", components: "Компоненты",
+    makeLabel: "Марка", typeLabel: "Тип", yearsLabel: "Годы", codeLabel: "Код",
+    print: "Печать", copy: "Копировать", notesLabel: "Примечания", updatedLabel: "Обновлено",
+    colorTypeSolidLabel: "Однотонный", colorTypeMetallicLabel: "Металлик", colorTypePearlLabel: "Перламутр",
+    colorTypeMatteLabel: "Матовый", colorTypeCandyLabel: "Канди", colorTypeSpecialLabel: "Специальный",
+    copySuccess: "Скопировано в буфер обмена", copyFail: "Не удалось скопировать",
+    searchHint: "Введите критерии поиска слева",
+    noResults: "Соответствующих цветов не найдено",
+    noResultsHint: "Попробуйте другую марку или код цвета",
+    adminTitle: "Список пользователей",
+    adminNewUser: "Новый пользователь",
+    adminNoPermission: "Нет доступа",
+    adminPasswordRequired: "Для нового пользователя пароль обязателен",
+    adminCannotDeleteAdmin: "Нельзя удалить суперадминистратора",
+    adminLoading: "Загрузка...",
+    adminColId: "ID",
+    adminColUsername: "Имя пользователя",
+    adminColRole: "Роль",
+    adminColCreatedAt: "Создан",
+    adminColActions: "Действия",
+    adminRoleAdmin: "Админ",
+    adminRoleUser: "Пользователь",
+    adminEdit: "Изменить",
+    adminDelete: "Удалить",
+    adminEditTitle: "Изменить пользователя",
+    adminLabelPassword: "Пароль",
+    adminPasswordHint: "Оставьте пустым, чтобы не менять",
+    adminPasswordPlaceholder: "Оставьте пустым, чтобы сохранить",
+    adminLabelRole: "Роль",
+    adminCancel: "Отмена",
+    adminSave: "Сохранить",
+    adminCreate: "Создать",
+    adminConfirmDelete: (username: string) => `Вы уверены, что хотите удалить пользователя "${username}"?`,
+    formulasCount: (n) => {
+      const mod10 = n % 10, mod100 = n % 100;
+      const word = mod10 === 1 && mod100 !== 11 ? "формула"
+                 : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? "формулы"
+                 : "формул";
+      return `${n} ${word}`;
+    },
+    foundCount: (n) => {
+      const mod10 = n % 10, mod100 = n % 100;
+      const word = mod10 === 1 && mod100 !== 11 ? "цвет"
+                 : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? "цвета"
+                 : "цветов";
+      return `Найдено ${n} ${word}`;
+    },
+    truncatedHint: (max) => `Показаны первые ${max} результатов. Уточните поиск.`,
+    totalFormula: (c, f) => `${c} цветов, ${f} формул`,
+    colorsBadge: (n) => `${n} Цв.`,
+    formulasBadge: (n) => `${n} Формул`,
+});
+
+export default dict_ru;

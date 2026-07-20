@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createUser, getUserByUsername } from "@/lib/db";
 import { hashPassword } from "@/lib/auth-helpers";
+import { applyRateLimit, REGISTER_LIMIT } from "@/lib/rate-limit";
 
 // 用户名规则：字母开头，3-20 位，仅允许字母、数字、下划线
 const USERNAME_RE = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
 
 export async function POST(req: NextRequest) {
+  // 注册限流：每小时 3 次
+  const limitRes = applyRateLimit(req, REGISTER_LIMIT);
+  if (limitRes) return limitRes;
   const { username, password, confirmPassword } = await req.json();
 
   if (!username || !password) {

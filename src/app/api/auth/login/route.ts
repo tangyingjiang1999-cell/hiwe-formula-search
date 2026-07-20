@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { signToken, setAuthCookie } from "@/lib/auth";
 import { getUserByUsername } from "@/lib/db";
 import { verifyPassword, initDefaultAdmin } from "@/lib/auth-helpers";
+import { applyRateLimit, LOGIN_LIMIT } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  // 登录限流：每分钟 5 次
+  const limitRes = applyRateLimit(req, LOGIN_LIMIT);
+  if (limitRes) return limitRes;
   let username: string, password: string;
   try {
     const body = await req.json();

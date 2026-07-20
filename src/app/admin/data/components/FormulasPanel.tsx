@@ -11,8 +11,8 @@ import type {
 } from "@/types";
 import type { Toner, CarMake } from "@/types";
 import { generateFormulaId } from "@/lib/id-generator";
-import { TONERS } from "@/data/toners";
 import { FONT, HEADER_BG, HEADER_FONT_SIZE, CELL_FONT_SIZE, COLUMN_BG, ROW_BG, tableContainerSx, tableSx, cellSx, headerCellSx, getRowSx } from "@/components/admin-table-styles";
+import { hexToRgb, filterTonersBySystem, matchingToners, matchingColors, LEGACY_FORMULA_TYPE_MAP } from "./formula-helpers";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -35,46 +35,6 @@ const EMPTY_COMPONENT: FormulaComponent = {
   percentage: 0,
   grams_per_100g: 0,
 };
-
-// hex → RGB 转换
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!m) return null;
-  return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
-}
-
-// 按体系过滤色母列表
-function filterTonersBySystem(system: "1K" | "2K"): Toner[] {
-  if (system === "2K") return TONERS.filter((t) => t.category === "2K_BASECOAT");
-  return TONERS.filter((t) => t.category !== "2K_BASECOAT");
-}
-
-// 模糊匹配色母（空查询时返回全部）
-function matchingToners(query: string, pool: Toner[]): Toner[] {
-  const q = query.toLowerCase().trim();
-  if (!q) return pool;
-  return pool.filter(
-    (t) =>
-      t.code.toLowerCase().includes(q) ||
-      t.tradeName.toLowerCase().includes(q) ||
-      t.nameZh.includes(q)
-  );
-}
-
-// 模糊匹配颜色
-function matchingColors(query: string, colors: Color[], brands: CarMake[]): Color[] {
-  const q = query.toLowerCase().trim();
-  if (!q) return colors;
-  const brandMap = new Map(brands.map((b) => [b.id, b.name]));
-  return colors.filter((c) => {
-    if (c.color_code.toLowerCase().includes(q)) return true;
-    if (c.color_name.toLowerCase().includes(q)) return true;
-    if (c.color_type.toLowerCase().includes(q)) return true;
-    const brandName = brandMap.get(c.make_id) ?? "";
-    if (brandName.toLowerCase().includes(q)) return true;
-    return false;
-  });
-}
 
 export default function FormulasPanel() {
   const [formulas, setFormulas] = useState<Formula[]>([]);
@@ -183,11 +143,6 @@ export default function FormulasPanel() {
     fetch("/api/admin/brands", { signal: ctrl.signal }).then((r) => r.ok ? r.json() : []).then(setBrands).catch(() => {});
     return () => ctrl.abort();
   }, [fetchFormulas]);
-
-  // 旧数据兼容：将已更名的配方类型映射到新名称
-  const LEGACY_FORMULA_TYPE_MAP: Record<string, FormulaType> = {
-    "Pearl Paint": "Three Stages",
-  };
 
   function selectFormula(formula: Formula) {
     setSelectedId(formula.id);

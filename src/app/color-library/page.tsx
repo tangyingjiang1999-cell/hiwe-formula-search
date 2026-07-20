@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useLang } from "@/components/LanguageContext";
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
-import { TONERS as DEFAULT_TONERS, TONER_CATEGORIES } from "@/data/toners";
+import { TONER_CATEGORIES } from "@/data/toners";
 import type { Toner, TonerCategory } from "@/types";
 import { useAuth } from "@/components/AuthContext";
 import Box from "@mui/material/Box";
@@ -470,9 +470,9 @@ function ManagementModal({
         <SettingsIcon sx={{ color: "primary.main" }} />
         管理材料 — 数据管理中心
       </DialogTitle>
-      <DialogContent sx={{ pt: 2.5, pb: 1 }}>
+      <DialogContent sx={{ pt: 3, pb: 1, px: 3 }}>
         {/* 搜索 + 添加按钮 */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, py: 1 }}>
           <TextField
             size="small"
             placeholder="搜索色母代码、名称、分类..."
@@ -528,7 +528,7 @@ function ManagementModal({
         <TableContainer
           component={Paper}
           variant="outlined"
-          sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca", maxHeight: 480, overflow: "auto" }}
+          sx={{ mt: 1, borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca", maxHeight: 480, overflow: "auto" }}
         >
           <Table stickyHeader sx={{ tableLayout: "fixed", width: "100%" }}>
             <TableHead>
@@ -701,8 +701,30 @@ export default function TonerPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [manageOpen, setManageOpen] = useState(false);
 
-  // ★ 共享数据源：状态提升到页面级别，新增/编辑/删除联动刷新
-  const [toners, setToners] = useState<Toner[]>(DEFAULT_TONERS);
+  // ★ 从 API 加载色母数据（Supabase 持久化）
+  const [toners, setToners] = useState<Toner[]>([]);
+  const [dbLoading, setDbLoading] = useState(true);
+
+  const fetchToners = useCallback(async () => {
+    try {
+      // 管理员走 admin 端点（可获取全部数据），普通用户走公开端点
+      const endpoint = isAdmin ? "/api/admin/toners" : "/api/toners";
+      const res = await fetch(endpoint);
+      if (res.ok) {
+        const data = await res.json();
+        setToners(data as Toner[]);
+      }
+    } catch {
+      // 网络异常时保持现有数据
+    } finally {
+      setDbLoading(false);
+    }
+  }, [isAdmin]);
+
+  // 挂载时 + isAdmin 变化时重新获取
+  useEffect(() => {
+    fetchToners();
+  }, [fetchToners]);
 
   const filteredToners = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
@@ -713,17 +735,46 @@ export default function TonerPage() {
     });
   }, [toners, activeCategory, searchQuery]);
 
-  // 管理弹窗回调
-  const handleUpdateItem = useCallback((updated: Toner) => {
-    setToners((prev) => prev.map((t) => t.code === updated.code ? updated : t));
+  // 管理弹窗回调 — 调用 Supabase API
+  const handleUpdateItem = useCallback(async (updated: Toner) => {
+    try {
+      const res = await fetch("/api/admin/toners", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setToners((prev) => prev.map((t) => t.code === updated.code ? saved as Toner : t));
+      }
+    } catch { /* 静默处理 */ }
   }, []);
 
-  const handleDeleteItem = useCallback((code: string) => {
-    setToners((prev) => prev.filter((t) => t.code !== code));
+  const handleDeleteItem = useCallback(async (code: string) => {
+    try {
+      const res = await fetch("/api/admin/toners", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (res.ok) {
+        setToners((prev) => prev.filter((t) => t.code !== code));
+      }
+    } catch { /* 静默处理 */ }
   }, []);
 
-  const handleAddItem = useCallback((newToner: Toner) => {
-    setToners((prev) => [...prev, newToner]);
+  const handleAddItem = useCallback(async (newToner: Toner) => {
+    try {
+      const res = await fetch("/api/admin/toners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newToner),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setToners((prev) => [...prev, saved as Toner]);
+      }
+    } catch { /* 静默处理 */ }
   }, []);
 
   return (
@@ -789,7 +840,11 @@ export default function TonerPage() {
       </Box>
 
       <Box sx={{ flex: 1, px: { xs: 2, lg: 3 }, py: 3 }}>
-        {filteredToners.length === 0 ? (
+        {dbLoading ? (
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 10, color: "text.disabled" }}>
+            <Typography variant="body2">加载中...</Typography>
+          </Box>
+        ) : filteredToners.length === 0 ? (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 10, color: "text.disabled" }}>
             <Typography variant="body2">No toners found</Typography>
             <Typography variant="caption" sx={{ mt: 0.5 }}>Try a different search or category</Typography>

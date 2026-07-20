@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromRequest, requireAdmin } from "@/lib/auth";
+import { applyRateLimit, ADMIN_LIMIT } from "@/lib/rate-limit";
 import { getFormulas, saveFormula, deleteFormula } from "@/lib/db-formula";
 import type { Formula } from "@/types";
 
@@ -37,6 +38,9 @@ function validateFormula(body: Formula): string | null {
 }
 
 export async function GET(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_GET = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_GET) return limitRes_GET;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
@@ -44,6 +48,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_POST = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_POST) return limitRes_POST;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
@@ -68,6 +75,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_PUT = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_PUT) return limitRes_PUT;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
@@ -92,6 +102,9 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_DELETE = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_DELETE) return limitRes_DELETE;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;

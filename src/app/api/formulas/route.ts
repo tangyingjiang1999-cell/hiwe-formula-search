@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { applyRateLimit, PUBLIC_LIMIT } from "@/lib/rate-limit";
 import { getFormulas } from "@/lib/db-formula";
 
 // 公开读取接口：搜索页普通用户可访问（无需登录）

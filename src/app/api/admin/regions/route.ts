@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromRequest, requireAdmin } from "@/lib/auth";
+import { applyRateLimit, ADMIN_LIMIT } from "@/lib/rate-limit";
 import { supabaseAdmin } from "@/lib/supabase-server";
 import type { Region } from "@/types";
 
 // GET /api/admin/regions - Get all regions (requires admin)
 export async function GET(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_GET = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_GET) return limitRes_GET;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
@@ -25,6 +29,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin/regions - Create new region (requires admin)
 export async function POST(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_POST = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_POST) return limitRes_POST;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;
@@ -68,6 +75,9 @@ export async function POST(req: NextRequest) {
 
 // DELETE /api/admin/regions - Delete region (requires admin)
 export async function DELETE(req: NextRequest) {
+  // 管理后台限流：每分钟 60 次
+  const limitRes_DELETE = applyRateLimit(req, ADMIN_LIMIT);
+  if (limitRes_DELETE) return limitRes_DELETE;
   const user = getUserFromRequest(req);
   const forbidden = requireAdmin(user);
   if (forbidden) return forbidden;

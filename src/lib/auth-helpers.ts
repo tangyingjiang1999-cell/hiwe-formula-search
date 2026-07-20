@@ -16,6 +16,8 @@ export async function initDefaultAdmin(): Promise<void> {
   if (!user) {
     const hash = hashPassword("admin123");
     await createUser("admin", hash, "admin");
-    console.log("✅ 默认管理员账号已创建：admin / admin123");
+    if (process.env.NODE_ENV !== "production") {
+      console.log("✅ 默认管理员账号已创建（仅开发环境）");
+    }
   }
 }
