@@ -633,11 +633,11 @@ function ManagementModal({
           <Stack spacing={2}>
             <TextField
               label="色母代码"
-              value={form.code}
-              onChange={(e) => setForm({ ...form, code: e.target.value })}
+              value={editingItem?.code}
+              disabled
               size="small"
               fullWidth
-            />
+/>
             <TextField
               label="英文商品名"
               value={form.tradeName}
