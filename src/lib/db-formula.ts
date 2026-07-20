@@ -249,19 +249,19 @@ export async function saveColor(
     })
     .select()
     .single();
-  if (error) throw error;
+  if (error) throw new Error(error.message || JSON.stringify(error));
 
   // 2. 同步 color_variant_map：先删后插
   const { error: delErr } = await supabaseAdmin
     .from("color_variant_map")
     .delete()
     .eq("color_id", color.id);
-  if (delErr) throw delErr;
+  if (delErr) throw new Error(delErr.message || JSON.stringify(delErr));
 
   if (variantIds.length > 0) {
     const rows = variantIds.map((variant_id) => ({ color_id: color.id, variant_id }));
     const { error: insErr } = await supabaseAdmin.from("color_variant_map").insert(rows);
-    if (insErr) throw insErr;
+    if (insErr) throw new Error(insErr.message || JSON.stringify(insErr));
   }
 
   return data as Color;
