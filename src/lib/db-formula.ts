@@ -253,11 +253,20 @@ export async function saveColor(
 
   // 2. 同步 color_variant_map：仅当 variantIds 非空时才写入（避免外键约束报错）
   if (variantIds.length > 0) {
-    const { error: delErr } = await supabaseAdmin
+    // 检查该颜色是否已有 color_variant_map 记录，没有则跳过删除
+    const { count, error: countErr } = await supabaseAdmin
       .from("color_variant_map")
-      .delete()
+      .select("*", { count: "exact", head: true })
       .eq("color_id", color.id);
-    if (delErr) throw new Error(delErr.message || JSON.stringify(delErr));
+    if (countErr) throw new Error(countErr.message || JSON.stringify(countErr));
+
+    if ((count ?? 0) > 0) {
+      const { error: delErr } = await supabaseAdmin
+        .from("color_variant_map")
+        .delete()
+        .eq("color_id", color.id);
+      if (delErr) throw new Error(delErr.message || JSON.stringify(delErr));
+    }
 
     // 只插入在 color_variants 表中实际存在的 variant_id
     const { data: existingVariants, error: fetchErr } = await supabaseAdmin
@@ -270,7 +279,7 @@ export async function saveColor(
 
     if (validVariantIds.length > 0) {
       const rows = validVariantIds.map((variant_id) => ({ color_id: color.id, variant_id }));
-      const { error: insErr } = await supabaseAdmin.from("color_variant_map").insert(rows);
+      const { error: insErr } = await supabaseAdmin.from("color_variant_map").upsert(rows, { onConflict: "color_id,variant_id" });
       if (insErr) throw new Error(insErr.message || JSON.stringify(insErr));
     }
   }
