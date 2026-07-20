@@ -38,9 +38,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(saved, { status: 201 });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "未知错误";
-    console.error("保存颜色失败:", msg);
-    return NextResponse.json({ error: "保存失败: " + msg }, { status: 500 });
+    console.error("保存颜色失败详情:", e, typeof e);
+    // Supabase PostgREST 错误可能是纯对象，非 Error 实例
+    const detail = (e as { code?: string; message?: string; details?: string })?.details
+                || (e as { code?: string; message?: string; details?: string })?.message
+                || (e instanceof Error ? e.message : "")
+                || (typeof e === "object" ? JSON.stringify(e) : String(e));
+    return NextResponse.json({ error: "保存失败: " + detail }, { status: 500 });
   }
 }
 
@@ -68,9 +72,12 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(saved);
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "未知错误";
-    console.error("保存颜色失败:", msg);
-    return NextResponse.json({ error: "保存失败: " + msg }, { status: 500 });
+    console.error("保存颜色失败详情:", e, typeof e);
+    const detail = (e as { code?: string; message?: string; details?: string })?.details
+                || (e as { code?: string; message?: string; details?: string })?.message
+                || (e instanceof Error ? e.message : "")
+                || (typeof e === "object" ? JSON.stringify(e) : String(e));
+    return NextResponse.json({ error: "保存失败: " + detail }, { status: 500 });
   }
 }
 
