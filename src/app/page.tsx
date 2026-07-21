@@ -197,13 +197,13 @@ export default function Home() {
         <Box component="section" sx={{ flex: 1, display: "flex", flexDirection: "column", pt: 10, pb: 4 }}>
           <Box sx={{ mx: { xs: 1, sm: 3, md: "60px" } }}>
             <Box
-              sx={{ mb: 4 }}
+              sx={{ mb: 4, mt: 1.25 }}
               onMouseEnter={handleGlassEnter}
               onMouseLeave={handleGlassLeave}
             >
               <Typography
                 sx={{
-                  fontWeight: 700,
+                  fontWeight: 800,
                   fontSize: { xs: "0.875rem", sm: "1.375rem", md: "1.875rem", lg: "2.375rem" },
                   lineHeight: 1.2,
                   color: "primary.main",

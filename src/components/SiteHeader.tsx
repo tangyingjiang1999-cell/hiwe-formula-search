@@ -89,8 +89,8 @@ export default function SiteHeader() {
                   disableElevation
                   sx={{
                     color: active ? "primary.main" : "text.secondary",
-                    fontWeight: active ? 600 : 500,
-                    fontSize: "0.875rem",
+                    fontWeight: active ? 700 : 600,
+                    fontSize: "0.9375rem",
                     minWidth: "auto",
                     px: 1.5,
                     "&:hover": {
