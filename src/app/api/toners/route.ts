@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { getToners } from "@/lib/db-toner";
 
-// 色母数据变动后自动失效缓存，使配方编辑器的下拉实时反映最新数据
+// 动态接口：每次请求直接从 Supabase 获取最新数据
+// 注意：/api/admin/toners 的 POST/PUT/DELETE 操作后，客户端应重新 fetch 此接口
 export async function GET() {
   const toners = await getToners();
-  return NextResponse.json(toners, {
-    headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120" },
-  });
+  return NextResponse.json(toners);
 }
