@@ -70,8 +70,9 @@ export default function DataManagementPage() {
             selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
             sx={{
-              borderRadius: 0,
+              borderRadius: { xs: "10px", md: 0 },
               mb: 0.25,
+              mx: { xs: 1, md: 0 },
               "&.Mui-selected": {
                 bgcolor: "#2487ca",
                 color: "#FFFFFF",
@@ -93,16 +94,18 @@ export default function DataManagementPage() {
   );
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default", overflowX: "clip" }}>
       <SiteHeader />
 
-      {/* 移动端汉堡按钮 */}
+      {/* 移动端汉堡按钮（Drawer 打开时隐藏；放在左下角避开顶部 Navbar） */}
       <IconButton
         onClick={() => setMobileNavOpen((v) => !v)}
         sx={{
-          position: "fixed", left: 16, top: 72, zIndex: 1250,
+          position: "fixed", right: { xs: 16, sm: 24 }, top: { xs: 72, sm: 76 }, zIndex: 1250,
           bgcolor: "#fff", border: 1, borderColor: "divider", boxShadow: 1,
-          display: { md: "none" },
+          display: { xs: mobileNavOpen ? "none" : "inline-flex", md: "none" },
+          minWidth: 36,
+          minHeight: 36,
         }}
       >
         <MenuIcon />
@@ -137,7 +140,7 @@ export default function DataManagementPage() {
           open={mobileNavOpen}
           onClose={() => setMobileNavOpen(false)}
           sx={{ display: { xs: "block", md: "none" } }}
-          slotProps={{ paper: { sx: { width: DRAWER_WIDTH, pt: 8 } } }}
+          slotProps={{ paper: { sx: { width: DRAWER_WIDTH, pt: 1 } } }}
         >
           {navContent}
         </Drawer>
@@ -149,11 +152,11 @@ export default function DataManagementPage() {
             flex: 1,
             minHeight: "calc(100vh - 64px)",
             overflow: "auto",
-            px: { xs: 2, sm: 3 },
-            py: 3,
+            px: { xs: 1.5, sm: 2, md: 3 },
+            py: { xs: 2, md: 3 },
           }}
         >
-          <Breadcrumbs separator="/" sx={{ mb: 3, fontSize: "0.8125rem" }}>
+          <Breadcrumbs separator="/" sx={{ mb: { xs: 2, md: 3 }, fontSize: "0.8125rem" }}>
             <Link underline="hover" color="text.disabled">Data Management</Link>
             <Typography variant="body2" sx={{ color: "text.primary", fontWeight: 500 }}>{activeLabel}</Typography>
           </Breadcrumbs>

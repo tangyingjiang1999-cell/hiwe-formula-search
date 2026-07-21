@@ -51,10 +51,10 @@ export default function SiteHeader() {
       <Toolbar
         disableGutters
         sx={{
-          pl: { xs: 1, sm: 3, md: "60px" },
-          pr: { xs: 1, sm: 3, md: "60px" },
+          pl: { xs: 1.5, sm: 3, md: "60px" },
+          pr: { xs: 1.5, sm: 3, md: "60px" },
           minHeight: 64,
-          gap: 4,
+          gap: { xs: 1, md: 4 },
         }}
       >
         {/* 左侧组：Logo + 中间 3 个 nav 链接 */}
@@ -65,7 +65,7 @@ export default function SiteHeader() {
               src="/hiwemix2-01.png"
               alt="HIWE MIX"
               sx={{
-                height: 32,
+                height: { xs: 19, md: 32 },
                 width: "auto",
                 objectFit: "contain",
                 display: "block",
@@ -126,6 +126,9 @@ export default function SiteHeader() {
                     "&:active": { transform: "scale(0.8)" },
                     textTransform: "none",
                     fontWeight: 600,
+                    minHeight: { xs: 26, md: "auto" },
+                    fontSize: { xs: "0.75rem", md: "0.8125rem" },
+                    px: { xs: 1.25, md: 1.5 },
                   }}
                 >
                   {t.navAdmin}
@@ -141,6 +144,9 @@ export default function SiteHeader() {
                     display: { xs: "none", md: "inline-flex" },
                     textTransform: "none",
                     fontWeight: 600,
+                    minHeight: { xs: 26, md: "auto" },
+                    fontSize: { xs: "0.75rem", md: "0.8125rem" },
+                    px: { xs: 1.25, md: 1.5 },
                   }}
                 >
                   {authUser.username}
@@ -150,7 +156,15 @@ export default function SiteHeader() {
                 onClick={logout}
                 variant="contained"
                 size="small"
-                sx={{ textTransform: "none", fontWeight: 600 }}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  minHeight: { xs: 28, md: "auto" },
+                  fontSize: { xs: "0.75rem", md: "0.8125rem" },
+                  lineHeight: 1.2,
+                  whiteSpace: "nowrap",
+                  px: { xs: 1.25, md: 1.5 },
+                }}
               >
                 {t.logout}
               </Button>
@@ -161,7 +175,13 @@ export default function SiteHeader() {
               href="/login"
               variant="contained"
               size="small"
-              sx={{ textTransform: "none", fontWeight: 600 }}
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                minHeight: { xs: 26, md: "auto" },
+                fontSize: { xs: "0.75rem", md: "0.8125rem" },
+                px: { xs: 1.25, md: 1.5 },
+              }}
             >
               {t.login}
             </Button>
@@ -175,6 +195,8 @@ export default function SiteHeader() {
             sx={{
               display: { xs: "inline-flex", md: "none" },
               color: "primary.main",
+              minWidth: 36,
+              minHeight: 36,
             }}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -185,16 +207,27 @@ export default function SiteHeader() {
 
       {/* 移动端导航菜单 */}
       <Drawer
-        anchor="top"
+        anchor="right"
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         slotProps={{
           root: { keepMounted: true },
-          paper: { sx: { mt: 8, borderTop: 1, borderColor: "divider" } },
+          paper: { sx: { width: "min(80vw, 320px)", borderLeft: 1, borderColor: "divider", borderRadius: { xs: "16px 0 0 16px", md: 0 } } },
         }}
       >
         <Box sx={{ width: "auto" }} role="presentation">
-          <List>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 2, py: 1.5, borderBottom: 1, borderColor: "divider" }}>
+            <Box
+              component="img"
+              src="/hiwemix2-01.png"
+              alt="HIWE MIX"
+              sx={{ height: 24, width: "auto", objectFit: "contain", display: "block" }}
+            />
+            <IconButton onClick={() => setMobileMenuOpen(false)} sx={{ minWidth: 36, minHeight: 36 }} aria-label="Close menu">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <List sx={{ pt: 1 }}>
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
@@ -206,6 +239,9 @@ export default function SiteHeader() {
                     selected={active}
                     sx={{
                       py: 1.5,
+                      minHeight: 48,
+                      borderRadius: { xs: "10px", md: 0 },
+                      mx: { xs: 1, md: 0 },
                       "&.Mui-selected": {
                         bgcolor: "rgba(36,135,202,0.08)",
                         color: "primary.main",
@@ -235,13 +271,13 @@ export default function SiteHeader() {
               <List dense>
                 <ListItem disablePadding>
                   <ListItemButton component={Link} href="/admin/data" onClick={() => setMobileMenuOpen(false)}
-                    sx={{ py: 1.5, "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}>
+                    sx={{ py: 1.5, minHeight: 48, mx: { xs: 1, md: 0 }, borderRadius: { xs: "10px", md: 0 }, "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}>
                     <ListItemText primary={t.navAdmin} slotProps={{ primary: { sx: { fontSize: "0.875rem", fontWeight: 500 } } }} />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemButton component={Link} href="/admin/users" onClick={() => setMobileMenuOpen(false)}
-                    sx={{ py: 1.5, "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}>
+                    sx={{ py: 1.5, minHeight: 48, mx: { xs: 1, md: 0 }, borderRadius: { xs: "10px", md: 0 }, "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}>
                     <ListItemText primary={`${authUser.username}`} slotProps={{ primary: { sx: { fontSize: "0.875rem", fontWeight: 500 } } }} />
                   </ListItemButton>
                 </ListItem>

@@ -93,24 +93,24 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default", overflowX: "clip" }}>
       <SiteHeader />
-      <Container maxWidth="lg" sx={{ pt: 10, px: { xs: 2, sm: 3 } }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>{t.adminTitle}</Typography>
-          <Button onClick={openCreate} variant="contained" sx={{ textTransform: "none" }}>
+      <Container maxWidth="lg" sx={{ pt: { xs: 9, md: 10 }, pb: 4, px: { xs: 1.5, sm: 2, md: 3 } }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { sm: "center" }, mb: 3, gap: 1.5 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs: "1.05rem", md: "1.25rem" } }}>{t.adminTitle}</Typography>
+          <Button onClick={openCreate} variant="contained" sx={{ borderRadius: { xs: "12px", md: 0 }, textTransform: "none", minHeight: { xs: 36, md: "auto" }, alignSelf: { xs: "flex-start", sm: "auto" } }}>
             + {t.adminNewUser}
           </Button>
         </Box>
 
-        <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+        <TableContainer component={Paper} variant="outlined" className="table-responsive-scroll">
+          <Table size="small" sx={{ minWidth: 520 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: "grey.50" }}>
-                <TableCell sx={{ fontWeight: 500, color: "text.secondary" }}>{t.adminColId}</TableCell>
+                <TableCell sx={{ fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>{t.adminColId}</TableCell>
                 <TableCell sx={{ fontWeight: 500, color: "text.secondary" }}>{t.adminColUsername}</TableCell>
                 <TableCell sx={{ fontWeight: 500, color: "text.secondary" }}>{t.adminColRole}</TableCell>
-                <TableCell sx={{ fontWeight: 500, color: "text.secondary" }}>{t.adminColCreatedAt}</TableCell>
+                <TableCell className="hide-on-mobile" sx={{ fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>{t.adminColCreatedAt}</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 500, color: "text.secondary" }}>{t.adminColActions}</TableCell>
               </TableRow>
             </TableHead>
@@ -118,7 +118,7 @@ export default function AdminUsersPage() {
               {users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>{user.id}</TableCell>
-                  <TableCell sx={{ fontSize: "0.8125rem", fontWeight: 600 }}>{user.username}</TableCell>
+                  <TableCell sx={{ fontSize: "0.8125rem", fontWeight: 600, wordBreak: "break-all" }}>{user.username}</TableCell>
                   <TableCell>
                     <Chip
                       label={user.role === "admin" ? t.adminRoleAdmin : t.adminRoleUser}
@@ -128,9 +128,9 @@ export default function AdminUsersPage() {
                       sx={{ fontWeight: 500 }}
                     />
                   </TableCell>
-                  <TableCell sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>{user.created_at}</TableCell>
-                  <TableCell align="right">
-                    <Button onClick={() => openEdit(user)} size="small" sx={{ textTransform: "none", mr: 1 }}>{t.adminEdit}</Button>
+                  <TableCell className="hide-on-mobile" sx={{ fontSize: "0.8125rem", color: "text.secondary", whiteSpace: "nowrap" }}>{user.created_at}</TableCell>
+                  <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+                    <Button onClick={() => openEdit(user)} size="small" sx={{ textTransform: "none", mr: { xs: 0, sm: 1 } }}>{t.adminEdit}</Button>
                     <Button onClick={() => handleDelete(user)} size="small" color="error" disabled={user.username === "admin"} sx={{ textTransform: "none" }}>{t.adminDelete}</Button>
                   </TableCell>
                 </TableRow>

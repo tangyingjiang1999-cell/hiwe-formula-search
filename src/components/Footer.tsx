@@ -17,74 +17,74 @@ export default function Footer() {
       sx={{
         bgcolor: "#ffffff",
         color: "#2487ca",
-        py: 1.5,
+        py: { xs: 2, md: 1.5 },
+        borderTop: 1,
+        borderColor: "divider",
       }}
     >
       <Stack
         direction={{ xs: "column", md: "row" }}
-        spacing={3}
-        sx={{ alignItems: "center", justifyContent: "space-between", mx: { xs: 1, sm: 3, md: "60px" } }}
+        spacing={{ xs: 1.5, md: 3 }}
+        sx={{ alignItems: "center", justifyContent: "space-between", mx: { xs: 1.5, sm: 3, md: "60px" } }}
       >
-          {/* 品牌 Logo + 社交图标 */}
-          <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
-            <Image
-              src="/hiwe.png"
-              alt="HIWE"
-              width={1206}
-              height={334}
-              style={{
-                height: 16,
-                width: "auto",
-                objectFit: "contain",
-              }}
-            />
-            {/* 社交媒体链接 */}
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-              <IconButton
-                component="a"
-                href="https://www.hiwe.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Website"
-                size="small"
-                sx={{ color: "#2487ca", "&:hover": { color: "#1d6ea8" } }}
-              >
-                <LanguageIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                component="a"
-                href="https://api.whatsapp.com/send?phone=8615819205996"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp"
-                size="small"
-                sx={{ color: "#2487ca", "&:hover": { color: "#1d6ea8" } }}
-              >
-                <WhatsAppIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                component="a"
-                href="https://www.facebook.com/profile.php?id=61550592422623"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                size="small"
-                sx={{ color: "#2487ca", "&:hover": { color: "#1d6ea8" } }}
-              >
-                <FacebookIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                component="a"
-                href="https://www.instagram.com/haiwenduan?igsh=eGd2c2Fkbnplazl1"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                size="small"
-                sx={{ color: "#2487ca", "&:hover": { color: "#1d6ea8" } }}
-              >
-                <InstagramIcon fontSize="small" />
-              </IconButton>
-            </Stack>
+          {/* 品牌 Logo */}
+          <Image
+            src="/hiwe.png"
+            alt="HIWE"
+            width={1206}
+            height={334}
+            style={{
+              height: 16,
+              width: "auto",
+              objectFit: "contain",
+            }}
+          />
+          {/* 社交媒体链接 */}
+          <Stack direction="row" spacing={{ xs: 0.5, md: 1.5 }} sx={{ alignItems: "center" }}>
+            <IconButton
+              component="a"
+              href="https://www.hiwe.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Website"
+              size="small"
+              sx={{ color: "#2487ca", minWidth: 36, minHeight: 36, "&:hover": { color: "#1d6ea8" } }}
+            >
+              <LanguageIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://api.whatsapp.com/send?phone=8615819205996"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              size="small"
+              sx={{ color: "#2487ca", minWidth: 36, minHeight: 36, "&:hover": { color: "#1d6ea8" } }}
+            >
+              <WhatsAppIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://www.facebook.com/profile.php?id=61550592422623"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              size="small"
+              sx={{ color: "#2487ca", minWidth: 36, minHeight: 36, "&:hover": { color: "#1d6ea8" } }}
+            >
+              <FacebookIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://www.instagram.com/haiwenduan?igsh=eGd2c2Fkbnplazl1"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              size="small"
+              sx={{ color: "#2487ca", minWidth: 36, minHeight: 36, "&:hover": { color: "#1d6ea8" } }}
+            >
+              <InstagramIcon fontSize="small" />
+            </IconButton>
           </Stack>
         </Stack>
     </Box>

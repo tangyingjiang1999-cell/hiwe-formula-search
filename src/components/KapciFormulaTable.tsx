@@ -18,12 +18,12 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 
-// 字体大小常量（+6px）
+// 字体大小常量（移动端小，桌面端 +6px）
 const FONT_SIZES = {
-  caption: "1.125rem",        // 18px
-  body: "1.25rem",            // 20px
-  small: "1.0625rem",         // 17px
-  tiny: "1rem",               // 16px
+  caption: { xs: "0.8125rem", md: "1.125rem" },
+  body: { xs: "0.875rem", md: "1.25rem" },
+  small: { xs: "0.75rem", md: "1.0625rem" },
+  tiny: { xs: "0.6875rem", md: "1rem" },
 } as const;
 
 const UNIT_OPTIONS = ["g", "kg", "ml", "liter"] as const;
@@ -116,12 +116,12 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
   return (
     <Box>
       <Stack
-        direction="row"
+        direction={{ xs: "column", sm: "row" }}
         spacing={1}
-        sx={{ mb: 1.5, p: 1.5, borderRadius: 0, bgcolor: "grey.50", flexWrap: "wrap", alignItems: "center" }}
+        sx={{ mb: 1.5, p: { xs: 1, sm: 1.5 }, borderRadius: 0, bgcolor: "grey.50", flexWrap: "wrap", alignItems: { xs: "stretch", sm: "center" }, gap: 1 }}
       >
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, flex: 1, alignItems: "center" }}>
-          <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500, fontSize: "14px" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500, fontSize: { xs: "0.75rem", md: "0.875rem" } }}>
             {t.volume}
           </Typography>
           <TextField
@@ -130,21 +130,21 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
             onChange={(e) => handleVolumeChange(e.target.value)}
             size="small"
             slotProps={{ htmlInput: { min: 0.1, step: 0.1 } }}
-            sx={{ width: 90, "& input": { textAlign: "center", fontSize: FONT_SIZES.tiny } }}
+            sx={{ width: { xs: 72, md: 90 }, "& input": { textAlign: "center", fontSize: FONT_SIZES.tiny } }}
           />
-          <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "14px" }}>×</Typography>
+          <Typography variant="caption" sx={{ color: "text.disabled", fontSize: { xs: "0.75rem", md: "0.875rem" } }}>×</Typography>
           <TextField
             select
             value={unit}
             onChange={(e) => setUnit(e.target.value as Unit)}
             size="small"
-            sx={{ width: 80, "& .MuiSelect-select": { fontSize: FONT_SIZES.tiny } }}
+            sx={{ width: { xs: 64, md: 80 }, "& .MuiSelect-select": { fontSize: FONT_SIZES.tiny } }}
           >
             {UNIT_OPTIONS.map((u) => (
               <MenuItem key={u} value={u}>{u}</MenuItem>
             ))}
           </TextField>
-          <Typography variant="caption" sx={{ color: "text.secondary", ml: 1, fontSize: "14px" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary", ml: { sm: 1 }, fontSize: { xs: "0.75rem", md: "0.875rem" }, width: { xs: "100%", sm: "auto" } }}>
             = {totalGrams.toLocaleString()} g total
           </Typography>
         </Box>
@@ -166,8 +166,8 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
         )}
       </Stack>
 
-      <TableContainer component={Paper} variant="outlined">
-        <Table size="small">
+      <TableContainer component={Paper} variant="outlined" className="table-responsive-scroll">
+        <Table size="small" sx={{ minWidth: 520 }}>
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontWeight: 500, color: "#1a1a1a", fontSize: FONT_SIZES.tiny }}>{t.tonerCode}</TableCell>
@@ -184,11 +184,11 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
 
               return (
                 <TableRow key={`${comp.toner_code}-${idx}`}>
-                  <TableCell sx={{ py: 1, fontSize: FONT_SIZES.tiny, fontFamily: "var(--font-inter), sans-serif", fontWeight: 600, color: "#1a1a1a" }}>
+                  <TableCell sx={{ py: 1, fontSize: FONT_SIZES.tiny, fontFamily: "var(--font-inter), sans-serif", fontWeight: 600, color: "#1a1a1a", whiteSpace: "nowrap" }}>
                     {comp.toner_code}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontSize: FONT_SIZES.small, color: "#1a1a1a" }}>{comp.toner_name}</TableCell>
-                  <TableCell sx={{ py: 1 }}>
+                  <TableCell sx={{ py: 1, minWidth: 88 }}>
                     <TextField
                       type="number"
                       value={weights[idx] ?? ""}
@@ -203,7 +203,7 @@ export default function KapciFormulaTable({ formula, activeGroup = "Pearl Paint"
                   </TableCell>
                   <TableCell sx={{ py: 1 }}>
                     <Box
-                      sx={{ height: 28, width: "100%", borderRadius: 0, border: 1, borderColor: "grey.200" }}
+                      sx={{ height: { xs: 24, md: 28 }, width: "100%", minWidth: 60, borderRadius: 0, border: 1, borderColor: "grey.200" }}
                       style={{ backgroundColor: massToneColor(comp) }}
                     />
                   </TableCell>

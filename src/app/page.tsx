@@ -161,7 +161,7 @@ export default function Home() {
   }
 
   return (
-    <Box sx={{ position: "relative", display: "flex", flexDirection: "column", minHeight: "100vh", overflow: "hidden" }}>
+    <Box sx={{ position: "relative", display: "flex", flexDirection: "column", minHeight: "100vh", overflowX: "clip", minWidth: 0 }}>
 
       {/* 背景图片层（默认显示，鼠标移到搜索组件时隐藏，让 body 白色透出） */}
       <Box
@@ -172,6 +172,7 @@ export default function Home() {
           transitionDuration: "1.5s",
           transitionTimingFunction: "ease",
           opacity: shouldBeBlurred ? 0 : 1,
+          display: { xs: "none", sm: "block" },
         }}
       >
         <Box
@@ -194,17 +195,17 @@ export default function Home() {
       {/* 页面内容 */}
       <Box sx={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", flex: 1 }}>
         <SiteHeader />
-        <Box component="section" sx={{ flex: 1, display: "flex", flexDirection: "column", pt: 10, pb: 4 }}>
-          <Box sx={{ mx: { xs: 1, sm: 3, md: "60px" } }}>
+        <Box component="section" sx={{ flex: 1, display: "flex", flexDirection: "column", pt: { xs: 9, md: 10 }, pb: { xs: 3, md: 4 } }}>
+          <Box sx={{ mx: { xs: 1.5, sm: 3, md: "60px" } }}>
             <Box
-              sx={{ mb: 4, mt: 1.25 }}
+              sx={{ mb: { xs: 2.5, md: 4 }, mt: { xs: 1, md: 1.25 } }}
               onMouseEnter={handleGlassEnter}
               onMouseLeave={handleGlassLeave}
             >
               <Typography
                 sx={{
                   fontWeight: 800,
-                  fontSize: { xs: "0.875rem", sm: "1.375rem", md: "1.875rem", lg: "2.375rem" },
+                  fontSize: { xs: "1.125rem", sm: "1.375rem", md: "1.875rem", lg: "2.375rem" },
                   lineHeight: 1.2,
                   color: "primary.main",
                   letterSpacing: "-0.02em",
@@ -225,7 +226,7 @@ export default function Home() {
               onMouseEnter={handleGlassEnter}
               onMouseLeave={handleGlassLeave}
               sx={{
-                p: { xs: 2.5, sm: 4 },
+                p: { xs: 2, sm: 3, md: 4 },
                 borderRadius: 0,
                 // 玻璃拟态：半透明白底 + 毛玻璃
                 bgcolor: shouldBeBlurred ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.3)",
@@ -250,7 +251,7 @@ export default function Home() {
             </Box>
           </Box>
           {hasSearched && (
-            <Box sx={{ mx: { xs: 1, sm: 3, md: "60px" }, mt: 2.5 }}>
+            <Box sx={{ mx: { xs: 1.5, sm: 3, md: "60px" }, mt: { xs: 2, md: 2.5 } }}>
               <SearchResults rows={tableRows} isLoading={isLoading} hasSearched={hasSearched} onOpenFormula={handleOpenFormula} />
             </Box>
           )}

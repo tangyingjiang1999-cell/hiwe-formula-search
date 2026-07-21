@@ -152,6 +152,7 @@ h1, h2, h3 {
 .table-responsive-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
 }
 .table-responsive-scroll table {
   min-width: 600px;
@@ -169,5 +170,46 @@ h1, h2, h3 {
 @media (max-width: 899px) {
   .hide-on-mobile {
     display: none !important;
+  }
+}
+
+/* ===== 全局响应式补充 ===== */
+
+/* 防止任何容器在窄屏产生横向溢出
+   注：使用 `overflow-x: clip` 而非 `hidden`，避免在 iOS Safari 等移动端浏览器
+   创建新的滚动上下文导致 body 无法垂直滚动 */
+html, body {
+  overflow-x: clip;
+}
+
+/* 移动端触摸目标最小 36px（紧凑风格） */
+@media (max-width: 767px) {
+  .MuiButton-root,
+  .MuiIconButton-root {
+    min-height: 36px;
+  }
+  .MuiIconButton-root {
+    min-width: 36px;
+  }
+}
+
+/* 隐藏滚动条但保留滚动能力 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 安全区底部内边距（适配 iPhone home indicator） */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 移动端字号基线覆盖（17px 在小屏偏大） */
+@media (max-width: 599px) {
+  body {
+    font-size: 15px;
   }
 }

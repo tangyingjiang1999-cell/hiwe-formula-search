@@ -11,12 +11,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
-import PersonIcon from "@mui/icons-material/Person";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Link from "@mui/material/Link";
+import LanguageIcon from "@mui/icons-material/Language";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
 import { useLang } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
 
@@ -95,18 +96,19 @@ export default function LoginPage() {
   const primaryColor = isRegister ? "#7C3AED" : "#2487ca";
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", flexDirection: { xs: "column", lg: "row" } }}>
-      {/* ===== 左侧渐变区 (40%) ===== */}
+    <Box sx={{ display: "flex", minHeight: "100vh", flexDirection: { xs: "column", lg: "row" }, alignItems: { xs: "center", lg: "stretch" }, overflowX: "clip" }}>
+      {/* ===== 左侧渐变区 (40%) — 桌面端保留，移动端完全隐藏 ===== */}
       <Box
         className="fluid-gradient"
         sx={{
           position: "relative",
-          display: "flex",
+          display: { xs: "none", lg: "flex" },
           flexDirection: "column",
           justifyContent: "space-between",
-          px: { xs: 3, lg: 5 },
-          py: { xs: 4, lg: 6 },
+          px: { xs: 2.5, sm: 3, lg: 5 },
+          py: { xs: 3, sm: 4, lg: 6 },
           width: { lg: "40%" },
+          minHeight: { xs: 160, lg: "auto" },
         }}
       >
         <Box className="fluid-blob" />
@@ -125,50 +127,73 @@ export default function LoginPage() {
         {/* 主标题 - 桌面端 */}
         <Box sx={{ position: "relative", zIndex: 10, display: { xs: "none", lg: "block" }, textAlign: "left" }}>
           <Typography
-            variant="h2"
             sx={{
               color: "#fff",
               fontFamily: "Arial, sans-serif",
-              fontSize: 52,
+              fontSize: { lg: 40, xl: 52 },
               fontWeight: 700,
               letterSpacing: 2,
               lineHeight: 1.1,
             }}
           >
-            HAIWEN MIX
+            Welcome to
           </Typography>
           <Typography
             sx={{
               color: "#fff",
               fontFamily: "Arial, sans-serif",
-              fontSize: 13,
-              fontWeight: 600,
-              letterSpacing: 3,
-              mt: 0.5,
+              fontSize: { lg: 40, xl: 52 },
+              fontWeight: 700,
+              letterSpacing: 2,
+              lineHeight: 1.1,
             }}
           >
-            {t.brandSlogan}
+            HIWEMIX
           </Typography>
         </Box>
 
-        {/* 底部官网链接 */}
-        <Box sx={{ position: "relative", zIndex: 10, display: { xs: "none", lg: "block" } }}>
-          <Link
+        {/* 底部社交图标（与首页 Footer 一致） */}
+        <Box sx={{ position: "relative", zIndex: 10, display: { xs: "none", lg: "flex" }, gap: 0.5, alignItems: "center" }}>
+          <IconButton
+            component="a"
             href="https://www.hiwe.com"
             target="_blank"
             rel="noopener noreferrer"
-            underline="always"
-            sx={{
-              color: "#fff",
-              fontFamily: "Arial, sans-serif",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              textUnderlineOffset: 3,
-              "&:hover": { opacity: 0.8 },
-            }}
+            aria-label="Website"
+            sx={{ color: "#fff", "&:hover": { color: "rgba(255,255,255,0.75)" } }}
           >
-            {t.officialWebsite} www.hiwe.com
-          </Link>
+            <LanguageIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            component="a"
+            href="https://api.whatsapp.com/send?phone=8615819205996"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp"
+            sx={{ color: "#fff", "&:hover": { color: "rgba(255,255,255,0.75)" } }}
+          >
+            <WhatsAppIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            component="a"
+            href="https://www.facebook.com/profile.php?id=61550592422623"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            sx={{ color: "#fff", "&:hover": { color: "rgba(255,255,255,0.75)" } }}
+          >
+            <FacebookIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            component="a"
+            href="https://www.instagram.com/haiwenduan?igsh=eGd2c2Fkbnplazl1"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            sx={{ color: "#fff", "&:hover": { color: "rgba(255,255,255,0.75)" } }}
+          >
+            <InstagramIcon fontSize="small" />
+          </IconButton>
         </Box>
       </Box>
 
@@ -181,65 +206,51 @@ export default function LoginPage() {
           alignItems: "center",
           justifyContent: "center",
           bgcolor: "#fff",
-          px: { xs: 3, lg: 5 },
-          py: { xs: 5, lg: 0 },
+          px: { xs: 2.5, sm: 3, lg: 5 },
+          py: { xs: 4, lg: 0 },
         }}
       >
-        {/* 注册模式返回箭头 */}
+        {/* 注册模式返回箭头（仅图标，黑色，放大 30%，下移 10px） */}
         {isRegister && (
-          <Button
+          <IconButton
             onClick={() => {
               setIsRegister(false);
               setError("");
               setConfirmPassword("");
             }}
-            startIcon={<ArrowBackIcon sx={{ fontSize: 18 }} />}
+            aria-label={t.backToLogin}
             sx={{
               position: "absolute",
-              left: { xs: 16, lg: 40 },
-              top: { xs: 16, lg: 40 },
-              color: "text.secondary",
-              fontSize: "0.8125rem",
-              textTransform: "none",
+              left: { xs: 12, lg: 36 },
+              top: { xs: 26, lg: 50 },
+              color: "#000000",
             }}
           >
-            {t.backToLogin}
-          </Button>
+            <ArrowBackIcon sx={{ fontSize: { xs: 24, md: 28 } }} />
+          </IconButton>
         )}
 
         <Box sx={{ width: "100%", maxWidth: 360 }}>
-          {/* 主标题与副标题 */}
-          <Box sx={{ mb: 5, display: { xs: "none", lg: "block" }, textAlign: "center" }}>
+          {/* 桌面端 Logo — 左对齐，与表单输入框左边视觉对齐 */}
+          <Box sx={{ mb: { xs: 5, lg: 6 }, display: { xs: "none", lg: "flex" }, justifyContent: "flex-start" }}>
             <Image
               src="/hiwe.png"
               alt="HIWE"
               width={1206}
               height={334}
-              style={{ height: 64, width: "auto", objectFit: "contain", margin: "0 auto 24px" }}
+              style={{ height: 56, width: "auto", objectFit: "contain" }}
             />
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              {isRegister ? t.registerWelcome : t.loginWelcome}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
-              {isRegister ? t.registerSubtitle : t.loginSubtitle}
-            </Typography>
           </Box>
 
-          {/* Logo 移动端 */}
-          <Box sx={{ mb: 4, display: { xs: "block", lg: "none" } }}>
+          {/* Logo 移动端 — 顶部独立元素（左对齐，与表单输入框左边对齐） */}
+          <Box sx={{ mb: { xs: 5, md: 5 }, display: { xs: "flex", lg: "none" }, justifyContent: "flex-start", height: { xs: 39, md: 56 } }}>
             <Image
               src="/hiwe.png"
               alt="HIWE"
               width={1206}
               height={334}
-              style={{ height: 40, width: "auto", objectFit: "contain", marginBottom: 16 }}
+              style={{ height: "100%", width: "auto", objectFit: "contain" }}
             />
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              {isRegister ? t.registerWelcome : t.loginMobileTitle}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
-              {isRegister ? t.registerSubtitle : t.panelTitle}
-            </Typography>
           </Box>
 
           {/* 表单 */}
@@ -253,17 +264,9 @@ export default function LoginPage() {
               autoFocus
               fullWidth
               autoComplete="off"
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <PersonIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
+                  borderRadius: { xs: "12px", md: 0 },
                   "&.Mui-focused fieldset": { borderColor: primaryColor },
                 },
                 "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
@@ -280,11 +283,6 @@ export default function LoginPage() {
               autoComplete={isRegister ? "new-password" : "current-password"}
               slotProps={{
                 input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockOutlinedIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
-                    </InputAdornment>
-                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
@@ -301,6 +299,7 @@ export default function LoginPage() {
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
+                  borderRadius: { xs: "12px", md: 0 },
                   "&.Mui-focused fieldset": { borderColor: primaryColor },
                 },
                 "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
@@ -318,11 +317,6 @@ export default function LoginPage() {
                 autoComplete="new-password"
                 slotProps={{
                   input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockOutlinedIcon sx={{ color: "#9CA3AF", fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
@@ -339,6 +333,7 @@ export default function LoginPage() {
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
+                    borderRadius: { xs: "12px", md: 0 },
                     "&.Mui-focused fieldset": { borderColor: primaryColor },
                   },
                   "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
@@ -358,7 +353,8 @@ export default function LoginPage() {
               variant="contained"
               fullWidth
               sx={{
-                py: 1.5,
+                py: { xs: 1, md: 1.25 },
+                borderRadius: { xs: "12px", md: 0 },
                 bgcolor: primaryColor,
                 "&:hover": { bgcolor: isRegister ? "#6D28D9" : "#1d6fb0" },
                 fontSize: "0.8125rem",

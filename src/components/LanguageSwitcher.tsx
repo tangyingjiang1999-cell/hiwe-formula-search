@@ -28,7 +28,20 @@ const FLAG_MAP: Record<string, React.FC<{ className?: string }>> = {
 function FlagIcon({ code, className }: { code: string; className?: string }) {
   const Flag = FLAG_MAP[code];
   if (!Flag) return null;
-  return <Flag className={className} />;
+  return (
+    <Box
+      component="span"
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: { xs: 12, md: 14 },
+        lineHeight: 0,
+      }}
+    >
+      <Flag className={className} />
+    </Box>
+  );
 }
 
 export default function LanguageSwitcher() {
@@ -46,15 +59,17 @@ export default function LanguageSwitcher() {
           <Box
             component="span"
             sx={{
-              display: "flex",
+              display: "inline-flex",
               alignItems: "center",
-              gap: 1,
+              gap: { xs: 0.75, md: 1 },
               fontWeight: 600,
-              fontSize: "0.8125rem",
+              fontSize: { xs: "0.75rem", md: "0.8125rem" },
               color: "primary.main",
+              lineHeight: 1,
+              height: "100%",
             }}
           >
-            <FlagIcon code={l.flag} className="h-4 w-auto rounded-none" />
+            <FlagIcon code={l.flag} className="h-3.5 w-auto rounded-none" />
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
               {l.code.toUpperCase()}
             </Box>
@@ -67,10 +82,19 @@ export default function LanguageSwitcher() {
         border: 1,
         borderColor: "primary.main",
         borderRadius: 0,
+        minHeight: { xs: 28, md: "auto" },
         "& .MuiSelect-select": {
-          py: 0.5,
-          pr: "24px !important",
-          pl: 1.5,
+          display: "flex",
+          alignItems: "center",
+          py: { xs: 0.4, md: 0.5 },
+          pr: "32px !important",
+          pl: { xs: 1, md: 1.5 },
+        },
+        "& .MuiSelect-icon": {
+          right: 6,
+          fontSize: "1.1rem",
+          top: "50%",
+          transform: "translateY(-50%)",
         },
         "& fieldset": { border: "none" },
         "&:hover": { bgcolor: "rgba(36,135,202,0.05)" },

@@ -103,19 +103,20 @@ function TonerCard({ code, tradeName, hex }: { code: string; tradeName: string; 
   return (
     <Card sx={{
       cursor: "pointer",
-      borderRadius: 0,
+      borderRadius: { xs: "12px", md: 0 },
       boxShadow: "none",
       border: "1px solid",
       borderColor,
+      overflow: "hidden",
       transition: "all 0.2s ease",
       "&:hover": { borderColor: "primary.main", transform: "translateY(-2px)" },
     }}>
-      <Box sx={{ height: 80, borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }} style={swatchStyle} />
-      <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-        <Typography sx={{ fontFamily: FONT, fontWeight: 700, fontSize: "0.9375rem", color: "#111827", lineHeight: 1.3 }}>
+      <Box sx={{ height: { xs: 56, sm: 70, md: 80 }, borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }} style={swatchStyle} />
+      <CardContent sx={{ p: { xs: 1.25, md: 2 }, "&:last-child": { pb: { xs: 1.25, md: 2 } } }}>
+        <Typography sx={{ fontFamily: FONT, fontWeight: 700, fontSize: { xs: "0.75rem", md: "0.9375rem" }, color: "#111827", lineHeight: 1.3, wordBreak: "break-all" }}>
           {code}
         </Typography>
-        <Typography noWrap sx={{ fontFamily: FONT, fontWeight: 500, fontSize: "0.75rem", color: "#9ca3af", mt: 0.5 }}>
+        <Typography noWrap sx={{ fontFamily: FONT, fontWeight: 500, fontSize: { xs: "0.625rem", md: "0.75rem" }, color: "#9ca3af", mt: 0.5 }}>
           {tradeName}
         </Typography>
       </CardContent>
@@ -481,9 +482,9 @@ function ManagementModal({
         <SettingsIcon sx={{ color: "primary.main" }} />
         管理材料 — 数据管理中心
       </DialogTitle>
-      <DialogContent sx={{ pt: 3, pb: 1, px: 3 }}>
+      <DialogContent sx={{ pt: { xs: 2, md: 3 }, pb: 1, px: { xs: 2, md: 3 } }}>
         {/* 搜索 + 添加按钮 */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, py: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: { sm: "center" }, mb: { xs: 2, md: 3 }, py: 1, gap: 1.5 }}>
           <TextField
             size="small"
             placeholder="搜索色母代码、名称、分类..."
@@ -499,9 +500,9 @@ function ManagementModal({
               },
             }}
             sx={{
-              width: 280,
+              width: { xs: "100%", sm: 280 },
               "& .MuiOutlinedInput-root": {
-                borderRadius: "0",
+                borderRadius: { xs: "12px", md: 0 },
                 fontSize: "0.8125rem",
                 bgcolor: "#fff",
                 "& fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
@@ -511,8 +512,8 @@ function ManagementModal({
             }}
           />
 
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-            <Typography variant="caption" color="text.secondary" sx={{ mr: 1 }}>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", justifyContent: "space-between" }}>
+            <Typography variant="caption" color="text.secondary" sx={{ mr: 1, whiteSpace: "nowrap" }}>
               共 {filteredRows.length} 条记录
             </Typography>
             {/* ★ 添加材料按钮 */}
@@ -522,11 +523,12 @@ function ManagementModal({
               startIcon={<AddIcon />}
               onClick={() => setAddOpen(true)}
               sx={{
-                borderRadius: "0",
+                borderRadius: { xs: "12px", md: 0 },
                 fontWeight: 600,
                 fontSize: "0.8125rem",
                 whiteSpace: "nowrap",
                 bgcolor: "#2487ca",
+                minHeight: { xs: 36, md: "auto" },
                 "&:hover": { bgcolor: "#1a6da8" },
               }}
             >
@@ -539,17 +541,18 @@ function ManagementModal({
         <TableContainer
           component={Paper}
           variant="outlined"
-          sx={{ mt: 1, borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca", maxHeight: 480, overflow: "auto" }}
+          className="table-responsive-scroll"
+          sx={{ mt: 1, borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca", maxHeight: 480 }}
         >
-          <Table stickyHeader sx={{ tableLayout: "fixed", width: "100%" }}>
+          <Table stickyHeader sx={{ tableLayout: "fixed", width: "100%", minWidth: 640 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: "#f9fafb" }}>
-                <TableCell sx={{ width: 56, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>颜色</TableCell>
-                <TableCell sx={{ width: 110, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>产品代码</TableCell>
-                <TableCell sx={{ width: 160, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>英文名称</TableCell>
-                <TableCell sx={{ width: 140, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>中文名称</TableCell>
-                <TableCell sx={{ width: 130, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>所属分类</TableCell>
-                <TableCell sx={{ width: 100, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>操作</TableCell>
+                <TableCell sx={{ width: { xs: 48, md: 56 }, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>颜色</TableCell>
+                <TableCell sx={{ width: { xs: 100, md: 110 }, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>产品代码</TableCell>
+                <TableCell sx={{ width: { md: 160 }, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>英文名称</TableCell>
+                <TableCell sx={{ width: { xs: 120, md: 140 }, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>中文名称</TableCell>
+                <TableCell sx={{ width: { md: 130 }, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center", display: { xs: "none", md: "table-cell" } }}>所属分类</TableCell>
+                <TableCell sx={{ width: { xs: 80, md: 100 }, fontWeight: 600, color: "#6b7280", fontFamily: FONT, fontSize: "0.75rem", borderBottom: "2px solid #e5e7eb", py: 1.25, textAlign: "center" }}>操作</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -590,7 +593,7 @@ function ManagementModal({
                       {row.original.nameZh}
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{ py: 1.2, textAlign: "center" }}>
+                  <TableCell sx={{ py: 1.2, textAlign: "center", display: { xs: "none", md: "table-cell" } }}>
                     <Typography sx={{ fontFamily: FONT, fontSize: "0.75rem", color: "#6b7280" }}>
                       {row.displayCategory}
                     </Typography>
@@ -797,7 +800,7 @@ export default function TonerPage() {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default", overflowX: "clip" }}>
       <SiteHeader />
 
       {/* 顶部占位：为固定导航栏留出空间 */}
@@ -806,27 +809,29 @@ export default function TonerPage() {
       <Box
         sx={{
           position: "sticky", top: 64, zIndex: 30, bgcolor: "#fff", borderBottom: 1, borderColor: "divider",
-          px: { xs: 2, lg: 3 }, py: 1.5,
+          px: { xs: 1.5, sm: 2, lg: 3 }, py: 1.5,
         }}
       >
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}>
-          {/* 左侧：分类标签行 */}
-          <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", gap: 1 }}>
-            {TONER_CATEGORIES.filter((cat) => cat.key !== "SUPPLEMENTARY" || isAdmin).map((cat) => (
-              <Chip
-                key={cat.key}
-                label={`${cat.label} ${toners.filter((t) => t.category === cat.key).length}`}
-                onClick={() => setActiveCategory(cat.key)}
-                variant={activeCategory === cat.key ? "filled" : "outlined"}
-                color={activeCategory === cat.key ? "primary" : "default"}
-                size="small"
-                sx={{ borderRadius: "0", fontWeight: 500 }}
-              />
-            ))}
-          </Stack>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={1.5} sx={{ justifyContent: "space-between", alignItems: { md: "center" } }}>
+          {/* 左侧：分类标签行（移动端横向滚动） */}
+          <Box sx={{ overflowX: "auto", mx: { xs: -1.5, md: 0 }, px: { xs: 1.5, md: 0 } }} className="no-scrollbar">
+            <Stack direction="row" spacing={1} sx={{ flexWrap: { md: "wrap" }, gap: 1, minWidth: "max-content" }}>
+              {TONER_CATEGORIES.filter((cat) => cat.key !== "SUPPLEMENTARY" || isAdmin).map((cat) => (
+                <Chip
+                  key={cat.key}
+                  label={`${cat.label} ${toners.filter((t) => t.category === cat.key).length}`}
+                  onClick={() => setActiveCategory(cat.key)}
+                  variant={activeCategory === cat.key ? "filled" : "outlined"}
+                  color={activeCategory === cat.key ? "primary" : "default"}
+                  size="small"
+                  sx={{ borderRadius: { xs: "10px", md: 0 }, fontWeight: 500, height: { xs: 30, md: 32 }, fontSize: { xs: "0.75rem", md: "0.8125rem" } }}
+                />
+              ))}
+            </Stack>
+          </Box>
 
           {/* 右侧：管理材料按钮（仅管理员可见）+ 搜索框 */}
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ width: { xs: "100%", md: "auto" } }}>
             {isAdmin && (
               <Button
                 variant="outlined"
@@ -834,12 +839,13 @@ export default function TonerPage() {
                 startIcon={<SettingsIcon />}
                 onClick={() => setManageOpen(true)}
                 sx={{
-                  borderRadius: "0",
+                  borderRadius: { xs: "12px", md: 0 },
                   fontWeight: 500,
                   fontSize: "0.8125rem",
                   whiteSpace: "nowrap",
                   borderColor: "#3b82f6",
                   color: "#3b82f6",
+                  minHeight: { xs: 36, md: "auto" },
                   "&:hover": { borderColor: "#2563eb", bgcolor: "rgba(36,135,202,0.04)" },
                 }}
               >
@@ -851,14 +857,18 @@ export default function TonerPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search code or name..."
               size="small"
-              sx={{ width: { xs: "100%", sm: 256 } }}
+              sx={{
+                width: { xs: "100%", sm: 256 },
+                flex: 1,
+                "& .MuiOutlinedInput-root": { borderRadius: { xs: "12px", md: 0 } },
+              }}
               slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 16, color: "text.disabled" }} /></InputAdornment> } }}
             />
           </Stack>
         </Stack>
       </Box>
 
-      <Box sx={{ flex: 1, px: { xs: 2, lg: 3 }, py: 3 }}>
+      <Box sx={{ flex: 1, px: { xs: 1.5, sm: 2, lg: 3 }, py: { xs: 2, md: 3 } }}>
         {dbLoading ? (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 10, color: "text.disabled" }}>
             <Typography variant="body2">加载中...</Typography>
@@ -869,7 +879,7 @@ export default function TonerPage() {
             <Typography variant="caption" sx={{ mt: 0.5 }}>Try a different search or category</Typography>
           </Box>
         ) : (
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 1.5, md: 3 }}>
             {filteredToners.map((toner) => (
               <Grid key={toner.code} size={{ xs: 6, sm: 4, md: 3, lg: 2 }}>
                 <TonerCard code={toner.code} tradeName={toner.tradeName} hex={toner.hex} />

@@ -24,12 +24,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import PrintIcon from "@mui/icons-material/Print";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-// 字体大小常量（+6px）
+// 字体大小常量（移动端缩小，桌面端 +6px）
 const FONT_SIZES = {
-  caption: "1.125rem",        // 18px
-  body: "1.25rem",            // 20px
-  small: "1.0625rem",         // 17px
-  tiny: "1rem",               // 16px
+  caption: { xs: "0.8125rem", md: "1.125rem" }, // 13px → 18px
+  body: { xs: "0.875rem", md: "1.25rem" },       // 14px → 20px
+  small: { xs: "0.8125rem", md: "1.0625rem" },   // 13px → 17px
+  tiny: { xs: "0.75rem", md: "1rem" },           // 12px → 16px
 } as const;
 
 interface FormulaDrawerProps {
@@ -162,31 +162,37 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
 
   return (
     <>
-      <Dialog open onClose={handleClose} maxWidth={false} slotProps={{ paper: { sx: { height: "100vh", maxHeight: "100vh", width: "100vw", maxWidth: "100vw", borderRadius: 0, m: 0, p: 0 } } }}>
+      <Dialog open onClose={handleClose} maxWidth={false} fullScreen slotProps={{ paper: { sx: { borderRadius: 0, m: 0, p: 0 } } }}>
         <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Toolbar sx={{ gap: 2 }}>
+          <Toolbar sx={{ gap: { xs: 1, md: 2 }, minHeight: { xs: 56, md: 64 }, px: { xs: 1, sm: 2 } }}>
             <Box
-              sx={{ width: 48, height: 48, borderRadius: 0, border: 1, borderColor: "grey.200", flexShrink: 0 }}
+              sx={{ width: { xs: 36, md: 48 }, height: { xs: 36, md: 48 }, borderRadius: 0, border: 1, borderColor: "grey.200", flexShrink: 0 }}
               style={colorSwatchStyle(previewColor)}
             />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flex: 1 }}>
               <Box sx={{ minWidth: 0 }}>
-                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 600 }}>{color.color_name}</Typography>
+                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 600, fontSize: { xs: "0.9rem", md: "1rem" } }}>{color.color_name}</Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary" }}>{color.color_code}</Typography>
               </Box>
             </Box>
 
-            {/* Print + Copy buttons */}
+            {/* Print + Copy buttons (移动端图标-only) */}
             <Button onClick={handlePrint} variant="outlined" startIcon={<PrintIcon />}
-              sx={{ color: "text.primary", borderColor: "grey.300", textTransform: "none", flexShrink: 0 }}>
+              sx={{ color: "text.primary", borderColor: "grey.300", textTransform: "none", flexShrink: 0, display: { xs: "none", sm: "inline-flex" }, minWidth: 64, px: 1.5 }}>
               {t.print}
             </Button>
+            <IconButton onClick={handlePrint} sx={{ display: { xs: "inline-flex", sm: "none" }, color: "text.primary" }} aria-label={t.print}>
+              <PrintIcon fontSize="small" />
+            </IconButton>
             <Button onClick={handleCopy} variant="contained" startIcon={<ContentCopyIcon />}
-              sx={{ textTransform: "none", flexShrink: 0 }}>
+              sx={{ textTransform: "none", flexShrink: 0, display: { xs: "none", sm: "inline-flex" }, minWidth: 64, px: 1.5 }}>
               {t.copy}
             </Button>
+            <IconButton onClick={handleCopy} sx={{ display: { xs: "inline-flex", sm: "none" }, bgcolor: "primary.main", color: "#fff", "&:hover": { bgcolor: "primary.dark" } }} aria-label={t.copy}>
+              <ContentCopyIcon fontSize="small" />
+            </IconButton>
 
-            <IconButton onClick={handleClose} edge="end"><CloseIcon /></IconButton>
+            <IconButton onClick={handleClose} edge="end" aria-label="Close"><CloseIcon /></IconButton>
           </Toolbar>
         </AppBar>
 
@@ -196,15 +202,15 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
           <Box sx={{
             flex: { xs: "1 1 auto", md: "1 1 62.5%" },
             overflow: { xs: "visible", md: "auto" },
-            p: { xs: 2, sm: 4 },
+            p: { xs: 2, sm: 3, md: 4 },
             borderRight: { md: 1 },
             borderBottom: { xs: 1, md: "none" },
             borderColor: "divider",
           }}>
             {activeFormula && displayedFormula && (
               <Box>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1.5 }}>
-                  <Typography variant="caption" sx={{ color: "#1a1a1a", fontSize: FONT_SIZES.caption }}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1.5, flexWrap: "wrap", gap: 0.5 }}>
+                  <Typography variant="caption" sx={{ color: "#1a1a1a", fontSize: FONT_SIZES.caption, fontWeight: 600 }}>
                     {t.version} {activeFormula.version}
                   </Typography>
 
@@ -247,13 +253,14 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
                 {t.colorPreview}
               </Typography>
               <Box
-                sx={{ mt: 1.5, height: { xs: 75, sm: 120 }, borderRadius: 0, border: 1, borderColor: "grey.200" }}
+                sx={{ mt: 1.5, height: { xs: 60, sm: 120 }, borderRadius: 0, border: 1, borderColor: "grey.200" }}
                 style={colorSwatchStyle(previewColor)}
               />
             </Box>
 
             <Box sx={{ borderTop: 1, borderColor: "divider" }}>
-              <Tabs value={infoTab} onChange={(_, v) => setInfoTab(v)} variant="fullWidth">
+              <Tabs value={infoTab} onChange={(_, v) => setInfoTab(v)} variant="fullWidth"
+                sx={{ minHeight: { xs: 36, md: 48 }, "& .MuiTab-root": { minHeight: { xs: 36, md: 48 }, fontSize: { xs: "0.75rem", md: "0.875rem" }, py: 0 } }}>
                 <Tab label={t.tabColorInfo} />
                 <Tab label={t.tabColorDocs} />
                 <Tab label={t.tabPlasticParts} />
@@ -262,7 +269,7 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
 
             <Box sx={{ p: { xs: 2, sm: 3 } }}>
               {infoTab === 0 && (
-                <Stack spacing={2}>
+                <Stack spacing={{ xs: 1.25, md: 2 }}>
                   <InfoRow label={t.manufacturerLabel} value={make} />
                   <InfoRow label={t.originLabel} value={origin} />
                   <InfoRow label={t.codeLabel} value={color.color_code} />
@@ -291,9 +298,9 @@ export default function FormulaDrawer({ result, onClose, initialFormulaIdx, form
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <Stack direction="row" spacing={1.5}>
-      <Typography variant="caption" sx={{ width: 112, flexShrink: 0, color: "text.secondary" }}>{label}</Typography>
-      <Typography variant="body2" sx={{ minWidth: 0, flex: 1 }}>{value}</Typography>
+    <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 0.25, sm: 1.5 }}>
+      <Typography variant="caption" sx={{ width: { sm: 112 }, flexShrink: 0, color: "text.secondary" }}>{label}</Typography>
+      <Typography variant="body2" sx={{ minWidth: 0, flex: 1, wordBreak: "break-word" }}>{value}</Typography>
     </Stack>
   );
 }

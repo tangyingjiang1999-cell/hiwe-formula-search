@@ -135,9 +135,9 @@ export default function SearchResults({
   const pageRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box>
-      <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca", overflowX: "auto" }}>
-        <Table sx={{ tableLayout: { xs: "auto", md: "fixed" }, width: "100%", minWidth: { xs: 500, md: "100%" } }}>
+    <Box sx={{ mx: { xs: -1, sm: 0 } }}>
+      <TableContainer component={Paper} variant="outlined" className="table-responsive-scroll" sx={{ borderRadius: 0, border: "1px solid", borderColor: "grey.200", borderTop: "2px solid #2487ca" }}>
+        <Table sx={{ tableLayout: { xs: "auto", md: "fixed" }, width: "100%", minWidth: { xs: 560, md: "100%" } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: "#2487ca" }}>
               <TableCell sx={{ width: { md: COLUMN_WIDTHS.colorType }, fontWeight: 700, color: "#FFFFFF", fontFamily: FONT, fontSize: HEADER_FONT_SIZE, borderBottom: "none", py: 1, textAlign: "center" }}>{t.colorType}</TableCell>

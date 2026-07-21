@@ -61,20 +61,23 @@ export const getRowSx = (rowIndex: number) => ({
   "&:hover": { bgcolor: HOVER_BG },
 });
 
-// 表格容器样式
+// 表格容器样式（移动端横向滚动）
 export const tableContainerSx = {
   borderRadius: "0",
   border: "1px solid #e5e7eb",
   borderTop: "2px solid #2487ca",
   boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-  overflow: "hidden",
+  overflowX: "auto",
+  overflowY: "hidden",
+  "-webkit-overflow-scrolling": "touch",
 };
 
-// 表格元素样式
+// 表格元素样式（移动端用最小宽度撑出横滚）
 export const tableSx = {
   tableLayout: "fixed" as const,
   width: "100%",
-};
+  minWidth: { xs: 640, md: "100%" },
+} as const;
 
 // 操作按钮通用样式
 export const actionButtonSx = {

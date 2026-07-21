@@ -83,31 +83,32 @@ export default function ApplicationGuidePage() {
   }, [guides, selectedCategory, searchQuery, lang]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default", overflowX: "clip" }}>
       <SiteHeader />
 
-      <Box sx={{ bgcolor: "#fff", pt: 10, pb: 2, px: { xs: 2, md: 3 } }}>
+      <Box sx={{ bgcolor: "#fff", pt: { xs: 9, md: 10 }, pb: { xs: 1.5, md: 2 }, px: { xs: 1.5, sm: 2, md: 3 } }}>
         <TextField
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t.guideSearchPlaceholder}
           size="small"
           fullWidth
+          sx={{ "& .MuiOutlinedInput-root": { borderRadius: { xs: "12px", md: 0 } } }}
         />
       </Box>
 
       <Box sx={{ display: "flex", flex: 1, flexDirection: { xs: "column", lg: "row" }, overflow: { xs: "auto", lg: "hidden" } }}>
         {/* 左栏：分类 */}
-        <Box sx={{ width: { lg: 256 }, flexShrink: 0, bgcolor: "#fff", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: 2, maxHeight: { xs: 200, lg: "none" }, overflow: { xs: "auto", lg: "visible" } }}>
-          <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600 }}>{t.guideCategories}</Typography>
+        <Box sx={{ width: { lg: 256 }, flexShrink: 0, bgcolor: "#fff", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: { xs: 1.5, md: 2 }, maxHeight: { xs: 200, lg: "none" }, overflow: { xs: "auto", lg: "visible" } }}>
+          <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600, px: 1 }}>{t.guideCategories}</Typography>
           <List dense>
             <ListItemButton selected={selectedCategory === ""} onClick={() => setSelectedCategory("")}
-              sx={{ borderRadius: 0, "&.Mui-selected": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}>
+              sx={{ borderRadius: { xs: "10px", md: 0 }, minHeight: { xs: 36, md: "auto" }, "&.Mui-selected": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}>
               <ListItemText primary={t.guideAllCategories} slotProps={{ primary: { sx: { fontSize: "0.8125rem" } } }} />
             </ListItemButton>
             {categories.map((cat) => (
               <ListItemButton key={cat.id} selected={selectedCategory === cat.id} onClick={() => setSelectedCategory(cat.id)}
-                sx={{ borderRadius: 0, "&.Mui-selected": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}>
+                sx={{ borderRadius: { xs: "10px", md: 0 }, minHeight: { xs: 36, md: "auto" }, "&.Mui-selected": { bgcolor: "rgba(36,135,202,0.08)", color: "primary.main" } }}>
                 <ListItemText primary={lang === "zh" ? cat.nameZh : cat.name} slotProps={{ primary: { sx: { fontSize: "0.8125rem" } } }} />
               </ListItemButton>
             ))}
@@ -115,8 +116,8 @@ export default function ApplicationGuidePage() {
         </Box>
 
         {/* 中栏：指南列表 */}
-        <Box sx={{ width: { lg: 320 }, flexShrink: 0, bgcolor: "grey.50", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: 2, maxHeight: { xs: 280, lg: "none" }, overflow: { xs: "auto", lg: "visible" } }}>
-          <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600 }}>
+        <Box sx={{ width: { lg: 320 }, flexShrink: 0, bgcolor: "grey.50", borderRight: { lg: 1 }, borderBottom: { xs: 1, lg: 0 }, borderColor: "divider", p: { xs: 1.5, md: 2 }, maxHeight: { xs: 280, lg: "none" }, overflow: { xs: "auto", lg: "visible" } }}>
+          <Typography variant="overline" sx={{ color: "text.secondary", fontWeight: 600, px: 1 }}>
             {t.guideListLabel} ({filteredGuides.length})
           </Typography>
           <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 1 }}>
@@ -126,13 +127,14 @@ export default function ApplicationGuidePage() {
                 onClick={() => setSelectedGuide(guide)}
                 sx={{
                   cursor: "pointer",
+                  borderRadius: { xs: "12px", md: 0 },
                   borderColor: selectedGuide?.id === guide.id ? "primary.main" : "grey.200",
                   boxShadow: selectedGuide?.id === guide.id ? 1 : 0,
                   "&:hover": { borderColor: "primary.main" },
                 }}
               >
                 <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, fontSize: { xs: "0.8125rem", md: "0.875rem" } }}>
                     {lang === "zh" ? guide.titleZh : guide.title}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.5 }}>
@@ -145,11 +147,11 @@ export default function ApplicationGuidePage() {
         </Box>
 
         {/* 右栏：内容 */}
-        <Box sx={{ flex: 1, p: { xs: 2, md: 3 } }}>
+        <Box sx={{ flex: 1, p: { xs: 2, md: 3 }, minHeight: { xs: 320, lg: "auto" } }}>
           {selectedGuide ? (
             <GuideContent guide={selectedGuide} />
           ) : (
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: 256 }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 256 }}>
               <Typography variant="body2" sx={{ color: "text.disabled" }}>{t.guideSelectHint}</Typography>
             </Box>
           )}
