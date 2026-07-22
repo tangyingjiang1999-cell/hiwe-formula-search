@@ -111,12 +111,42 @@ export default function SearchResults({
 
   if (rows.length === 0) {
     return (
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 300, p: 3 }} role="status">
-        <SearchOffIcon aria-hidden="true" sx={{ fontSize: 56, color: "background.paper", mb: 2, filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))" }} />
-        <Typography variant="body2" sx={{ color: "background.paper", fontWeight: 600, fontFamily: FONT, fontSize: CELL_FONT_SIZE, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: 300,
+          p: 3,
+        }}
+        role="status"
+      >
+        <SearchOffIcon
+          aria-hidden="true"
+          sx={{ fontSize: 56, color: "grey.500", mb: 2 }}
+        />
+        <Typography
+          sx={{
+            fontFamily: FONT,
+            fontSize: "1rem",
+            fontWeight: 600,
+            color: "grey.800",
+            textShadow: "none",
+          }}
+        >
           {t.noResults}
         </Typography>
-        <Typography variant="body2" sx={{ color: "background.paper", fontWeight: 500, fontFamily: FONT, fontSize: CAPTION_FONT_SIZE, mt: 0.5, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>
+        <Typography
+          sx={{
+            fontFamily: FONT,
+            fontSize: "0.875rem",
+            fontWeight: 400,
+            color: "text.secondary",
+            mt: 0.5,
+            textShadow: "none",
+          }}
+        >
           {t.noResultsHint}
         </Typography>
       </Box>

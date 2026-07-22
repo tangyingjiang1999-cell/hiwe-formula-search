@@ -120,7 +120,12 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             onChange={(e) => setMakeId(e.target.value)}
             size="small"
             fullWidth
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: { xs: "12px", md: 0 } } }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: { xs: "12px", md: 0 },
+                bgcolor: "transparent",
+              },
+            }}
             slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
           >
             <MenuItem value="">All</MenuItem>
@@ -139,7 +144,12 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             placeholder={t.colorCodePlaceholder}
             size="small"
             fullWidth
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: { xs: "12px", md: 0 } } }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: { xs: "12px", md: 0 },
+                bgcolor: "transparent",
+              },
+            }}
             slotProps={{ htmlInput: { maxLength: 20 } }}
           />
 
@@ -151,7 +161,12 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             placeholder={t.colorNamePlaceholder}
             size="small"
             fullWidth
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: { xs: "12px", md: 0 } } }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: { xs: "12px", md: 0 },
+                bgcolor: "transparent",
+              },
+            }}
           />
 
           {/* Year */}
@@ -162,7 +177,12 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             placeholder={t.yearPlaceholder}
             size="small"
             fullWidth
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: { xs: "12px", md: 0 } } }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: { xs: "12px", md: 0 },
+                bgcolor: "transparent",
+              },
+            }}
             slotProps={{ htmlInput: { maxLength: 9 } }}
           />
         </Box>
@@ -189,16 +209,23 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
                   onClick={() => setColorType(opt.value)}
                   role="radio"
                   aria-checked={isSelected}
-                  variant={isSelected ? "filled" : "outlined"}
-                  color={isSelected ? "primary" : "default"}
+                  variant="outlined"
                   size="small"
                   sx={{
-                    fontWeight: 500,
+                    fontWeight: isSelected ? 600 : 500,
                     fontSize: { xs: "0.75rem", md: "0.8125rem" },
                     borderRadius: { xs: "12px", md: 0 },
                     height: { xs: 30, md: 28 },
                     px: 0.5,
-                    ...(isSelected ? {} : { borderColor: "grey.300", color: "text.secondary" }),
+                    // 透明底保持毛玻璃穿透感
+                    bgcolor: isSelected ? "rgba(255,255,255,0.25)" : "transparent",
+                    borderColor: isSelected ? "primary.main" : "rgba(0,0,0,0.15)",
+                    color: isSelected ? "primary.main" : "text.secondary",
+                    "&:hover": {
+                      bgcolor: isSelected ? "rgba(255,255,255,0.25)" : "rgba(36,135,202,0.08)",
+                      borderColor: "primary.main",
+                      color: "primary.main",
+                    },
                   }}
                 />
               );
@@ -218,7 +245,7 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
             <Button
               type="submit"
               disabled={isLoading}
-              variant="contained"
+              variant="outlined"
               startIcon={<SearchIcon />}
               sx={{
                 borderRadius: { xs: "12px", md: 0 },
@@ -229,6 +256,14 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
                 minHeight: { xs: 36, md: "auto" },
                 flex: { xs: 1, md: "0 0 auto" },
                 minWidth: { xs: 0, md: 96 },
+                // 透明底 + 蓝框 + 蓝字，穿透毛玻璃
+                bgcolor: "transparent",
+                borderColor: "primary.main",
+                color: "primary.main",
+                "&:hover": {
+                  bgcolor: "rgba(36,135,202,0.08)",
+                  borderColor: "primary.main",
+                },
               }}
             >
               {isLoading ? t.searching : t.search}
@@ -244,12 +279,18 @@ export default function SearchPanel({ onSearch, isLoading, onSubmitRef, onFocusC
                 textTransform: "none",
                 fontWeight: 600,
                 fontSize: { xs: "0.8125rem", md: "0.8125rem" },
-                color: "text.secondary",
-                borderColor: "grey.300",
                 py: { xs: 0.75, md: 0.75 },
                 minHeight: { xs: 36, md: "auto" },
                 flex: { xs: 1, md: "0 0 auto" },
                 minWidth: { xs: 0, md: 96 },
+                // 透明底 + 蓝框 + 蓝字，穿透毛玻璃
+                bgcolor: "transparent",
+                borderColor: "primary.main",
+                color: "primary.main",
+                "&:hover": {
+                  bgcolor: "rgba(36,135,202,0.08)",
+                  borderColor: "primary.main",
+                },
               }}
             >
               {t.reset}

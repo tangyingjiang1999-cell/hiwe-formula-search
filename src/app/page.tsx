@@ -255,7 +255,7 @@ export default function Home() {
             </Box>
           )}
         </Box>
-        <Footer />
+        <Footer isLightBackground={shouldBeBlurred} />
         <FormulaDrawer result={drawerResult} formulaId={drawerFormulaId} initialYear={drawerYear} onClose={() => setDrawerResult(null)} />
       </Box>
     </Box>

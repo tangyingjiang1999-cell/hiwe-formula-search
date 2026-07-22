@@ -49,8 +49,22 @@ function FlagIcon({ code, small }: { code: string; small?: boolean }) {
   );
 }
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({
+  isHome,
+  transitionStyle,
+}: {
+  isHome: boolean;
+  transitionStyle: string;
+}) {
   const { lang, setLang } = useLang();
+
+  const textColor = isHome ? "text.secondary" : "rgba(255,255,255,0.7)";
+  const iconColor = isHome ? "text.secondary" : "rgba(255,255,255,0.7)";
+  const borderColor = isHome ? "grey.300" : "rgba(255,255,255,0.3)";
+  const hoverBorderColor = isHome ? "primary.main" : "#ffffff";
+  const hoverBg = isHome
+    ? "rgba(36,135,202,0.04)"
+    : "rgba(255,255,255,0.1)";
 
   return (
     <Select
@@ -68,8 +82,9 @@ export default function LanguageSwitcher() {
               alignItems: "center",
               fontWeight: 600,
               fontSize: "0.8125rem",
-              color: "text.secondary",
+              color: textColor,
               lineHeight: 1,
+              transition: transitionStyle,
             }}
           >
             {l.code.toUpperCase()}
@@ -78,11 +93,12 @@ export default function LanguageSwitcher() {
       }}
       sx={{
         bgcolor: "transparent",
-        color: "text.secondary",
+        color: textColor,
         border: 1,
-        borderColor: "grey.300",
+        borderColor: borderColor,
         borderRadius: 2,
         height: 36,
+        transition: transitionStyle,
         "& .MuiSelect-select": {
           display: "flex",
           alignItems: "center",
@@ -95,15 +111,16 @@ export default function LanguageSwitcher() {
           fontSize: "1.1rem",
           top: "50%",
           transform: "translateY(-50%)",
-          color: "text.secondary",
+          color: iconColor,
+          transition: transitionStyle,
         },
-        "& fieldset": { borderColor: "grey.300" },
+        "& fieldset": { borderColor: borderColor },
         "&:hover": {
-          bgcolor: "rgba(36,135,202,0.04)",
-          borderColor: "primary.main",
-          "& .MuiSelect-icon": { color: "primary.main" },
+          bgcolor: hoverBg,
+          borderColor: hoverBorderColor,
+          "& .MuiSelect-icon": { color: hoverBorderColor },
         },
-        "&.Mui-focused fieldset": { borderColor: "primary.main", borderWidth: 1 },
+        "&.Mui-focused fieldset": { borderColor: hoverBorderColor, borderWidth: 1 },
       }}
       MenuProps={{
         slotProps: {

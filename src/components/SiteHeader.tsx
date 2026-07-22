@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
@@ -27,6 +27,42 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // ==================== 路由追踪与渐变动画逻辑 ====================
+
+  // 保存上一次路由，用于判断是否跨首页导航
+  const prevPathRef = useRef<string | null>(null);
+
+  const isHome = pathname === "/";
+  const prevIsHome = prevPathRef.current === "/";
+
+  // 条件 A/B：首页 ↔ 其他页面切换 → 开启 1.5s 渐变
+  // 条件 C：其他页面之间切换 → 无渐变（保持 0s 即 seamless）
+  // 首次渲染时 prevPathRef 为 null，不触发过渡
+  const isCrossHomeNav =
+    prevPathRef.current !== null && prevIsHome !== isHome;
+
+  // 渲染后更新上一次路由
+  useEffect(() => {
+    prevPathRef.current = pathname;
+  }, [pathname]);
+
+  // 动态过渡样式：跨首页导航用 1.5s 缓动，其他情况禁用过渡
+  const transitionStyle = isCrossHomeNav
+    ? "all 1.5s ease-in-out"
+    : "none";
+
+  // === 根据是否首页计算 Header 配色与定位 ===
+  // 首页：透明底浮于背景图上方 + 蓝字 + 灰边框
+  // 非首页：蓝底常规流 + 白字 + 白边框
+  const headerBg = isHome ? "transparent" : "#2487ca";
+  const headerPosition = isHome ? "absolute" : "relative";
+  const headerTextColor = isHome ? "#2487ca" : "#ffffff";
+  const headerMutedColor = isHome ? "text.secondary" : "rgba(255,255,255,0.7)";
+  const headerBorderColor = isHome ? "grey.300" : "rgba(255,255,255,0.3)";
+  const headerHoverBg = isHome
+    ? "rgba(36,135,202,0.04)"
+    : "rgba(255,255,255,0.1)";
+
   // 顶部导航链接，与 Logo 同行水平对齐
   const navItems: { label: string; href: string }[] = [
     { label: t.navFormulaSearch, href: "/" },
@@ -40,12 +76,17 @@ export default function SiteHeader() {
 
   return (
     <AppBar
-      position="fixed"
+      position={isHome ? "absolute" : "fixed"}
       color="default"
       elevation={0}
       sx={{
-        bgcolor: "background.paper",
+        bgcolor: headerBg,
         zIndex: 1100,
+        top: isHome ? 0 : undefined,
+        left: isHome ? 0 : undefined,
+        transition: transitionStyle,
+        // 非首页时底部细线分隔
+        borderBottom: isHome ? "none" : "1px solid rgba(255,255,255,0.15)",
       }}
     >
       <Toolbar
@@ -69,6 +110,9 @@ export default function SiteHeader() {
                 width: "auto",
                 objectFit: "contain",
                 display: "block",
+                // 首页保持原色；非首页蓝底下用滤镜变白，与背景渐变同步
+                filter: isHome ? "none" : "brightness(0) invert(1)",
+                transition: transitionStyle,
               }}
             />
           </Link>
@@ -89,14 +133,15 @@ export default function SiteHeader() {
                   disableElevation
                   aria-current={active ? "page" : undefined}
                   sx={{
-                    color: active ? "primary.main" : "text.secondary",
+                    color: active ? headerTextColor : headerMutedColor,
                     fontWeight: active ? 700 : 600,
                     fontSize: "0.9375rem",
                     minWidth: "auto",
                     px: 1.5,
+                    transition: transitionStyle,
                     "&:hover": {
                       bgcolor: "transparent",
-                      color: "primary.main",
+                      color: headerTextColor,
                     },
                   }}
                 >
@@ -107,7 +152,7 @@ export default function SiteHeader() {
           </Stack>
         </Stack>
 
-        {/* 右侧 actions：4 个元素统一高度 36px、字号 0.8125rem、居中对齐、间距 12px */}
+        {/* 右侧 actions：统一高度 36px、字号 0.8125rem、居中对齐、间距 12px */}
         <Stack direction="row" sx={{ alignItems: "center", gap: 1.5 }}>
           {authUser ? (
             <>
@@ -125,12 +170,13 @@ export default function SiteHeader() {
                     px: 1.5,
                     height: 36,
                     borderRadius: 2,
-                    borderColor: "grey.300",
-                    color: "text.secondary",
+                    borderColor: headerBorderColor,
+                    color: headerMutedColor,
+                    transition: transitionStyle,
                     "&:hover": {
-                      borderColor: "primary.main",
-                      color: "primary.main",
-                      bgcolor: "rgba(36,135,202,0.04)",
+                      borderColor: headerTextColor,
+                      color: headerTextColor,
+                      bgcolor: headerHoverBg,
                     },
                   }}
                 >
@@ -151,12 +197,13 @@ export default function SiteHeader() {
                     px: 1.5,
                     height: 36,
                     borderRadius: 2,
-                    borderColor: "grey.300",
-                    color: "text.secondary",
+                    borderColor: headerBorderColor,
+                    color: headerMutedColor,
+                    transition: transitionStyle,
                     "&:hover": {
-                      borderColor: "primary.main",
-                      color: "primary.main",
-                      bgcolor: "rgba(36,135,202,0.04)",
+                      borderColor: headerTextColor,
+                      color: headerTextColor,
+                      bgcolor: headerHoverBg,
                     },
                   }}
                 >
@@ -166,7 +213,6 @@ export default function SiteHeader() {
               <Button
                 onClick={logout}
                 variant="outlined"
-                color="error"
                 size="small"
                 sx={{
                   display: { xs: "none", md: "inline-flex" },
@@ -176,11 +222,13 @@ export default function SiteHeader() {
                   px: 1.5,
                   height: 36,
                   borderRadius: 2,
-                  borderColor: "error.main",
-                  color: "error.main",
+                  borderColor: headerBorderColor,
+                  color: headerMutedColor,
+                  transition: transitionStyle,
                   "&:hover": {
-                    bgcolor: "rgba(220,38,38,0.06)",
-                    borderColor: "error.main",
+                    borderColor: headerTextColor,
+                    color: headerTextColor,
+                    bgcolor: headerHoverBg,
                   },
                 }}
               >
@@ -199,22 +247,24 @@ export default function SiteHeader() {
                 fontSize: "0.8125rem",
                 px: 1.5,
                 height: 36,
+                transition: transitionStyle,
               }}
             >
               {t.login}
             </Button>
           )}
 
-          <LanguageSwitcher />
+          <LanguageSwitcher isHome={isHome} transitionStyle={transitionStyle} />
 
           {/* 移动端汉堡菜单按钮 */}
           <IconButton
             onClick={() => setMobileMenuOpen((o) => !o)}
             sx={{
               display: { xs: "inline-flex", md: "none" },
-              color: "primary.main",
+              color: headerTextColor,
               minWidth: 36,
               minHeight: 36,
+              transition: transitionStyle,
             }}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
