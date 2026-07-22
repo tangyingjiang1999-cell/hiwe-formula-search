@@ -120,8 +120,10 @@ export default function FormulasPanel() {
     : "";
 
   function openTonerDropdown(index: number, currentCode: string) {
-    setTonerDropdownFor(index);
+    // 必须同时设置两个状态，确保 React 在一次渲染中打开下拉
+    // 不要通过 scheduleClose 或 blur 关闭 —— 改由 ClickAwayListener 负责
     setTonerQuery(currentCode);
+    setTonerDropdownFor(index);
   }
 
   // 新建时：颜色 + 版本变化自动生成 ID
@@ -510,8 +512,9 @@ export default function FormulasPanel() {
               )}
               {filtered.map((c, rowIndex) => {
                 const globalIndex = components.indexOf(c);
-                // 使用顶层 ref 的 callback 模式存储每个色母行输入框的 DOM 引用
-                const isDropdownOpen = tonerDropdownFor === globalIndex && matchingToners(tonerQuery, tonerPool).length > 0;
+                // 始终计算匹配结果，不受 open 状态影响
+                const matches = matchingToners(tonerQuery, tonerPool);
+                const isDropdownOpen = tonerDropdownFor === globalIndex && matches.length > 0;
                 return (
                   <TableRow key={c.uid ?? globalIndex} sx={getRowSx(rowIndex)}>
                     <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.odd }}>
@@ -521,39 +524,35 @@ export default function FormulasPanel() {
                         value={c.toner_code}
                         onChange={(e) => { updateComponent(globalIndex, "toner_code", e.target.value); setTonerQuery(e.target.value); }}
                         onFocus={(e) => { INPUT_FOCUS_HANDLER(e); openTonerDropdown(globalIndex, c.toner_code); }}
-                        onBlur={(e) => { INPUT_BLUR_HANDLER(e); /* 不再通过 blur 关闭下拉 */ }}
+                        onBlur={(e) => { INPUT_BLUR_HANDLER(e); }}
                         style={INPUT_SMALL_STYLE}
                       />
-                      {/* ★ Popper 下拉：固定定位挂载到 body，zIndex 9999 确保不被任何容器裁剪 */}
-                      {isDropdownOpen && (
-                        <Popper
-                          open={isDropdownOpen}
-                          anchorEl={tonerInputRefs.current[globalIndex] ?? null}
-                          placement="bottom-start"
-                          disablePortal={false}
-                          sx={{ zIndex: 9999 }}
-                          modifiers={[
-                            { name: "offset", options: { offset: [0, 4] } },
-                          ]}
-                        >
-                          <ClickAwayListener onClickAway={() => closeTonerDropdown()}>
-                            <Paper sx={{ maxHeight: 250, width: 280, overflow: "auto", boxShadow: "0 8px 32px rgba(0,0,0,0.14)", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
-                              {matchingToners(tonerQuery, tonerPool).map((toner) => (
-                                <Button
-                                  key={toner.code}
-                                  onMouseDown={(e) => { e.preventDefault(); selectToner(globalIndex, toner); closeTonerDropdown(); }}
-                                  fullWidth
-                                  sx={{ justifyContent: "flex-start", gap: 1, px: 1.5, py: 1, borderRadius: 0, fontSize: "0.8125rem", fontFamily: FONT, textTransform: "none", transition: "background-color 0.15s ease", "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}
-                                >
-                                  <Box sx={{ width: 32, height: 20, borderRadius: 2, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: toner.hex }} />
-                                  <Box component="span" sx={{ color: "text.primary", fontWeight: 500 }}>{toner.code}</Box>
-                                  <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>{toner.tradeName}</Box>
-                                </Button>
-                              ))}
-                            </Paper>
-                          </ClickAwayListener>
-                        </Popper>
-                      )}
+                      {/* ★ 始终保持 Popper 挂载以获取 anchorEl，仅通过 open 控制显示/隐藏 */}
+                      <Popper
+                        open={isDropdownOpen}
+                        anchorEl={tonerInputRefs.current[globalIndex] ?? null}
+                        placement="bottom-start"
+                        disablePortal={false}
+                        sx={{ zIndex: 9999 }}
+                        modifiers={[{ name: "offset", options: { offset: [0, 4] } }]}
+                      >
+                        <ClickAwayListener onClickAway={() => closeTonerDropdown()}>
+                          <Paper sx={{ maxHeight: 250, width: 280, overflow: "auto", boxShadow: "0 8px 32px rgba(0,0,0,0.14)", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+                            {matches.map((toner) => (
+                              <Button
+                                key={toner.code}
+                                onMouseDown={(e) => { e.preventDefault(); selectToner(globalIndex, toner); closeTonerDropdown(); }}
+                                fullWidth
+                                sx={{ justifyContent: "flex-start", gap: 1, px: 1.5, py: 1, borderRadius: 0, fontSize: "0.8125rem", fontFamily: FONT, textTransform: "none", transition: "background-color 0.15s ease", "&:hover": { bgcolor: "rgba(36,135,202,0.06)" } }}
+                              >
+                                <Box sx={{ width: 32, height: 20, borderRadius: 2, border: 1, borderColor: "grey.200", flexShrink: 0, bgcolor: toner.hex }} />
+                                <Box component="span" sx={{ color: "text.primary", fontWeight: 500 }}>{toner.code}</Box>
+                                <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>{toner.tradeName}</Box>
+                              </Button>
+                            ))}
+                          </Paper>
+                        </ClickAwayListener>
+                      </Popper>
                     </TableCell>
                     <TableCell sx={{ ...cellSx, bgcolor: COLUMN_BG.even }}>
                       <input
