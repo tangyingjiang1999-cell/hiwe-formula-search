@@ -13,6 +13,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PersonOutlined from "@mui/icons-material/PersonOutlined";
+import LockOutlined from "@mui/icons-material/LockOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LanguageIcon from "@mui/icons-material/Language";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -130,11 +132,12 @@ export default function LoginPage() {
           <Typography
             sx={{
               color: "#fff",
-              fontFamily: "Arial, sans-serif",
-              fontSize: { lg: 40, xl: 52 },
-              fontWeight: 700,
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontSize: { lg: 70, xl: 82 },
+              fontWeight: 800,
               letterSpacing: 2,
               lineHeight: 1.1,
+              textTransform: "uppercase",
             }}
           >
             Welcome to
@@ -142,11 +145,12 @@ export default function LoginPage() {
           <Typography
             sx={{
               color: "#fff",
-              fontFamily: "Arial, sans-serif",
-              fontSize: { lg: 40, xl: 52 },
-              fontWeight: 700,
+              fontFamily: "var(--font-outfit), sans-serif",
+              fontSize: { lg: 70, xl: 82 },
+              fontWeight: 800,
               letterSpacing: 2,
               lineHeight: 1.1,
+              textTransform: "uppercase",
             }}
           >
             HIWEMIX
@@ -232,8 +236,8 @@ export default function LoginPage() {
         )}
 
         <Box sx={{ width: "100%", maxWidth: 360 }}>
-          {/* 桌面端 Logo — 左对齐，与表单输入框左边视觉对齐 */}
-          <Box sx={{ mb: { xs: 5, lg: 6 }, display: { xs: "none", lg: "flex" }, justifyContent: "flex-start" }}>
+          {/* 桌面端 Logo — 水平居中在表单正上方，向上平移 30px */}
+          <Box sx={{ mb: -2, display: { xs: "none", lg: "flex" }, justifyContent: "center", transform: "translateY(-90px)" }}>
             <Image
               src="/hiwe.png"
               alt="HIWE"
@@ -243,8 +247,8 @@ export default function LoginPage() {
             />
           </Box>
 
-          {/* Logo 移动端 — 顶部独立元素（左对齐，与表单输入框左边对齐） */}
-          <Box sx={{ mb: { xs: 5, md: 5 }, display: { xs: "flex", lg: "none" }, justifyContent: "flex-start", height: { xs: 39, md: 56 } }}>
+          {/* Logo 移动端 — 水平居中在表单正上方，向上平移 30px */}
+          <Box sx={{ mb: -2, display: { xs: "flex", lg: "none" }, justifyContent: "center", transform: "translateY(-90px)", height: { xs: 39, md: 56 } }}>
             <Image
               src="/hiwe.png"
               alt="HIWE"
@@ -258,32 +262,43 @@ export default function LoginPage() {
           <Box component="form" onSubmit={handleSubmit} aria-label={isRegister ? t.registerButton : t.loginButton} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             <TextField
               type="text"
-              label={t.loginEmail}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder={t.loginPlaceholderEmail}
+              placeholder="Username"
               autoFocus
               fullWidth
               autoComplete="off"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonOutlined sx={{ color: "#888888", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  borderRadius: { xs: "12px", md: 0 },
+                  borderRadius: "12px",
                   "&.Mui-focused fieldset": { borderColor: primaryColor },
                 },
-                "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
               }}
             />
 
             <TextField
               type={showPassword ? "text" : "password"}
-              label={t.loginPassword}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={t.loginPlaceholderPassword}
+              placeholder="Password"
               fullWidth
               autoComplete={isRegister ? "new-password" : "current-password"}
               slotProps={{
                 input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlined sx={{ color: "#888888", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
@@ -301,24 +316,27 @@ export default function LoginPage() {
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  borderRadius: { xs: "12px", md: 0 },
+                  borderRadius: "12px",
                   "&.Mui-focused fieldset": { borderColor: primaryColor },
                 },
-                "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
               }}
             />
 
             {isRegister && (
               <TextField
                 type={showConfirmPassword ? "text" : "password"}
-                label={t.registerConfirmLabel}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={t.registerConfirmPlaceholder}
+                placeholder="Confirm password"
                 fullWidth
                 autoComplete="new-password"
                 slotProps={{
                   input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockOutlined sx={{ color: "#888888", fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
@@ -336,7 +354,7 @@ export default function LoginPage() {
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: { xs: "12px", md: 0 },
+                    borderRadius: "12px",
                     "&.Mui-focused fieldset": { borderColor: primaryColor },
                   },
                   "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
@@ -358,7 +376,7 @@ export default function LoginPage() {
               fullWidth
               sx={{
                 py: { xs: 1, md: 1.25 },
-                borderRadius: { xs: "12px", md: 0 },
+                borderRadius: "12px",
                 bgcolor: primaryColor,
                 "&:hover": { bgcolor: isRegister ? "#6D28D9" : "primary.dark" },
                 fontSize: "0.8125rem",
