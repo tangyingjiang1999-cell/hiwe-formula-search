@@ -119,10 +119,9 @@ export default function FormulasPanel() {
     ? `${selectedColor.color_code} - ${selectedColor.color_name} (${brandMap.get(selectedColor.make_id) ?? selectedColor.make_id})`
     : "";
 
-  function openTonerDropdown(index: number, currentCode: string) {
-    // 必须同时设置两个状态，确保 React 在一次渲染中打开下拉
-    // 不要通过 scheduleClose 或 blur 关闭 —— 改由 ClickAwayListener 负责
-    setTonerQuery(currentCode);
+  function openTonerDropdown(index: number) {
+    // 仅设置下拉锚点行索引，不干预 tonerQuery（由 onChange 单独管理）
+    // 这样避免了 openTonerDropdown 和 onChange 之间的状态竞态
     setTonerDropdownFor(index);
   }
 
@@ -522,8 +521,15 @@ export default function FormulasPanel() {
                         ref={(el) => { tonerInputRefs.current[globalIndex] = el; }}
                         type="text"
                         value={c.toner_code}
-                        onChange={(e) => { updateComponent(globalIndex, "toner_code", e.target.value); setTonerQuery(e.target.value); }}
-                        onFocus={(e) => { INPUT_FOCUS_HANDLER(e); openTonerDropdown(globalIndex, c.toner_code); }}
+                        onChange={(e) => {
+                          updateComponent(globalIndex, "toner_code", e.target.value);
+                          setTonerQuery(e.target.value);
+                          // 只要输入了就打开下拉（如果还有匹配项）
+                          if (!tonerDropdownFor || tonerDropdownFor !== globalIndex) {
+                            setTonerDropdownFor(globalIndex);
+                          }
+                        }}
+                        onFocus={(e) => { INPUT_FOCUS_HANDLER(e); setTonerQuery(c.toner_code); setTonerDropdownFor(globalIndex); }}
                         onBlur={(e) => { INPUT_BLUR_HANDLER(e); }}
                         style={INPUT_SMALL_STYLE}
                       />
