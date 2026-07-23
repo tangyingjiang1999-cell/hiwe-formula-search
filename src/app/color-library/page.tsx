@@ -196,12 +196,12 @@ function AddMaterialDialog({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ borderBottom: "1px solid #e5e7eb", pb: 2, mb: 0, display: "flex", alignItems: "center", gap: 1 }}>
+      <DialogTitle sx={{ borderBottom: "1px solid #e5e7eb", pb: 2, mb: 3, display: "flex", alignItems: "center", gap: 1 }}>
         <AddIcon sx={{ color: "primary.main" }} />
         新增材料
       </DialogTitle>
-      <DialogContent sx={{ pt: 4, pb: 1, px: { xs: 2, sm: 3 } }}>
-        <Stack spacing={2.5} sx={{ mt: 1 }}>
+      <DialogContent sx={{ py: 3, px: 4 }}>
+        <Stack spacing={3}>
 
           {/* 分类选择 */}
           <TextField
@@ -217,7 +217,8 @@ function AddMaterialDialog({
                   disableScrollLock: true,
                   anchorOrigin: { vertical: "bottom", horizontal: "left" },
                   transformOrigin: { vertical: "top", horizontal: "left" },
-                  slotProps: { paper: { sx: { maxHeight: 200 } } },
+                  marginThreshold: 8,
+                  slotProps: { paper: { sx: { maxHeight: 200, mt: "6px" } } },
                 },
               },
             }}
@@ -259,7 +260,7 @@ function AddMaterialDialog({
           />
 
           {/* 颜色拾取器：色块预览 + HEX 输入 并排 */}
-          <Paper variant="outlined" sx={{ border: "1px solid", borderColor: "grey.200", p: 2 }}>
+          <Paper variant="outlined" sx={{ border: "1px solid", borderColor: "grey.200", p: 2, mb: 1 }}>
             <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
               {/* 色块 — 点击打开原生拾色器 */}
               <Box sx={{ position: "relative", flexShrink: 0 }}>
@@ -315,7 +316,7 @@ function AddMaterialDialog({
           )}
         </Stack>
       </DialogContent>
-      <DialogActions sx={{ borderTop: "1px solid #e5e7eb", pt: 2, pb: 2.5, px: 3 }}>
+      <DialogActions sx={{ borderTop: "1px solid #e5e7eb", pt: 2.5, pb: 3, px: 4 }}>
         <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 0 }}>取消</Button>
         <Button onClick={handleSave} variant="contained" sx={{ borderRadius: 0 }}>保存提交</Button>
       </DialogActions>
