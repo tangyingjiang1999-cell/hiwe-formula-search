@@ -62,18 +62,14 @@ function mapTonerRow(row: Record<string, unknown>): Toner {
   return t;
 }
 
+// 注意：toners 表当前不包含 rgb_r/g/b 列（仅 code/trade_name/name_zh/category/hex）
+// RGB 数据由前端 hex 值和色母静态数据派生，无需持久化到数据库
 function toTonerRow(toner: Toner): Record<string, unknown> {
-  const row: Record<string, unknown> = {
+  return {
     code: toner.code,
     trade_name: toner.tradeName,
     name_zh: toner.nameZh,
     category: toner.category,
     hex: toner.hex,
   };
-  if (toner.rgb_r != null) {
-    row.rgb_r = toner.rgb_r;
-    row.rgb_g = toner.rgb_g;
-    row.rgb_b = toner.rgb_b;
-  }
-  return row;
 }

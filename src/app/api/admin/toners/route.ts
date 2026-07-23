@@ -4,7 +4,12 @@ import { applyRateLimit, ADMIN_LIMIT } from "@/lib/rate-limit";
 import { getToners, saveToner, deleteToner } from "@/lib/db-toner";
 import type { Toner } from "@/types";
 
-export async function GET(req: NextRequest) {
+/** 从任意错误中提取可读消息（兼容 Supabase PostgrestError 对象） */
+function extractError(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  if (e && typeof e === "object" && "message" in e) return String((e as { message: unknown }).message);
+  return String(e);
+}
   const limitRes = applyRateLimit(req, ADMIN_LIMIT);
   if (limitRes) return limitRes;
   const user = getUserFromRequest(req);
@@ -35,7 +40,7 @@ export async function POST(req: NextRequest) {
     const saved = await saveToner(body);
     return NextResponse.json(saved, { status: 201 });
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : String(e);
+    const msg = extractError(e);
     console.error("[POST /api/admin/toners]", msg);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
@@ -63,7 +68,7 @@ export async function PUT(req: NextRequest) {
     const saved = await saveToner(body);
     return NextResponse.json(saved);
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : String(e);
+    const msg = extractError(e);
     console.error("[PUT /api/admin/toners]", msg);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
@@ -90,7 +95,7 @@ export async function DELETE(req: NextRequest) {
     await deleteToner(code);
     return NextResponse.json({ success: true });
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : String(e);
+    const msg = extractError(e);
     console.error("[DELETE /api/admin/toners]", msg);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
