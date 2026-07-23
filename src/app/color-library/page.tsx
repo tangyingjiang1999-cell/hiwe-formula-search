@@ -212,7 +212,9 @@ function AddMaterialDialog({
             size="small"
             fullWidth
             slotProps={{
+              inputLabel: { shrink: true },
               select: {
+                displayEmpty: true,
                 MenuProps: {
                   disableScrollLock: true,
                   anchorOrigin: { vertical: "bottom", horizontal: "left" },
@@ -220,6 +222,12 @@ function AddMaterialDialog({
                   marginThreshold: 8,
                   slotProps: { paper: { sx: { maxHeight: 200, mt: "6px" } } },
                 },
+              },
+            }}
+            sx={{
+              "& .MuiInputLabel-outlined": {
+                background: "#fff",
+                px: "4px",
               },
             }}
           >
@@ -630,13 +638,21 @@ function ManagementModal({
               size="small"
               fullWidth
               slotProps={{
+                inputLabel: { shrink: true },
                 select: {
+                  displayEmpty: true,
                   MenuProps: {
                     disableScrollLock: true,
                     anchorOrigin: { vertical: "bottom", horizontal: "left" },
                     transformOrigin: { vertical: "top", horizontal: "left" },
                     slotProps: { paper: { sx: { maxHeight: 200 } } },
                   },
+                },
+              }}
+              sx={{
+                "& .MuiInputLabel-outlined": {
+                  background: "#fff",
+                  px: "4px",
                 },
               }}
             >
