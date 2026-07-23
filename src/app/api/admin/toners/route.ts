@@ -10,6 +10,8 @@ function extractError(e: unknown): string {
   if (e && typeof e === "object" && "message" in e) return String((e as { message: unknown }).message);
   return String(e);
 }
+
+export async function GET(req: NextRequest) {
   const limitRes = applyRateLimit(req, ADMIN_LIMIT);
   if (limitRes) return limitRes;
   const user = getUserFromRequest(req);
