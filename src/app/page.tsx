@@ -120,12 +120,12 @@ export default function Home() {
             aria-hidden="true"
             className="h-full w-full object-cover object-center"
           />
-          {/* 工业感深色渐变蒙版：保证标题与卡片区域对比度 */}
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,22,34,0.78)_0%,rgba(11,22,34,0.45)_38%,rgba(11,22,34,0.35)_60%,rgba(244,245,247,0.96)_100%)]" />
+          {/* 工业感深色渐变蒙版：顶部深色保证标题对比度，底部平滑溶入页面灰 */}
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,22,34,0.82)_0%,rgba(11,22,34,0.5)_28%,rgba(11,22,34,0.42)_46%,rgba(244,245,247,0.7)_80%,rgba(244,245,247,1)_100%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(11,22,34,0.55)_0%,transparent_55%)]" />
         </div>
 
-        <div className="mx-auto w-full max-w-[1240px] px-4 pt-28 sm:px-8 md:pt-32 md:px-12">
+        <div className="mx-auto w-full max-w-[1240px] px-4 pt-28 pb-20 sm:px-8 md:pt-32 md:pb-28 md:px-12">
           {/* 标题区 */}
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
