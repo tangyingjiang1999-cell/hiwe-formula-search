@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo, type CSSProperties, 
 import type { Formula, FormulaComponent, FormulaType, ComponentGroup, Color, ColorVariant } from "@/types";
 import type { Toner, CarMake } from "@/types";
 import { generateFormulaId } from "@/lib/id-generator";
-import { hexToRgb, filterTonersBySystem, matchingColors } from "./formula-helpers";
+import { hexToRgb, filterTonersBySystem, matchingToners, matchingColors } from "./formula-helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,11 @@ export default function FormulasPanel() {
   const [colorQuery, setColorQuery] = useState("");
   const [colorDropdownOpen, setColorDropdownOpen] = useState(false);
   const colorBlurRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 色母搜索下拉
+  const [tonerDropdownFor, setTonerDropdownFor] = useState<number | null>(null);
+  const [tonerQuery, setTonerQuery] = useState("");
+  const tonerBlurRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const percentageSums = useMemo(() => {
     const filled = components.filter((c) => c.toner_code.trim() !== "");
@@ -164,7 +169,7 @@ export default function FormulasPanel() {
           <Button onClick={() => addComponent(group)} variant="outline" size="sm" className="rounded-lg text-[13px]"><Plus className="size-4" /> 添加色母</Button>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200 max-h-[300px] overflow-y-auto">
+        <div className="[&_div[data-slot='table-container']]:overflow-visible rounded-lg border border-gray-200 max-h-none">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/80">
@@ -183,8 +188,40 @@ export default function FormulasPanel() {
                 const globalIndex = components.indexOf(c);
                 return (
                   <TableRow key={c.uid ?? globalIndex} className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50">
-                    <TableCell className="py-2 px-2">
-                      <input type="text" value={c.toner_code} onChange={(e) => updateComponent(globalIndex, "toner_code", e.target.value)} className={INPUT_CLASS} />
+                    <TableCell className="py-2 px-2 relative">
+                      <input
+                        type="text" value={c.toner_code}
+                        onChange={(e) => { updateComponent(globalIndex, "toner_code", e.target.value); setTonerQuery(e.target.value); setTonerDropdownFor(globalIndex); }}
+                        onFocus={(e) => { setTonerQuery(e.target.value); setTonerDropdownFor(globalIndex); }}
+                        onBlur={() => { tonerBlurRef.current = setTimeout(() => setTonerDropdownFor(null), 180); }}
+                        className={INPUT_CLASS}
+                      />
+                      {tonerDropdownFor === globalIndex && (() => {
+                        const hits = matchingToners(tonerQuery, tonerPool);
+                        if (hits.length === 0) return null;
+                        return (
+                          <div className="absolute left-2 right-2 top-full z-50 mt-1 max-h-40 overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+                            {hits.map((t) => (
+                              <button
+                                key={t.code}
+                                onMouseDown={() => {
+                                  updateComponent(globalIndex, "toner_code", t.code);
+                                  updateComponent(globalIndex, "toner_name", t.nameZh || t.tradeName);
+                                  updateComponent(globalIndex, "rgb_r", t.rgb_r);
+                                  updateComponent(globalIndex, "rgb_g", t.rgb_g);
+                                  updateComponent(globalIndex, "rgb_b", t.rgb_b);
+                                  setTonerDropdownFor(null);
+                                }}
+                                className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs hover:bg-blue-50"
+                              >
+                                <div className="size-4 rounded-full border border-gray-200 flex-shrink-0" style={{ backgroundColor: `#${t.hex.replace(/^#/, "")}` }} />
+                                <span className="font-medium w-20 flex-shrink-0">{t.code}</span>
+                                <span className="text-gray-500 truncate">{t.nameZh || t.tradeName}</span>
+                              </button>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="py-2 px-2">
                       <input type="text" value={c.toner_name} onChange={(e) => updateComponent(globalIndex, "toner_name", e.target.value)} className={INPUT_CLASS} />
@@ -314,7 +351,7 @@ export default function FormulasPanel() {
           <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="min-h-[60px] w-full rounded-lg border border-gray-200 p-3 text-sm outline-none focus:border-primary" />
         </div>
 
-        <div className="mt-2 flex-1 min-h-0 overflow-auto">
+        <div className="mt-2 flex-1 min-h-0 overflow-visible">
           {form.formula_type === "Three Stages" ? (
             <div className="flex flex-col gap-4">{PEARL_GROUPS.map((g) => renderComponentTable(g))}</div>
           ) : renderComponentTable()}
